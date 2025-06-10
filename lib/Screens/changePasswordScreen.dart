@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school/customWidgets/theme.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   @override
@@ -46,11 +47,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade50, Colors.white],
-          ),
+          gradient: AppTheme.primaryGradient,
         ),
         child: SafeArea(
           child: Padding(

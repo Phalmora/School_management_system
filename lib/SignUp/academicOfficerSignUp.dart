@@ -580,7 +580,7 @@ class _AcademicOfficerSignupPageState extends State<AcademicOfficerSignupPage> w
         // Navigate to dashboard
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/academicOfficer-dashboard',
+          '/academic-officer-dashboard',
               (route) => false,
         );
       });

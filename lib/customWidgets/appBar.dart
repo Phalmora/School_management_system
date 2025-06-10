@@ -41,7 +41,19 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget{
               fontWeight: FontWeight.w500,
             ),
           ),
-          )
+          ),
+          Spacer(),
+          GestureDetector(
+            onTap: (){
+              Navigator.pushNamed(context, '/main-chat');
+            },child: Icon(Icons.chat),
+          ),
+          SizedBox(width: AppTheme.smallSpacing,),
+          GestureDetector(
+            onTap:(){
+              Navigator.pushNamed(context,'/notifications');
+            },child: Icon(Icons.notifications),
+          ),
         ],
       ),
 

@@ -46,35 +46,36 @@ class academicOfficerDashboard extends StatelessWidget {
                 ],
               ),
             ),
+
             _buildDrawerItem(
               context,
               icon: Icons.dashboard,
               title: 'Dashboard',
-              route: '/academic-dashboard',
+              route: '/academic-officer-dashboard',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.person_search,
               title: 'Teacher Performance',
-              route: '/teacher-performance',
+              route: '/academic-officer-teacher-performance',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.class_,
               title: 'Classroom Reports',
-              route: '/classroom-reports',
+              route: '/academic-officer-classroom-report',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.quiz,
               title: 'Exam Management',
-              route: '/exam-management',
+              route: '/academic-officer-exam-management-screen',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.notifications_active,
               title: 'Notifications',
-              route: '/notifications-management',
+              route: '/academic-officer-notification',
             ),
             _buildDrawerItem(
               context,
@@ -196,7 +197,8 @@ class academicOfficerDashboard extends StatelessWidget {
               ),
 
               SizedBox(height: 20),
-
+              Text('Quick Access', style: TextStyle(fontSize: 25, color: Colors.white,fontWeight: FontWeight.bold)),
+              SizedBox(height: 20),
               // Main Dashboard Grid
               Expanded(
                 child: GridView.count(
@@ -205,29 +207,30 @@ class academicOfficerDashboard extends StatelessWidget {
                   mainAxisSpacing: 15,
                   childAspectRatio: 1.1,
                   children: [
+
                     _buildDashboardCard(
                       'Teacher Performance',
                       Icons.person_search,
                       Colors.blue,
-                          () => Navigator.pushNamed(context, '/teacher-performance'),
+                          () => Navigator.pushNamed(context, '/academic-officer-teacher-performance'),
                     ),
                     _buildDashboardCard(
                       'Classroom Reports',
                       Icons.assessment,
                       Colors.green,
-                          () => Navigator.pushNamed(context, '/classroom-reports'),
+                          () => Navigator.pushNamed(context, '/academic-officer-classroom-report'),
                     ),
                     _buildDashboardCard(
                       'Exam Management',
                       Icons.quiz,
                       Colors.orange,
-                          () => Navigator.pushNamed(context, '/exam-management'),
+                          () => Navigator.pushNamed(context, '/academic-officer-exam-management-screen'),
                     ),
                     _buildDashboardCard(
                       'Send Notifications',
                       Icons.notifications_active,
                       Colors.purple,
-                          () => Navigator.pushNamed(context, '/send-notifications'),
+                          () => Navigator.pushNamed(context, '/academic-officer-notification'),
                     ),
                     _buildDashboardCard(
                       'Attendance Reports',

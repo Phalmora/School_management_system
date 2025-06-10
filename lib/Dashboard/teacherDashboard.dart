@@ -62,13 +62,13 @@ class teacherDashboard extends StatelessWidget {
                       _buildDrawerSection(context, 'Main', [
                         _buildDrawerItem(context, Icons.dashboard_rounded, 'Dashboard', '/teacher-dashboard'),
                         _buildDrawerItem(context, Icons.person_rounded, 'Profile', '/teacher-profile'),
-                        _buildDrawerItem(context, Icons.groups_rounded, 'Student List', '/student-list'),
-                        _buildDrawerItem(context, Icons.assignment_rounded, 'Result Entry', '/result-entry'),
+                        _buildDrawerItem(context, Icons.groups_rounded, 'Student List', '/teacher-student-list'),
+                        _buildDrawerItem(context, Icons.assignment_rounded, 'Result Entry', '/teacher-result-entry'),
                       ]),
                       _buildDrawerSection(context, 'Academic', [
                         _buildDrawerItem(context, Icons.fact_check_rounded, 'Attendance', '/teacher-attendance'),
                         _buildDrawerItem(context, Icons.schedule_rounded, 'Time Table', '/teacher-timetable'),
-                        _buildDrawerItem(context, Icons.message_rounded, 'Messages', '/teacher-messages', badge: '5'),
+                        _buildDrawerItem(context, Icons.message_rounded, 'Messages', '/teacher-message', badge: '5'),
                       ]),
                       _buildDrawerSection(context, 'Support', [
                         _buildDrawerItem(context, Icons.help_outline_rounded, 'Help & Support', '/teacher-help'),
@@ -444,15 +444,15 @@ class teacherDashboard extends StatelessWidget {
   Widget _buildDashboardGrid(BuildContext context) {
     final items = [
       _DashboardItem('Student List', Icons.groups_rounded, Colors.blue,
-              () => Navigator.pushNamed(context, '/student-list'), 'View students in classes'),
+              () => Navigator.pushNamed(context, '/teacher-student-list'), 'View students in classes'),
       _DashboardItem('Attendance', Icons.fact_check_rounded, Colors.green,
               () => Navigator.pushNamed(context, '/teacher-attendance'), 'Mark daily attendance'),
       _DashboardItem('Result Entry', Icons.assignment_rounded, Colors.purple,
-              () => Navigator.pushNamed(context, '/result-entry'), 'Add exam scores & grades'),
+              () => Navigator.pushNamed(context, '/teacher-result-entry'), 'Add exam scores & grades'),
       _DashboardItem('Time Table', Icons.schedule_rounded, Colors.orange,
               () => Navigator.pushNamed(context, '/teacher-timetable'), 'Teaching schedule'),
       _DashboardItem('Messages', Icons.message_rounded, Colors.red,
-              () => Navigator.pushNamed(context, '/teacher-messages'), 'Admin & academic messages', badge: '5'),
+              () => Navigator.pushNamed(context, '/teacher-message'), 'Admin & academic messages', badge: '5'),
       _DashboardItem('Profile', Icons.person_rounded, Colors.teal,
               () => Navigator.pushNamed(context, '/teacher-profile'), 'Personal information'),
     ];

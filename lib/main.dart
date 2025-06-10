@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:school/AdminDashboardPages/academicResults.dart';
+import 'package:school/AdminDashboardPages/classAndSectionManagement.dart';
+import 'package:school/AdminDashboardPages/employmentManagement.dart';
+import 'package:school/AdminDashboardPages/feeManagement.dart';
+import 'package:school/AdminDashboardPages/reportAndAnalytics.dart';
+import 'package:school/AdminDashboardPages/studentManagement.dart';
+import 'package:school/AdminDashboardPages/systemControl.dart';
 import 'package:school/Admission/admissionBasicInfo.dart';
 import 'package:school/Admission/admissionContactScreen.dart';
 import 'package:school/Admission/admissionDocumentsScreen.dart';
@@ -8,22 +15,43 @@ import 'package:school/Admission/admissionPaymentsScreen.dart';
 import 'package:school/Admission/checkAddmissionStatus.dart';
 import 'package:school/Dashboard/academicOfficerDashboard.dart';
 import 'package:school/Dashboard/adminDashboard.dart';
+import 'package:school/Dashboard/parentsDashBoard.dart';
 import 'package:school/Dashboard/studentDashboard.dart';
 import 'package:school/Dashboard/teacherDashboard.dart';
 import 'package:school/Help/parentHelp.dart';
 import 'package:school/Help/schoolHelp.dart';
+import 'package:school/Screens/Notifications.dart';
 import 'package:school/Screens/changePasswordScreen.dart';
+import 'package:school/Screens/forgetPassword.dart';
 import 'package:school/Screens/loginScreen.dart';
+import 'package:school/Screens/mainChat.dart';
 import 'package:school/Screens/registerScreen.dart';
-import 'package:school/Screens/studentInformation.dart';
+import 'package:school/Screens/setting.dart';
 import 'package:school/SignUp/academicOfficerSignUp.dart';
 import 'package:school/SignUp/adminSignUp.dart';
 import 'package:school/SignUp/mainSignUpPage.dart';
 import 'package:school/SignUp/parentSignUp.dart';
 import 'package:school/SignUp/studentSignUp.dart';
 import 'package:school/SignUp/teacherSignUp.dart';
+import 'package:school/StudentDashboardPages/feeManagementStudent.dart';
+import 'package:school/StudentDashboardPages/noticeAndMessages.dart';
+import 'package:school/StudentDashboardPages/profileStudent.dart';
+import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
+import 'package:school/StudentDashboardPages/timeTableStudent.dart';
+import 'package:school/academicOfficerDashboardPages/classroomReportAcademicOfficer.dart';
+import 'package:school/academicOfficerDashboardPages/sendNotificationAcademciOfficer.dart';
+import 'package:school/academicOfficerDashboardPages/teacherPerformance.dart';
+import 'package:school/parentDashboardPages/feeManagementParent.dart';
 import 'package:school/schoolDetails.dart';
 import 'package:school/splashScreen.dart';
+import 'package:school/teacherDashboardPages/attendanceTeacher.dart';
+import 'package:school/teacherDashboardPages/messageTeacher.dart';
+import 'package:school/teacherDashboardPages/profileTeacher.dart';
+import 'package:school/teacherDashboardPages/resultEntryTeacher.dart';
+import 'package:school/teacherDashboardPages/studentList.dart';
+import 'package:school/teacherDashboardPages/timeTableTeacher.dart';
+
+import 'academicOfficerDashboardPages/ExamManagementAcademicOfficer.dart';
 
 
 void main() {
@@ -43,9 +71,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
       ),
       home: SplashScreen(),
-      // home: StudentInformation(),
-      // home: AdmissionStatusScreen(),
-      // home: teacherDashboard (),
+      // home: AppSettingsPage(),
+      // home: SubjectsMarksScreen(),
+      // home: AcademicResultsScreen(),
       routes: {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
@@ -62,7 +90,8 @@ class MyApp extends StatelessWidget {
         '/admin-dashboard':(context) => adminDashboard(),
         '/student-dashboard': (context) => StudentDashboard(),
         '/teacher-dashboard': (context) => teacherDashboard(),
-        'academicOfficer-dashboard':(context) => academicOfficerDashboard(),
+        '/academic-officer-dashboard':(context) => academicOfficerDashboard(),
+        '/parent-dashboard':(context) => ParentDashboard(),
         '/admission-main': (context) => AdmissionMainScreen(),
         '/admission-basic': (context) => AdmissionBasicInfoScreen(),
         '/admission-parent': (context) => AdmissionParentInfoScreen(),
@@ -70,7 +99,32 @@ class MyApp extends StatelessWidget {
         '/admission-documents': (context) => AdmissionDocumentsScreen(),
         '/payment-page': (context) => AdmissionPaymentsScreen(),
         '/check-admission-status': (context) => AdmissionStatusScreen(),
-
+        '/forget-password': (context) => ForgotPasswordScreen(),
+        '/admin-employee-management': (context) => EmployeeManagementPage(),
+        '/admin-student-management':(context) => StudentManagementPage(),
+        '/admin-class-section-management':(context) => ClassSectionManagementPage(),
+        '/admin-academic-result-screen':(context) => AcademicResultsScreen(),
+        '/admin-report-analytics':(context) => ReportsAnalyticsPage(),
+        '/admin-system-control':(context) => SystemControlsPage(),
+        '/admin-fee-management':(context) => FeeManagementPage(),
+        '/student-subject-marks':(context) => SubjectsMarksScreen(),
+        '/student-notice-message':(context) => NoticesMessage(),
+        '/student-fee-management':(context) => FeeManagementScreenStudent(),
+        '/student-profile': (context) => StudentProfile(),
+        '/student-timetable': (context) => TimeTableStudentScreen(),
+        '/teacher-student-list': (context) => StudentListScreen(),
+        '/teacher-attendance':(context) => AttendancePageTeacher(),
+        '/teacher-result-entry': (context) => ResultEntryPage(),
+        '/teacher-message': (context) => MessagePageTeacher(),
+        '/teacher-timetable': (context) => TeacherTimetablePage(),
+        '/teacher-profile': (context) => TeacherProfilePage(),
+        '/academic-officer-teacher-performance': (context) => TeacherPerformanceScreen(),
+        '/academic-officer-classroom-report': (context) => ClassroomReportsScreen(),
+        '/academic-officer-exam-management-screen': (context) => ExamManagementScreen(),
+        '/academic-officer-notification': (context) => NotificationsScreen(),
+        '/parent-fee-management': (context) => FeePaymentParentPage(),
+        '/notifications': (context) => Notifications(),
+        '/main-chat': (context) => MainChat(),
       },
     );
   }

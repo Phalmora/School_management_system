@@ -56,43 +56,43 @@ class adminDashboard extends StatelessWidget {
               context,
               icon: Icons.people,
               title: 'Student Management',
-              route: '/student-management',
+              route: '/admin-student-management',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.work,
               title: 'Employee Management',
-              route: '/employee-management',
+              route: '/admin-employee-management',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.class_,
               title: 'Class Management',
-              route: '/class-management',
+              route: '/admin-class-section-management',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.payment,
               title: 'Fee Management',
-              route: '/fee-management',
+              route: '/admin-fee-management',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.grade,
               title: 'Academic Results',
-              route: '/academic-results',
+              route: '/admin-academic-result-screen',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.analytics,
               title: 'Reports & Analytics',
-              route: '/reports-analytics',
+              route: '/admin-report-analytics',
             ),
             _buildDrawerItem(
               context,
               icon: Icons.settings,
               title: 'System Controls',
-              route: '/system-controls',
+              route: '/admin-system-control',
             ),
             Divider(),
             _buildDrawerItem(
@@ -189,43 +189,43 @@ class adminDashboard extends StatelessWidget {
                       'Student Management',
                       Icons.people,
                       Colors.blue,
-                          () => Navigator.pushNamed(context, '/student-management'),
+                          () => Navigator.pushNamed(context, '/admin-student-management'),
                     ),
                     _buildDashboardCard(
                       'Employee Management',
                       Icons.work,
                       Colors.green,
-                          () => Navigator.pushNamed(context, '/employee-management'),
+                          () => Navigator.pushNamed(context, '/admin-employee-management'),
                     ),
                     _buildDashboardCard(
                       'Class & Section Management',
                       Icons.class_,
                       Colors.orange,
-                          () => Navigator.pushNamed(context, '/class-management'),
+                          () => Navigator.pushNamed(context, '/admin-class-section-management'),
                     ),
                     _buildDashboardCard(
                       'Fee Management',
                       Icons.payment,
                       Colors.purple,
-                          () => Navigator.pushNamed(context, '/fee-management'),
+                          () => Navigator.pushNamed(context, '/admin-fee-management'),
                     ),
                     _buildDashboardCard(
                       'Academic Results',
                       Icons.grade,
                       Colors.indigo,
-                          () => Navigator.pushNamed(context, '/academic-results'),
+                          () => Navigator.pushNamed(context, '/admin-academic-result-screen'),
                     ),
                     _buildDashboardCard(
                       'Reports & Analytics',
                       Icons.analytics,
                       Colors.teal,
-                          () => Navigator.pushNamed(context, '/reports-analytics'),
+                          () => Navigator.pushNamed(context, '/admin-report-analytics'),
                     ),
                     _buildDashboardCard(
                       'System Controls',
                       Icons.settings,
                       Colors.red.shade700,
-                          () => Navigator.pushNamed(context, '/system-controls'),
+                          () => Navigator.pushNamed(context, '/admin-system-control'),
                     ),
                     _buildDashboardCard(
                       'Quick Actions',
@@ -377,6 +377,14 @@ class adminDashboard extends StatelessWidget {
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/add-employee');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.pending_actions, color: Colors.red),
+                title: Text('View Reports'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/view-report');
                 },
               ),
               ListTile(

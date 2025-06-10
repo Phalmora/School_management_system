@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
-                                items: ['Student', 'Teacher', 'Admin', 'Academic Officer', 'Parent']
+                                items: ['Academic Officer', 'Admin', 'Parent', 'Student', 'Teacher']
                                     .map((role) => DropdownMenuItem(
                                   value: role,
                                   child: Text(role),
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
-                                validator: (value) => value!.isEmpty
+                                validator: (value) => value == null || value.isEmpty
                                     ? 'Please enter your name'
                                     : null,
                               ),
@@ -141,8 +141,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
-                                validator: (value) => value!.isEmpty
-                                    ? 'Please enter admission ID'
+                                validator: (value) => value == null || value.isEmpty
+                                    ? 'Please enter your ID'
                                     : null,
                               ),
                               SizedBox(height: 20),
@@ -166,7 +166,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                 ),
-                                validator: (value) => value!.isEmpty
+                                validator: (value) => value == null || value.isEmpty
                                     ? 'Please enter password'
                                     : null,
                               ),
@@ -195,24 +195,27 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               ),
                               SizedBox(height: 20),
                               Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, '/change-password');
+                                      Navigator.pushNamed(context, '/change-password');
                                     },
                                     child: Text('Change Password'),
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.pushNamed(
-                                          context, '/admission-main');
+                                      Navigator.pushNamed(context, '/forget-password');
                                     },
-                                    child: Text('New Admission'),
+                                    child: Text('Forget Password'),
                                   ),
                                 ],
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/admission-main');
+                                },
+                                child: Text('New Admission'),
                               ),
                             ],
                           ),
@@ -231,16 +234,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      if (_admissionIdController.text.startsWith('ADM')) {
+      // Basic validation - you can add more sophisticated authentication logic here
+      if (_admissionIdController.text.isNotEmpty && _passwordController.text.isNotEmpty) {
         switch (_userType) {
           case 'Admin':
-            Navigator.pushReplacementNamed(context, '/adminDashboard');
+            Navigator.pushReplacementNamed(context, '/admin-dashboard');
             break;
           case 'Teacher':
-            Navigator.pushReplacementNamed(context, '/teacherDashboard');
+            Navigator.pushReplacementNamed(context, '/teacher-dashboard');
             break;
           case 'Student':
-            Navigator.pushReplacementNamed(context, '/studentDashboard');
+            Navigator.pushReplacementNamed(context, '/student-dashboard');
+            break;
+          case 'Academic Officer':
+            Navigator.pushReplacementNamed(context, '/academic-officer-dashboard');
+            break;
+          case 'Parent':
+            Navigator.pushReplacementNamed(context, '/parent-dashboard');
             break;
           default:
             _showError('Unknown user type!');
@@ -256,6 +266,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
       ),
     );
   }

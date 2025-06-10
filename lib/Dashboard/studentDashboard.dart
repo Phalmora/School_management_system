@@ -60,12 +60,12 @@ class StudentDashboard extends StatelessWidget {
                     _buildDrawerSection('Main', [
                       _buildDrawerItem(context, Icons.dashboard_rounded, 'Dashboard', '/student-dashboard'),
                       _buildDrawerItem(context, Icons.person_rounded, 'Profile', '/student-profile'),
-                      _buildDrawerItem(context, Icons.grade_rounded, 'Subjects & Marks', '/subjects-marks'),
-                      _buildDrawerItem(context, Icons.payment_rounded, 'Fee Management', '/student-fee'),
+                      _buildDrawerItem(context, Icons.grade_rounded, 'Subjects & Marks', '/student-subject-marks'),
+                      _buildDrawerItem(context, Icons.payment_rounded, 'Fee Management', '/student-fee-management'),
                     ]),
                     _buildDrawerSection('Academic', [
-                      _buildDrawerItem(context, Icons.schedule_rounded, 'Time Table', '/time-table'),
-                      _buildDrawerItem(context, Icons.notifications_active_rounded, 'Notices & Messages', '/notices-messages', badge: '3'),
+                      _buildDrawerItem(context, Icons.schedule_rounded, 'Time Table', '/student-timetable'),
+                      _buildDrawerItem(context, Icons.notifications_active_rounded, 'Notices & Messages', '/student-notice-message', badge: '3'),
                     ]),
                     _buildDrawerSection('Support', [
                       _buildDrawerItem(context, Icons.school_rounded, 'School Help', '/school-help'),
@@ -291,7 +291,7 @@ class StudentDashboard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        'Class 10-A',
+                        'Class 10-A . Roll-15',
                         style: TextStyle(
                           color: Colors.indigo.shade700,
                           fontSize: 12,
@@ -414,13 +414,13 @@ class StudentDashboard extends StatelessWidget {
   Widget _buildDashboardGrid(BuildContext context) {
     final items = [
       _DashboardItem('Subjects & Marks', Icons.grade_rounded, Colors.purple,
-              () => Navigator.pushNamed(context, '/subjects-marks'), 'View grades & results'),
+              () => Navigator.pushNamed(context, '/student-subject-marks'), 'View grades & results'),
       _DashboardItem('Fee Management', Icons.payment_rounded, Colors.green,
-              () => Navigator.pushNamed(context, '/student-fee'), 'Fee history & payments'),
+              () => Navigator.pushNamed(context, '/student-fee-management'), 'Fee history & payments'),
       _DashboardItem('Time Table', Icons.schedule_rounded, Colors.orange,
-              () => Navigator.pushNamed(context, '/time-table'), 'Daily class schedule'),
-      _DashboardItem('Notices', Icons.notifications_active_rounded, Colors.red,
-              () => Navigator.pushNamed(context, '/notices-messages'), 'School announcements', badge: '3'),
+              () => Navigator.pushNamed(context, '/student-timetable'), 'Daily class schedule'),
+      _DashboardItem('Notices and Message', Icons.notifications_active_rounded, Colors.red,
+              () => Navigator.pushNamed(context, '/student-notice-message'), 'School announcements', badge: '3'),
       _DashboardItem('Profile', Icons.person_rounded, Colors.blue,
               () => Navigator.pushNamed(context, '/student-profile'), 'Personal information'),
       _DashboardItem('Help & Support', Icons.support_agent_rounded, Colors.teal,
