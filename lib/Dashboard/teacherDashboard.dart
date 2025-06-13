@@ -64,6 +64,7 @@ class teacherDashboard extends StatelessWidget {
                         _buildDrawerItem(context, Icons.person_rounded, 'Profile', '/teacher-profile'),
                         _buildDrawerItem(context, Icons.groups_rounded, 'Student List', '/teacher-student-list'),
                         _buildDrawerItem(context, Icons.assignment_rounded, 'Result Entry', '/teacher-result-entry'),
+                        _buildDrawerItem(context, Icons.person_add_alt, 'Add Applicant', '/admin-add-student-applicant'),
                       ]),
                       _buildDrawerSection(context, 'Academic', [
                         _buildDrawerItem(context, Icons.fact_check_rounded, 'Attendance', '/teacher-attendance'),
@@ -453,6 +454,10 @@ class teacherDashboard extends StatelessWidget {
               () => Navigator.pushNamed(context, '/teacher-timetable'), 'Teaching schedule'),
       _DashboardItem('Messages', Icons.message_rounded, Colors.red,
               () => Navigator.pushNamed(context, '/teacher-message'), 'Admin & academic messages', badge: '5'),
+      _DashboardItem('Add Applicant', Icons.person_add_alt, Colors.brown,
+          ()=> Navigator.pushNamed(context, '/admin-add-student-applicant',), 'Add new student'),
+      _DashboardItem('Academic Options', Icons.sports_sharp, Colors.indigo,
+              ()=> Navigator.pushNamed(context, '/academic-option',), 'Academics improvement'),
       _DashboardItem('Profile', Icons.person_rounded, Colors.teal,
               () => Navigator.pushNamed(context, '/teacher-profile'), 'Personal information'),
     ];

@@ -233,6 +233,12 @@ class academicOfficerDashboard extends StatelessWidget {
                           () => Navigator.pushNamed(context, '/academic-officer-notification'),
                     ),
                     _buildDashboardCard(
+                      'Academic Options',
+                      Icons.sports_sharp,
+                      Colors.blueGrey,
+                          () => Navigator.pushNamed(context, '/academic-options'),
+                    ),
+                    _buildDashboardCard(
                       'Attendance Reports',
                       Icons.fact_check,
                       Colors.indigo,

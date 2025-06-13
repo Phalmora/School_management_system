@@ -90,6 +90,12 @@ class adminDashboard extends StatelessWidget {
             ),
             _buildDrawerItem(
               context,
+              icon: Icons.person_add_alt,
+              title: 'Add Applicant',
+              route: '/admin-add-student-applicant',
+            ),
+            _buildDrawerItem(
+              context,
               icon: Icons.settings,
               title: 'System Controls',
               route: '/admin-system-control',
@@ -220,6 +226,36 @@ class adminDashboard extends StatelessWidget {
                       Icons.analytics,
                       Colors.teal,
                           () => Navigator.pushNamed(context, '/admin-report-analytics'),
+                    ),
+                    _buildDashboardCard(
+                      'Add New Applicant',
+                      Icons.person_add_alt_1_sharp,
+                      Colors.brown,
+                          () => Navigator.pushNamed(context, '/admin-add-student-applicant'),
+                    ),
+                    _buildDashboardCard(
+                      'Add Teacher',
+                      Icons.add_outlined,
+                      Colors.green,
+                          () => Navigator.pushNamed(context, '/admin-add-teacher'),
+                    ),
+                    _buildDashboardCard(
+                      'Add Designation',
+                      Icons.add_outlined,
+                      Colors.deepPurple,
+                          () => Navigator.pushNamed(context, '/admin-add-designation'),
+                    ),
+                    _buildDashboardCard(
+                      'Academic options',
+                      Icons.sports_sharp,
+                      Colors.black45,
+                          () => Navigator.pushNamed(context, '/academic-options'),
+                    ),
+                    _buildDashboardCard(
+                      'User Request',
+                      Icons.notification_add_sharp,
+                      Colors.teal,
+                          () => Navigator.pushNamed(context, '/admin-user-request'),
                     ),
                     _buildDashboardCard(
                       'System Controls',

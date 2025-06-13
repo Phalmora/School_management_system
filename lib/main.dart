@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:school/AdminDashboardPages/academicOption.dart';
 import 'package:school/AdminDashboardPages/academicResults.dart';
+import 'package:school/AdminDashboardPages/addDesignation.dart';
+import 'package:school/AdminDashboardPages/addTeacher.dart';
+import 'package:school/AdminDashboardPages/adminAddNewApplicant.dart';
 import 'package:school/AdminDashboardPages/classAndSectionManagement.dart';
 import 'package:school/AdminDashboardPages/employmentManagement.dart';
 import 'package:school/AdminDashboardPages/feeManagement.dart';
 import 'package:school/AdminDashboardPages/reportAndAnalytics.dart';
 import 'package:school/AdminDashboardPages/studentManagement.dart';
 import 'package:school/AdminDashboardPages/systemControl.dart';
+import 'package:school/AdminDashboardPages/userRequest.dart';
 import 'package:school/Admission/admissionBasicInfo.dart';
 import 'package:school/Admission/admissionContactScreen.dart';
 import 'package:school/Admission/admissionDocumentsScreen.dart';
@@ -101,12 +106,18 @@ class MyApp extends StatelessWidget {
         '/check-admission-status': (context) => AdmissionStatusScreen(),
         '/forget-password': (context) => ForgotPasswordScreen(),
         '/admin-employee-management': (context) => EmployeeManagementPage(),
-        '/admin-student-management':(context) => StudentManagementPage(),
+        '/admin-student-management':(context) => ClassManagementPage(),
+        '/admin-student-management-student-list': (context) => ClassManagementPage(),
         '/admin-class-section-management':(context) => ClassSectionManagementPage(),
         '/admin-academic-result-screen':(context) => AcademicResultsScreen(),
         '/admin-report-analytics':(context) => ReportsAnalyticsPage(),
         '/admin-system-control':(context) => SystemControlsPage(),
         '/admin-fee-management':(context) => FeeManagementPage(),
+        '/admin-add-student-applicant': (context) => AddNewApplicantScreen(),
+        '/admin-add-teacher': (context) => AddTeacherScreen(),
+        '/admin-add-designation': (context) => AddDesignationPage(),
+        '/admin-user-request': (context) => UserRequestsPage(),
+        '/academic-options': (context) => AcademicScreen(),
         '/student-subject-marks':(context) => SubjectsMarksScreen(),
         '/student-notice-message':(context) => NoticesMessage(),
         '/student-fee-management':(context) => FeeManagementScreenStudent(),
