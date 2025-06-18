@@ -8,6 +8,9 @@ class StudentSignupPage extends StatefulWidget {
 
 class _StudentSignupPageState extends State<StudentSignupPage> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  final _scrollController = ScrollController();
+
+  // Animation Controllers
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -19,6 +22,7 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  // Password Visibility
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -57,210 +61,193 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
           gradient: AppTheme.primaryGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(AppTheme.defaultSpacing),
-            child: Column(
-              children: [
-                // Header
-                FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.arrow_back, color: AppTheme.white),
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: AppTheme.getMaxWidth(context),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Padding(
+                      padding: AppTheme.getScreenPadding(context),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: AppTheme.white,
+                              size: AppTheme.getHeaderIconSize(context),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Student Registration',
+                              style: AppTheme.getFontStyle(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(width: AppTheme.getHeaderIconSize(context) + 16), // Balance the back button
+                        ],
                       ),
-                      Text(
-                        'Student Signup',
-                        style: AppTheme.FontStyle.copyWith(fontSize: 24),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                SizedBox(height: AppTheme.defaultSpacing),
 
-                Expanded(
-                  child: Center(
+                  // Form Card
+                  Expanded(
                     child: SlideTransition(
                       position: _slideAnimation,
                       child: FadeTransition(
                         opacity: _fadeAnimation,
-                        child: Card(
-                          elevation: AppTheme.cardElevation,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                          ),
+                        child: SingleChildScrollView(
                           child: Padding(
-                            padding: EdgeInsets.all(AppTheme.extraLargeSpacing),
-                            child: SingleChildScrollView(
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Create Student Account',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.blue800,
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.smallSpacing),
-                                    Text(
-                                      'Please fill in your details to register',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.extraLargeSpacing),
-
-                                    // Full Name Field
-                                    _buildAnimatedTextField(
-                                      controller: _fullNameController,
-                                      icon: Icons.person,
-                                      label: 'Full Name',
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter your full name';
-                                        }
-                                        return null;
-                                      },
-                                      delay: 100,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Email Field
-                                    _buildAnimatedTextField(
-                                      controller: _emailController,
-                                      icon: Icons.email,
-                                      label: 'Email Address',
-                                      keyboardType: TextInputType.emailAddress,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter your email';
-                                        }
-                                        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                                          return 'Please enter a valid email';
-                                        }
-                                        return null;
-                                      },
-                                      delay: 200,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Phone Number Field
-                                    _buildAnimatedTextField(
-                                      controller: _phoneController,
-                                      icon: Icons.phone,
-                                      label: 'Phone Number',
-                                      keyboardType: TextInputType.phone,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter your phone number';
-                                        }
-                                        if (value.length < 10) {
-                                          return 'Please enter a valid phone number';
-                                        }
-                                        return null;
-                                      },
-                                      delay: 300,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Password Field
-                                    _buildAnimatedTextField(
-                                      controller: _passwordController,
-                                      icon: Icons.lock,
-                                      label: 'Password',
-                                      obscureText: _obscurePassword,
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                                          color: AppTheme.blue600,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _obscurePassword = !_obscurePassword;
-                                          });
-                                        },
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter your password';
-                                        }
-                                        if (value.length < 6) {
-                                          return 'Password must be at least 6 characters';
-                                        }
-                                        return null;
-                                      },
-                                      delay: 400,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Confirm Password Field
-                                    _buildAnimatedTextField(
-                                      controller: _confirmPasswordController,
-                                      icon: Icons.lock_outline,
-                                      label: 'Confirm Password',
-                                      obscureText: _obscureConfirmPassword,
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
-                                          color: AppTheme.blue600,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _obscureConfirmPassword = !_obscureConfirmPassword;
-                                          }
-                                          );
-                                          Navigator.pushNamed(context, '/student-dashboard');
-                                        },
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please confirm your password';
-                                        }
-                                        if (value != _passwordController.text) {
-                                          return 'Passwords do not match';
-                                        }
-                                        return null;
-                                      },
-                                      delay: 500,
-                                    ),
-                                    SizedBox(height: AppTheme.extraLargeSpacing),
-
-                                    // Signup Button
-                                    TweenAnimationBuilder<double>(
-                                      duration: Duration(milliseconds: 600),
-                                      tween: Tween(begin: 0.0, end: 1.0),
-                                      builder: (context, value, child) {
-                                        return Transform.scale(
-                                          scale: value,
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            height: AppTheme.buttonHeight,
-                                            child: ElevatedButton(
-                                              onPressed: _handleStudentSignup,
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppTheme.primaryBlue,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                                                ),
-                                                elevation: AppTheme.buttonElevation,
-                                              ),
-                                              child: Text(
-                                                'Create Account',
-                                                style: AppTheme.buttonTextStyle,
-                                              ),
+                            padding: AppTheme.getScreenPadding(context),
+                            child: Card(
+                              elevation: AppTheme.getCardElevation(context),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                padding: AppTheme.getCardPadding(context),
+                                child: Form(
+                                  key: _formKey,
+                                  child: Scrollbar(
+                                    controller: _scrollController,
+                                    child: SingleChildScrollView(
+                                      controller: _scrollController,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // Title Section
+                                          Text(
+                                            'Create Student Account',
+                                            style: AppTheme.getHeadingStyle(context).copyWith(
+                                              fontSize: AppTheme.isMobile(context) ? 24 : (AppTheme.isTablet(context) ? 28 : 32),
+                                              color: AppTheme.blue800,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                        );
-                                      },
+                                          SizedBox(height: AppTheme.getSmallSpacing(context)),
+                                          Text(
+                                            'Please fill in your details to register',
+                                            style: AppTheme.getSubHeadingStyle(context),
+                                          ),
+                                          SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+
+                                          // Form Fields
+                                          _buildAnimatedTextField(
+                                            controller: _fullNameController,
+                                            label: 'Full Name',
+                                            icon: Icons.person,
+                                            validator: _validateName,
+                                            delay: 100,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedTextField(
+                                            controller: _emailController,
+                                            label: 'Email Address',
+                                            icon: Icons.email,
+                                            keyboardType: TextInputType.emailAddress,
+                                            validator: _validateEmail,
+                                            delay: 200,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedTextField(
+                                            controller: _phoneController,
+                                            label: 'Phone Number',
+                                            icon: Icons.phone,
+                                            keyboardType: TextInputType.phone,
+                                            validator: _validatePhone,
+                                            delay: 300,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedPasswordField(
+                                            controller: _passwordController,
+                                            label: 'Password',
+                                            obscureText: _obscurePassword,
+                                            onToggleVisibility: () => setState(() => _obscurePassword = !_obscurePassword),
+                                            validator: _validatePassword,
+                                            delay: 400,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedPasswordField(
+                                            controller: _confirmPasswordController,
+                                            label: 'Confirm Password',
+                                            obscureText: _obscureConfirmPassword,
+                                            onToggleVisibility: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                                            validator: _validateConfirmPassword,
+                                            delay: 500,
+                                          ),
+                                          SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+
+                                          // Register Button
+                                          TweenAnimationBuilder<double>(
+                                            duration: Duration(milliseconds: 800),
+                                            tween: Tween(begin: 0.0, end: 1.0),
+                                            builder: (context, value, child) {
+                                              return Transform.scale(
+                                                scale: value,
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  height: AppTheme.getButtonHeight(context),
+                                                  child: ElevatedButton(
+                                                    onPressed: _handleStudentSignup,
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: AppTheme.primaryBlue,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                                                      ),
+                                                      elevation: AppTheme.getButtonElevation(context),
+                                                    ),
+                                                    child: Text(
+                                                      'Create Account',
+                                                      style: AppTheme.getButtonTextStyle(context),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          // Login Link
+                                          TweenAnimationBuilder<double>(
+                                            duration: Duration(milliseconds: 1000),
+                                            tween: Tween(begin: 0.0, end: 1.0),
+                                            builder: (context, value, child) {
+                                              return Opacity(
+                                                opacity: value,
+                                                child: Center(
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pushNamed(context, '/login');
+                                                    },
+                                                    child: Text(
+                                                      'Already have an account? Login here',
+                                                      style: AppTheme.getSubHeadingStyle(context).copyWith(
+                                                        color: AppTheme.primaryBlue,
+                                                        fontWeight: FontWeight.w500,
+                                                        fontSize: AppTheme.isMobile(context) ? 14 : (AppTheme.isTablet(context) ? 15 : 16),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -269,8 +256,8 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -280,10 +267,8 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
 
   Widget _buildAnimatedTextField({
     required TextEditingController controller,
-    required IconData icon,
     required String label,
-    bool obscureText = false,
-    Widget? suffixIcon,
+    required IconData icon,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
     required int delay,
@@ -298,21 +283,30 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
             opacity: value,
             child: TextFormField(
               controller: controller,
-              obscureText: obscureText,
               keyboardType: keyboardType,
+              maxLines: AppTheme.getTextFieldMaxLines(context),
+              style: AppTheme.getBodyTextStyle(context),
               decoration: InputDecoration(
-                prefixIcon: Icon(icon, color: AppTheme.blue600),
-                suffixIcon: suffixIcon,
+                prefixIcon: Icon(
+                  icon,
+                  color: AppTheme.blue600,
+                  size: AppTheme.getIconSize(context),
+                ),
                 labelText: label,
+                labelStyle: AppTheme.getSubHeadingStyle(context),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                   borderSide: BorderSide(
                     color: AppTheme.primaryBlue,
-                    width: AppTheme.focusedBorderWidth,
+                    width: AppTheme.getFocusedBorderWidth(context),
                   ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.getDefaultSpacing(context),
+                  vertical: AppTheme.getMediumSpacing(context),
                 ),
               ),
               validator: validator,
@@ -323,6 +317,120 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
     );
   }
 
+  Widget _buildAnimatedPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required bool obscureText,
+    required VoidCallback onToggleVisibility,
+    String? Function(String?)? validator,
+    required int delay,
+  }) {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 400 + delay),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(50 * (1 - value), 0),
+          child: Opacity(
+            opacity: value,
+            child: TextFormField(
+              controller: controller,
+              obscureText: obscureText,
+              style: AppTheme.getBodyTextStyle(context),
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: AppTheme.blue600,
+                  size: AppTheme.getIconSize(context),
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: AppTheme.blue600,
+                    size: AppTheme.getIconSize(context),
+                  ),
+                  onPressed: onToggleVisibility,
+                ),
+                labelText: label,
+                labelStyle: AppTheme.getSubHeadingStyle(context),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                  borderSide: BorderSide(
+                    color: AppTheme.primaryBlue,
+                    width: AppTheme.getFocusedBorderWidth(context),
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.getDefaultSpacing(context),
+                  vertical: AppTheme.getMediumSpacing(context),
+                ),
+              ),
+              validator: validator,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Validation Methods
+  String? _validateName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your full name';
+    }
+    if (value.trim().length < 2) {
+      return 'Name must be at least 2 characters long';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your email address';
+    }
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value.trim())) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Please enter your phone number';
+    }
+    if (value.trim().length < 10) {
+      return 'Phone number must be at least 10 digits';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
+      return 'Password must contain uppercase, lowercase and number';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please confirm your password';
+    }
+    if (value != _passwordController.text) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
+
   void _handleStudentSignup() {
     if (_formKey.currentState!.validate()) {
       // Show loading indicator
@@ -330,20 +438,35 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
         context: context,
         barrierDismissible: false,
         builder: (context) => Center(
-          child: CircularProgressIndicator(color: AppTheme.primaryBlue),
+          child: CircularProgressIndicator(
+            color: AppTheme.primaryBlue,
+            strokeWidth: AppTheme.isMobile(context) ? 3.0 : 4.0,
+          ),
         ),
       );
 
       // Simulate API call
       Future.delayed(Duration(seconds: 2), () {
         Navigator.pop(context); // Close loading dialog
-        Navigator.pushNamed(context, '/student-dashboard');
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Student account created successfully!'),
+            content: Text(
+              'Student account created successfully!',
+              style: AppTheme.getBodyTextStyle(context).copyWith(color: Colors.white),
+            ),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(AppTheme.getDefaultSpacing(context)),
           ),
+        );
+
+        // Navigate to student dashboard
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          '/student-dashboard',
+              (route) => false,
         );
       });
     }
@@ -357,6 +480,7 @@ class _StudentSignupPageState extends State<StudentSignupPage> with TickerProvid
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 }

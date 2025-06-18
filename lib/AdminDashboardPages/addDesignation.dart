@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
 import 'package:school/customWidgets/appBar.dart';
+import 'package:school/customWidgets/theme.dart';
 
 class AddDesignationPage extends StatefulWidget {
   const AddDesignationPage({Key? key}) : super(key: key);

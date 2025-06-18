@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
 import 'package:school/customWidgets/appBar.dart';
+import 'package:school/customWidgets/theme.dart';
 
 // Chat Selection Page
 class MainChat extends StatelessWidget {
@@ -12,7 +12,12 @@ class MainChat extends StatelessWidget {
       appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF42A5F5), Color(0xFF5C6BC0)],
+            // colors: [greylight, greydark ],
+          ),
         ),
         child: SafeArea(
           child: Column(
@@ -27,7 +32,7 @@ class MainChat extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(AppTheme.defaultSpacing),
                         child: const Text(
-                          'Select Chat',
+                          'Select Chat With',
                           style: AppTheme.FontStyle,
                         ),
                       ),

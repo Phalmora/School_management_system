@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/appBar.dart';
 import 'package:school/customWidgets/theme.dart';
+import 'package:school/model/dashBoarditemStudent.dart';
 
 class StudentDashboard extends StatelessWidget {
   @override
@@ -413,17 +414,17 @@ class StudentDashboard extends StatelessWidget {
 
   Widget _buildDashboardGrid(BuildContext context) {
     final items = [
-      _DashboardItem('Subjects & Marks', Icons.grade_rounded, Colors.purple,
+      DashboardItem('Subjects & Marks', Icons.grade_rounded, Colors.purple,
               () => Navigator.pushNamed(context, '/student-subject-marks'), 'View grades & results'),
-      _DashboardItem('Fee Management', Icons.payment_rounded, Colors.green,
+      DashboardItem('Fee Management', Icons.payment_rounded, Colors.green,
               () => Navigator.pushNamed(context, '/student-fee-management'), 'Fee history & payments'),
-      _DashboardItem('Time Table', Icons.schedule_rounded, Colors.orange,
+      DashboardItem('Time Table', Icons.schedule_rounded, Colors.orange,
               () => Navigator.pushNamed(context, '/student-timetable'), 'Daily class schedule'),
-      _DashboardItem('Notices and Message', Icons.notifications_active_rounded, Colors.red,
+      DashboardItem('Notices and Message', Icons.notifications_active_rounded, Colors.red,
               () => Navigator.pushNamed(context, '/student-notice-message'), 'School announcements', badge: '3'),
-      _DashboardItem('Profile', Icons.person_rounded, Colors.blue,
+      DashboardItem('Profile', Icons.person_rounded, Colors.blue,
               () => Navigator.pushNamed(context, '/student-profile'), 'Personal information'),
-      _DashboardItem('Help & Support', Icons.support_agent_rounded, Colors.teal,
+      DashboardItem('Help & Support', Icons.support_agent_rounded, Colors.teal,
               () => _showHelpDialog(context), 'Get assistance'),
     ];
 
@@ -441,7 +442,7 @@ class StudentDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildDashboardCard(_DashboardItem item) {
+  Widget _buildDashboardCard(DashboardItem item) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -730,13 +731,3 @@ class StudentDashboard extends StatelessWidget {
   }
 }
 
-class _DashboardItem {
-  final String title;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  final String subtitle;
-  final String? badge;
-
-  _DashboardItem(this.title, this.icon, this.color, this.onTap, this.subtitle, {this.badge});
-}

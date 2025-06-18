@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
 import 'package:school/customWidgets/appBar.dart';
+import 'package:school/customWidgets/theme.dart';
 
 // Models
 class ExamSession {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/appBar.dart';
+import 'package:school/customWidgets/theme.dart';
 
 class SubjectsMarksScreen extends StatefulWidget {
   const SubjectsMarksScreen({Key? key}) : super(key: key);
@@ -636,63 +637,4 @@ class ExamResult {
   final String grade;
 
   ExamResult(this.examName, this.date, this.percentage, this.grade);
-}
-
-// Theme class (copy from your theme.dart file)
-class AppTheme {
-  static const Color primaryBlue = Color(0xFF42A5F5);
-  static const Color primaryPurple = Color(0xFF8E24AA);
-  static const Color white = Colors.white;
-  static const Color white70 = Colors.white70;
-  static const Color blue50 = Color(0xFFE3F2FD);
-  static const Color blue100 = Color(0xFFBBDEFB);
-  static const Color blue200 = Color(0xFF90CAF9);
-  static final Color blue800 = Colors.blue.shade800;
-  static final Color blue600 = Colors.blue.shade600;
-
-  static const LinearGradient primaryGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [primaryBlue, primaryPurple],
-  );
-
-  static const double cardElevation = 8.0;
-  static const double cardBorderRadius = 15.0;
-  static const double inputBorderRadius = 10.0;
-  static const double focusedBorderWidth = 2.0;
-  static const double buttonHeight = 50.0;
-  static const double buttonBorderRadius = 25.0;
-  static const double buttonElevation = 5.0;
-
-  static const TextStyle buttonTextStyle = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-    color: white,
-    fontFamily: 'Roboto',
-  );
-
-  static const TextStyle FontStyle = TextStyle(
-    fontSize: 28,
-    color: white,
-    fontWeight: FontWeight.bold,
-    fontFamily: 'Roboto',
-  );
-
-  static const TextStyle splashSubtitleStyle = TextStyle(
-    fontSize: 16,
-    color: white70,
-    fontFamily: 'Roboto',
-  );
-
-  static const Duration splashAnimationDuration = Duration(seconds: 2);
-  static const Duration splashScreenDuration = Duration(seconds: 3);
-  static const Duration slideAnimationDuration = Duration(milliseconds: 800);
-  static const Duration buttonAnimationDuration = Duration(milliseconds: 300);
-
-  static const double defaultSpacing = 20.0;
-  static const double smallSpacing = 10.0;
-  static const double mediumSpacing = 15.0;
-  static const double largeSpacing = 50.0;
-  static const double extraLargeSpacing = 30.0;
-  static const double logoSize = 50.0;
 }

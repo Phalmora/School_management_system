@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
+import 'package:school/customWidgets/theme.dart';
 
 class AppSettingsPage extends StatefulWidget {
   const AppSettingsPage({Key? key}) : super(key: key);

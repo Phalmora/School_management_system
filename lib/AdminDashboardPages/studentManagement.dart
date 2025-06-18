@@ -2,23 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school/AdminStudentManagement/studentListTile.dart';
 import 'package:school/customWidgets/appBar.dart';
 import 'package:school/customWidgets/theme.dart';
-
-
-class ClassInfo {
-  final String id;
-  final String name;
-  final String teacher;
-  final int totalStudents;
-  final String description;
-
-  ClassInfo({
-    required this.id,
-    required this.name,
-    required this.teacher,
-    required this.totalStudents,
-    required this.description,
-  });
-}
+import 'package:school/model/classInfo.dart';
 
 class ClassManagementPage extends StatefulWidget {
   @override
@@ -303,6 +287,7 @@ class _ClassManagementPageState extends State<ClassManagementPage> {
             child: SafeArea(
               child: Column(
                 children: [
+                  SizedBox(height: AppTheme.defaultSpacing,),
                   // Search Section
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),

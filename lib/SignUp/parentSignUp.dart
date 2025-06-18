@@ -72,217 +72,222 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> with TickerProvider
           gradient: AppTheme.primaryGradient,
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              // Animated Header
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: Padding(
-                  padding: EdgeInsets.all(AppTheme.defaultSpacing),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: Icon(Icons.arrow_back, color: AppTheme.white),
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Parent Registration',
-                          style: AppTheme.FontStyle.copyWith(fontSize: 20),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(width: 48), // Balance the back button
-                    ],
-                  ),
-                ),
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: AppTheme.getMaxWidth(context),
               ),
-
-              // Animated Form Card
-              Expanded(
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: FadeTransition(
+              child: Column(
+                children: [
+                  // Header
+                  FadeTransition(
                     opacity: _fadeAnimation,
-                    child: Container(
-                      margin: EdgeInsets.all(AppTheme.defaultSpacing),
-                      child: Card(
-                        elevation: AppTheme.cardElevation,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(AppTheme.extraLargeSpacing),
-                          child: Form(
-                            key: _formKey,
-                            child: Scrollbar(
-                              controller: _scrollController,
-                              child: SingleChildScrollView(
-                                controller: _scrollController,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Create Parent Account',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.blue800,
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.smallSpacing),
-                                    Text(
-                                      'Please fill in all the required information',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    SizedBox(height: AppTheme.extraLargeSpacing),
+                    child: Padding(
+                      padding: AppTheme.getScreenPadding(context),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => Navigator.pop(context),
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: AppTheme.white,
+                              size: AppTheme.getHeaderIconSize(context),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Parent Registration',
+                              style: AppTheme.getFontStyle(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          SizedBox(width: AppTheme.getHeaderIconSize(context) + 16), // Balance the back button
+                        ],
+                      ),
+                    ),
+                  ),
 
-                                    // Full Name Field
-                                    _buildAnimatedTextFormField(
-                                      controller: _fullNameController,
-                                      label: 'Full Name',
-                                      icon: Icons.person,
-                                      validator: _validateName,
-                                      delay: 100,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Email Field
-                                    _buildAnimatedTextFormField(
-                                      controller: _emailController,
-                                      label: 'Email Address',
-                                      icon: Icons.email,
-                                      keyboardType: TextInputType.emailAddress,
-                                      validator: _validateEmail,
-                                      delay: 200,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Phone Number Field
-                                    _buildAnimatedTextFormField(
-                                      controller: _phoneController,
-                                      label: 'Phone Number',
-                                      icon: Icons.phone,
-                                      keyboardType: TextInputType.phone,
-                                      validator: _validatePhone,
-                                      delay: 300,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Role in School Dropdown
-                                    _buildAnimatedDropdownField(
-                                      value: _selectedRole,
-                                      label: 'Role',
-                                      icon: Icons.family_restroom,
-                                      items: _roles,
-                                      onChanged: (value) => setState(() => _selectedRole = value),
-                                      delay: 400,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Child's Admission Number Field
-                                    _buildAnimatedTextFormField(
-                                      controller: _childAdmissionNoController,
-                                      label: "Child's Admission Number",
-                                      icon: Icons.badge,
-                                      validator: _validateChildAdmissionNo,
-                                      delay: 500,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Relationship Dropdown
-                                    _buildAnimatedDropdownField(
-                                      value: _selectedRelationship,
-                                      label: 'Relationship',
-                                      icon: Icons.people,
-                                      items: _relationships,
-                                      onChanged: (value) => setState(() => _selectedRelationship = value),
-                                      isRequired: true,
-                                      delay: 600,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Password Field
-                                    _buildAnimatedPasswordField(
-                                      controller: _passwordController,
-                                      label: 'Password',
-                                      obscureText: _obscurePassword,
-                                      onToggleVisibility: () => setState(() => _obscurePassword = !_obscurePassword),
-                                      validator: _validatePassword,
-                                      delay: 700,
-                                    ),
-                                    SizedBox(height: AppTheme.defaultSpacing),
-
-                                    // Confirm Password Field
-                                    _buildAnimatedPasswordField(
-                                      controller: _confirmPasswordController,
-                                      label: 'Confirm Password',
-                                      obscureText: _obscureConfirmPassword,
-                                      onToggleVisibility: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-                                      validator: _validateConfirmPassword,
-                                      delay: 800,
-                                    ),
-                                    SizedBox(height: AppTheme.extraLargeSpacing),
-
-                                    // Animated Register Button
-                                    TweenAnimationBuilder<double>(
-                                      duration: Duration(milliseconds: 900),
-                                      tween: Tween(begin: 0.0, end: 1.0),
-                                      builder: (context, value, child) {
-                                        return Transform.scale(
-                                          scale: value,
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            height: AppTheme.buttonHeight,
-                                            child: ElevatedButton(
-                                              onPressed: _handleRegistration,
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: AppTheme.primaryBlue,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                                                ),
-                                                elevation: AppTheme.buttonElevation,
-                                              ),
-                                              child: Text(
-                                                'Create Parent Account',
-                                                style: AppTheme.buttonTextStyle,
-                                              ),
+                  // Form Card
+                  Expanded(
+                    child: SlideTransition(
+                      position: _slideAnimation,
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: AppTheme.getScreenPadding(context),
+                            child: Card(
+                              elevation: AppTheme.getCardElevation(context),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                padding: AppTheme.getCardPadding(context),
+                                child: Form(
+                                  key: _formKey,
+                                  child: Scrollbar(
+                                    controller: _scrollController,
+                                    child: SingleChildScrollView(
+                                      controller: _scrollController,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // Title Section
+                                          Text(
+                                            'Create Parent Account',
+                                            style: AppTheme.getHeadingStyle(context).copyWith(
+                                              fontSize: AppTheme.isMobile(context) ? 24 : (AppTheme.isTablet(context) ? 28 : 32),
+                                              color: AppTheme.blue800,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                        );
-                                      },
-                                    ),
-
-                                    SizedBox(height: AppTheme.mediumSpacing),
-
-                                    // Animated Login Link
-                                    TweenAnimationBuilder<double>(
-                                      duration: Duration(milliseconds: 1000),
-                                      tween: Tween(begin: 0.0, end: 1.0),
-                                      builder: (context, value, child) {
-                                        return Opacity(
-                                          opacity: value,
-                                          child: Center(
-                                            child: TextButton(
-                                              onPressed: () {
-                                                Navigator.pushNamed(context, '/login');
-                                              },
-                                              child: Text(
-                                                'Already have an account? Login here',
-                                                style: TextStyle(
-                                                  color: AppTheme.primaryBlue,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ),
+                                          SizedBox(height: AppTheme.getSmallSpacing(context)),
+                                          Text(
+                                            'Please fill in all the required information',
+                                            style: AppTheme.getSubHeadingStyle(context),
                                           ),
-                                        );
-                                      },
+                                          SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+
+                                          // Form Fields
+                                          _buildAnimatedTextField(
+                                            controller: _fullNameController,
+                                            label: 'Full Name',
+                                            icon: Icons.person,
+                                            validator: _validateName,
+                                            delay: 100,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedTextField(
+                                            controller: _emailController,
+                                            label: 'Email Address',
+                                            icon: Icons.email,
+                                            keyboardType: TextInputType.emailAddress,
+                                            validator: _validateEmail,
+                                            delay: 200,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedTextField(
+                                            controller: _phoneController,
+                                            label: 'Phone Number',
+                                            icon: Icons.phone,
+                                            keyboardType: TextInputType.phone,
+                                            validator: _validatePhone,
+                                            delay: 300,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedDropdownField(
+                                            value: _selectedRole,
+                                            label: 'Role',
+                                            icon: Icons.family_restroom,
+                                            items: _roles,
+                                            onChanged: (value) => setState(() => _selectedRole = value),
+                                            delay: 400,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedTextField(
+                                            controller: _childAdmissionNoController,
+                                            label: "Child's Admission Number",
+                                            icon: Icons.badge,
+                                            validator: _validateChildAdmissionNo,
+                                            delay: 500,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedDropdownField(
+                                            value: _selectedRelationship,
+                                            label: 'Relationship',
+                                            icon: Icons.people,
+                                            items: _relationships,
+                                            onChanged: (value) => setState(() => _selectedRelationship = value),
+                                            isRequired: true,
+                                            delay: 600,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedPasswordField(
+                                            controller: _passwordController,
+                                            label: 'Password',
+                                            obscureText: _obscurePassword,
+                                            onToggleVisibility: () => setState(() => _obscurePassword = !_obscurePassword),
+                                            validator: _validatePassword,
+                                            delay: 700,
+                                          ),
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          _buildAnimatedPasswordField(
+                                            controller: _confirmPasswordController,
+                                            label: 'Confirm Password',
+                                            obscureText: _obscureConfirmPassword,
+                                            onToggleVisibility: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                                            validator: _validateConfirmPassword,
+                                            delay: 800,
+                                          ),
+                                          SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+
+                                          // Register Button
+                                          TweenAnimationBuilder<double>(
+                                            duration: Duration(milliseconds: 1000),
+                                            tween: Tween(begin: 0.0, end: 1.0),
+                                            builder: (context, value, child) {
+                                              return Transform.scale(
+                                                scale: value,
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  height: AppTheme.getButtonHeight(context),
+                                                  child: ElevatedButton(
+                                                    onPressed: _handleRegistration,
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: AppTheme.primaryBlue,
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                                                      ),
+                                                      elevation: AppTheme.getButtonElevation(context),
+                                                    ),
+                                                    child: Text(
+                                                      'Create Parent Account',
+                                                      style: AppTheme.getButtonTextStyle(context),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+
+                                          SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                                          // Login Link
+                                          TweenAnimationBuilder<double>(
+                                            duration: Duration(milliseconds: 1200),
+                                            tween: Tween(begin: 0.0, end: 1.0),
+                                            builder: (context, value, child) {
+                                              return Opacity(
+                                                opacity: value,
+                                                child: Center(
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pushNamed(context, '/login');
+                                                    },
+                                                    child: Text(
+                                                      'Already have an account? Login here',
+                                                      style: AppTheme.getSubHeadingStyle(context).copyWith(
+                                                        color: AppTheme.primaryBlue,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -291,16 +296,16 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> with TickerProvider
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAnimatedTextFormField({
+  Widget _buildAnimatedTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -319,18 +324,29 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> with TickerProvider
             child: TextFormField(
               controller: controller,
               keyboardType: keyboardType,
+              maxLines: AppTheme.getTextFieldMaxLines(context),
+              style: AppTheme.getBodyTextStyle(context),
               decoration: InputDecoration(
-                prefixIcon: Icon(icon, color: AppTheme.blue600),
+                prefixIcon: Icon(
+                  icon,
+                  color: AppTheme.blue600,
+                  size: AppTheme.getIconSize(context),
+                ),
                 labelText: label,
+                labelStyle: AppTheme.getSubHeadingStyle(context),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                   borderSide: BorderSide(
                     color: AppTheme.primaryBlue,
-                    width: AppTheme.focusedBorderWidth,
+                    width: AppTheme.getFocusedBorderWidth(context),
                   ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.getDefaultSpacing(context),
+                  vertical: AppTheme.getMediumSpacing(context),
                 ),
               ),
               validator: validator,
@@ -360,24 +376,37 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> with TickerProvider
             opacity: animValue,
             child: DropdownButtonFormField<String>(
               value: value,
+              style: AppTheme.getBodyTextStyle(context),
               decoration: InputDecoration(
-                prefixIcon: Icon(icon, color: AppTheme.blue600),
+                prefixIcon: Icon(
+                  icon,
+                  color: AppTheme.blue600,
+                  size: AppTheme.getIconSize(context),
+                ),
                 labelText: label,
+                labelStyle: AppTheme.getSubHeadingStyle(context),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                   borderSide: BorderSide(
                     color: AppTheme.primaryBlue,
-                    width: AppTheme.focusedBorderWidth,
+                    width: AppTheme.getFocusedBorderWidth(context),
                   ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.getDefaultSpacing(context),
+                  vertical: AppTheme.getMediumSpacing(context),
                 ),
               ),
               items: items.map((String item) {
                 return DropdownMenuItem<String>(
                   value: item,
-                  child: Text(item),
+                  child: Text(
+                    item,
+                    style: AppTheme.getBodyTextStyle(context),
+                  ),
                 );
               }).toList(),
               onChanged: onChanged,
@@ -413,25 +442,36 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> with TickerProvider
             child: TextFormField(
               controller: controller,
               obscureText: obscureText,
+              style: AppTheme.getBodyTextStyle(context),
               decoration: InputDecoration(
-                prefixIcon: Icon(Icons.lock, color: AppTheme.blue600),
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: AppTheme.blue600,
+                  size: AppTheme.getIconSize(context),
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     obscureText ? Icons.visibility_off : Icons.visibility,
                     color: AppTheme.blue600,
+                    size: AppTheme.getIconSize(context),
                   ),
                   onPressed: onToggleVisibility,
                 ),
                 labelText: label,
+                labelStyle: AppTheme.getSubHeadingStyle(context),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
                   borderSide: BorderSide(
                     color: AppTheme.primaryBlue,
-                    width: AppTheme.focusedBorderWidth,
+                    width: AppTheme.getFocusedBorderWidth(context),
                   ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.getDefaultSpacing(context),
+                  vertical: AppTheme.getMediumSpacing(context),
                 ),
               ),
               validator: validator,
@@ -509,12 +549,15 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> with TickerProvider
 
   void _handleRegistration() {
     if (_formKey.currentState!.validate()) {
-      // Show loading indicator with animation
+      // Show loading indicator
       showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => Center(
-          child: CircularProgressIndicator(color: AppTheme.primaryBlue),
+          child: CircularProgressIndicator(
+            color: AppTheme.primaryBlue,
+            strokeWidth: AppTheme.isMobile(context) ? 3.0 : 4.0,
+          ),
         ),
       );
 
@@ -524,17 +567,21 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> with TickerProvider
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Parent account created successfully!'),
+            content: Text(
+              'Parent account created successfully!',
+              style: AppTheme.getBodyTextStyle(context).copyWith(color: Colors.white),
+            ),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(AppTheme.getDefaultSpacing(context)),
           ),
         );
 
-        // Navigate to parent dashboard
+        // Navigate to login
         Navigator.pushNamedAndRemoveUntil(
           context,
-          '/parent-dashboard',
+          '/login',
               (route) => false,
         );
       });

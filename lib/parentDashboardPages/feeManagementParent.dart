@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
 import 'package:school/customWidgets/appBar.dart';
+import 'package:school/customWidgets/theme.dart';
 
 class FeePaymentParentPage extends StatefulWidget {
   @override

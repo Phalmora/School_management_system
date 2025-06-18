@@ -1,63 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/appBar.dart';
 import 'package:school/customWidgets/theme.dart';
+import 'package:school/model/systemControlModel.dart';
 
-// User Role Model
-class UserRole {
-  final String id;
-  final String name;
-  final String email;
-  final String role;
-  final bool isActive;
-  final DateTime lastLogin;
-
-  UserRole({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.role,
-    required this.isActive,
-    required this.lastLogin,
-  });
-}
-
-// Announcement Model
-class Announcement {
-  final String id;
-  final String title;
-  final String content;
-  final String priority;
-  final DateTime createdDate;
-  final String createdBy;
-  final bool isActive;
-
-  Announcement({
-    required this.id,
-    required this.title,
-    required this.content,
-    required this.priority,
-    required this.createdDate,
-    required this.createdBy,
-    required this.isActive,
-  });
-}
-
-// System Setting Model
-class SystemSetting {
-  final String key;
-  final String title;
-  final String value;
-  final String type; // 'text', 'boolean', 'number'
-  final String description;
-
-  SystemSetting({
-    required this.key,
-    required this.title,
-    required this.value,
-    required this.type,
-    required this.description,
-  });
-}
 
 class SystemControlsPage extends StatefulWidget {
   @override
@@ -928,9 +873,9 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                 margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
                 child: TabBar(
                   controller: _tabController,
-                  labelColor: AppTheme.primaryBlue,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: AppTheme.primaryBlue,
+                  labelColor: Colors.black87,
+                  unselectedLabelColor: Colors.white,
+                  indicatorColor: Colors.black87,
                   tabs: [
                     Tab(text: 'User Roles', icon: Icon(Icons.people)),
                     Tab(text: 'Announcements', icon: Icon(Icons.announcement)),

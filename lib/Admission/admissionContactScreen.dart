@@ -18,6 +18,18 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
   final _alternateContactController = TextEditingController();
 
   @override
+  void dispose() {
+    _addressController.dispose();
+    _cityController.dispose();
+    _stateController.dispose();
+    _zipCodeController.dispose();
+    _mobileController.dispose();
+    _emailController.dispose();
+    _alternateContactController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
@@ -26,149 +38,104 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
           gradient: AppTheme.primaryGradient,
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(AppTheme.defaultSpacing),
-              child: Column(
-                children: [
-                  _buildProgressIndicator(3, 4),
-                  SizedBox(height: AppTheme.defaultSpacing),
-                  Text(
-                    'Contact & Address Information',
-                    style: AppTheme.FontStyle,
-                  ),
-                  SizedBox(height: AppTheme.extraLargeSpacing),
-                  Card(
-                    elevation: AppTheme.cardElevation,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: AppTheme.getMaxWidth(context),
+              ),
+              child: SingleChildScrollView(
+                padding: AppTheme.getScreenPadding(context),
+                child: Column(
+                  children: [
+                    _buildProgressIndicator(3, 4),
+                    SizedBox(height: AppTheme.getDefaultSpacing(context)),
+                    Text(
+                      'Contact & Address Information',
+                      style: AppTheme.getFontStyle(context),
                     ),
-                    child: Padding(
-                      padding: EdgeInsets.all(AppTheme.defaultSpacing),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Address Information',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.blue600,
+                    SizedBox(height: AppTheme.getSmallSpacing(context)),
+                    Text(
+                      'Please provide your contact details and address',
+                      style: AppTheme.getSplashSubtitleStyle(context),
+                    ),
+                    SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                    Card(
+                      elevation: AppTheme.getCardElevation(context),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+                      ),
+                      child: Padding(
+                        padding: AppTheme.getCardPadding(context),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              _buildSectionHeader('Address Information'),
+                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              _buildTextField(
+                                controller: _addressController,
+                                label: 'Full Address *',
+                                icon: Icons.location_on,
+                                maxLines: AppTheme.isMobile(context) ? 2 : 3,
+                                validator: (value) =>
+                                value!.isEmpty ? 'Please enter full address' : null,
                               ),
-                            ),
-                            SizedBox(height: AppTheme.mediumSpacing),
-                            _buildTextField(
-                              controller: _addressController,
-                              label: 'Full Address *',
-                              icon: Icons.location_on,
-                              maxLines: 3,
-                              validator: (value) =>
-                              value!.isEmpty ? 'Please enter full address' : null,
-                            ),
-                            SizedBox(height: AppTheme.mediumSpacing),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildTextField(
-                                    controller: _cityController,
-                                    label: 'City *',
-                                    icon: Icons.location_city,
-                                    validator: (value) =>
-                                    value!.isEmpty ? 'Please enter city' : null,
-                                  ),
-                                ),
-                                SizedBox(width: AppTheme.mediumSpacing),
-                                Expanded(
-                                  child: _buildTextField(
-                                    controller: _stateController,
-                                    label: 'State/Province *',
-                                    icon: Icons.map,
-                                    validator: (value) =>
-                                    value!.isEmpty ? 'Please enter state' : null,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: AppTheme.mediumSpacing),
-                            _buildTextField(
-                              controller: _zipCodeController,
-                              label: 'ZIP/Postal Code *',
-                              icon: Icons.local_post_office,
-                              keyboardType: TextInputType.number,
-                              validator: (value) {
-                                if (value!.isEmpty) return 'Please enter ZIP code';
-                                if (value.length < 5) return 'Please enter valid ZIP code';
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: AppTheme.extraLargeSpacing),
-
-                            Text(
-                              'Contact Information',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: AppTheme.blue600,
+                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              _buildCityStateRow(),
+                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              _buildTextField(
+                                controller: _zipCodeController,
+                                label: 'ZIP/Postal Code *',
+                                icon: Icons.local_post_office,
+                                keyboardType: TextInputType.number,
+                                validator: (value) {
+                                  if (value!.isEmpty) return 'Please enter ZIP code';
+                                  if (value.length < 5) return 'Please enter valid ZIP code';
+                                  return null;
+                                },
                               ),
-                            ),
-                            SizedBox(height: AppTheme.mediumSpacing),
-                            _buildTextField(
-                              controller: _mobileController,
-                              label: 'Mobile Number (Student/Parent) *',
-                              icon: Icons.phone_android,
-                              keyboardType: TextInputType.phone,
-                              validator: (value) {
-                                if (value!.isEmpty) return 'Please enter mobile number';
-                                if (value.length < 10) return 'Please enter valid mobile number';
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: AppTheme.mediumSpacing),
-                            _buildTextField(
-                              controller: _emailController,
-                              label: 'Email (Parent/Student) *',
-                              icon: Icons.email,
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value!.isEmpty) return 'Please enter email';
-                                if (!value.contains('@')) return 'Please enter valid email';
-                                return null;
-                              },
-                            ),
-                            SizedBox(height: AppTheme.mediumSpacing),
-                            _buildTextField(
-                              controller: _alternateContactController,
-                              label: 'Alternate Contact Number',
-                              icon: Icons.phone,
-                              keyboardType: TextInputType.phone,
-                            ),
-                            SizedBox(height: AppTheme.extraLargeSpacing),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildAnimatedButton(
-                                    text: 'Back',
-                                    onPressed: () => Navigator.pop(context),
-                                    isSecondary: true,
-                                  ),
-                                ),
-                                SizedBox(width: AppTheme.mediumSpacing),
-                                Expanded(
-                                  child: _buildAnimatedButton(
-                                    text: 'Next',
-                                    onPressed: _nextPage,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                              SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                              _buildSectionHeader('Contact Information'),
+                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              _buildTextField(
+                                controller: _mobileController,
+                                label: 'Mobile Number (Student/Parent) *',
+                                icon: Icons.phone_android,
+                                keyboardType: TextInputType.phone,
+                                validator: (value) {
+                                  if (value!.isEmpty) return 'Please enter mobile number';
+                                  if (value.length < 10) return 'Please enter valid mobile number';
+                                  return null;
+                                },
+                              ),
+                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              _buildTextField(
+                                controller: _emailController,
+                                label: 'Email (Parent/Student) *',
+                                icon: Icons.email,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) {
+                                  if (value!.isEmpty) return 'Please enter email';
+                                  if (!value.contains('@')) return 'Please enter valid email';
+                                  return null;
+                                },
+                              ),
+                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              _buildTextField(
+                                controller: _alternateContactController,
+                                label: 'Alternate Contact Number',
+                                icon: Icons.phone,
+                                keyboardType: TextInputType.phone,
+                              ),
+                              SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                              buildActionButtons(),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -179,7 +146,7 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
 
   Widget _buildProgressIndicator(int currentStep, int totalSteps) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 16),
+      padding: AppTheme.getVerticalPadding(context),
       child: Row(
         children: List.generate(totalSteps, (index) {
           bool isCompleted = index < currentStep;
@@ -187,17 +154,32 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
 
           return Expanded(
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 2),
-              height: 4,
+              margin: EdgeInsets.symmetric(
+                horizontal: AppTheme.getSmallSpacing(context) / 4,
+              ),
+              height: AppTheme.isMobile(context) ? 4 : 6,
               decoration: BoxDecoration(
                 color: isCompleted || isCurrent
                     ? AppTheme.blue600
                     : Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(AppTheme.isMobile(context) ? 2 : 3),
               ),
             ),
           );
         }),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: AppTheme.getSmallSpacing(context)),
+      child: Text(
+        title,
+        style: AppTheme.getHeadingStyle(context).copyWith(
+          color: AppTheme.blue600,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -207,28 +189,126 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
     required String label,
     required IconData icon,
     TextInputType? keyboardType,
-    int maxLines = 1,
+    int? maxLines,
     String? Function(String?)? validator,
   }) {
+    int effectiveMaxLines = maxLines ?? AppTheme.getTextFieldMaxLines(context);
+
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      maxLines: maxLines,
+      maxLines: effectiveMaxLines,
       validator: validator,
+      style: AppTheme.getBodyTextStyle(context),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon),
+        labelStyle: AppTheme.getSubHeadingStyle(context),
+        prefixIcon: Icon(
+          icon,
+          size: AppTheme.getIconSize(context),
+          color: Colors.grey[600],
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
           borderSide: BorderSide(
             color: AppTheme.blue600,
-            width: AppTheme.focusedBorderWidth,
+            width: AppTheme.getFocusedBorderWidth(context),
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+          borderSide: BorderSide(
+            color: Colors.grey,
+            width: 1.0,
+          ),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppTheme.getDefaultSpacing(context),
+          vertical: AppTheme.getMediumSpacing(context),
+        ),
+        filled: true,
+        fillColor: Colors.white,
       ),
+    );
+  }
+
+  Widget _buildCityStateRow() {
+    // On mobile, stack vertically for better UX
+    if (AppTheme.isMobile(context)) {
+      return Column(
+        children: [
+          _buildTextField(
+            controller: _cityController,
+            label: 'City *',
+            icon: Icons.location_city,
+            validator: (value) =>
+            value!.isEmpty ? 'Please enter city' : null,
+          ),
+          SizedBox(height: AppTheme.getMediumSpacing(context)),
+          _buildTextField(
+            controller: _stateController,
+            label: 'State/Province *',
+            icon: Icons.map,
+            validator: (value) =>
+            value!.isEmpty ? 'Please enter state' : null,
+          ),
+        ],
+      );
+    }
+
+    // On tablet and desktop, use row layout
+    return Row(
+      children: [
+        Expanded(
+          child: _buildTextField(
+            controller: _cityController,
+            label: 'City *',
+            icon: Icons.location_city,
+            validator: (value) =>
+            value!.isEmpty ? 'Please enter city' : null,
+          ),
+        ),
+        SizedBox(width: AppTheme.getMediumSpacing(context)),
+        Expanded(
+          child: _buildTextField(
+            controller: _stateController,
+            label: 'State/Province *',
+            icon: Icons.map,
+            validator: (value) =>
+            value!.isEmpty ? 'Please enter state' : null,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildActionButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: AppTheme.getButtonHeight(context),
+            child: _buildAnimatedButton(
+              text: 'Back',
+              onPressed: () => Navigator.pop(context),
+              isSecondary: true,
+            ),
+          ),
+        ),
+        SizedBox(width: AppTheme.getMediumSpacing(context)),
+        Expanded(
+          child: Container(
+            height: AppTheme.getButtonHeight(context),
+            child: _buildAnimatedButton(
+              text: 'Next',
+              onPressed: _nextPage,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -237,24 +317,20 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
     required VoidCallback onPressed,
     bool isSecondary = false,
   }) {
-    return Container(
-      height: AppTheme.buttonHeight,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isSecondary ? Colors.grey[300] : AppTheme.blue600,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-          ),
-          elevation: AppTheme.buttonElevation,
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSecondary ? Colors.grey[300] : AppTheme.blue600,
+        foregroundColor: isSecondary ? Colors.black87 : Colors.white,
+        elevation: AppTheme.getButtonElevation(context),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: isSecondary ? Colors.grey[700] : Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+      ),
+      child: Text(
+        text,
+        style: AppTheme.getButtonTextStyle(context).copyWith(
+          color: isSecondary ? Colors.black87 : Colors.white,
         ),
       ),
     );
@@ -262,6 +338,7 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
 
   void _nextPage() {
     if (_formKey.currentState!.validate()) {
+      // Save data and navigate to next page
       Navigator.pushNamed(context, '/admission-documents');
     }
   }

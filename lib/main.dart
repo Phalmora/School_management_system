@@ -55,7 +55,6 @@ import 'package:school/teacherDashboardPages/profileTeacher.dart';
 import 'package:school/teacherDashboardPages/resultEntryTeacher.dart';
 import 'package:school/teacherDashboardPages/studentList.dart';
 import 'package:school/teacherDashboardPages/timeTableTeacher.dart';
-
 import 'academicOfficerDashboardPages/ExamManagementAcademicOfficer.dart';
 
 
@@ -83,7 +82,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
         '/change-password': (context) => ChangePasswordPage(),
-        '/school-details' : (context) => SchoolDetails(),
+        '/school-details' : (context) => AboutSchool(),
         '/school-help': (context) => SchoolHelp(),
         '/parent-help': (context) => ParentHelp(),
         '/main-signup': (context) => MainSignUpPage(),

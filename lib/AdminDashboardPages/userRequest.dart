@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
 import 'package:school/customWidgets/appBar.dart';
+import 'package:school/customWidgets/theme.dart' as AppTheme;
+import 'package:school/model/userRequestModel.dart';
 
 class UserRequestsPage extends StatefulWidget {
   const UserRequestsPage({Key? key}) : super(key: key);
@@ -40,24 +40,26 @@ class _UserRequestsPageState extends State<UserRequestsPage>
   @override
   void initState() {
     super.initState();
+    _initializeAnimations();
+  }
+
+  void _initializeAnimations() {
     _animationController = AnimationController(
-      duration: AppTheme.slideAnimationDuration,
+      duration: AppTheme.AppTheme.slideAnimationDuration,
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
+
     _animationController.forward();
   }
 
@@ -83,48 +85,13 @@ class _UserRequestsPageState extends State<UserRequestsPage>
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
+        decoration: const BoxDecoration(gradient: AppTheme.AppTheme.primaryGradient),
         child: SafeArea(
           child: Column(
             children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-                child: Text(
-                  'USER REQUESTS',
-                  style: AppTheme.FontStyle.copyWith(fontSize: 24),
-                ),
-              ),
-              // Content with side padding to show background
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(
-                    top: AppTheme.smallSpacing,
-                    left: AppTheme.mediumSpacing,
-                    right: AppTheme.mediumSpacing,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: AppTheme.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(AppTheme.extraLargeSpacing),
-                      topRight: Radius.circular(AppTheme.extraLargeSpacing),
-                    ),
-                  ),
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-                        itemCount: userRequests.length,
-                        itemBuilder: (context, index) {
-                          return _buildUserRequestCard(index);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              _buildHeader(context),
+              _buildContentArea(context),
+
             ],
           ),
         ),
@@ -132,298 +99,402 @@ class _UserRequestsPageState extends State<UserRequestsPage>
     );
   }
 
-  Widget _buildUserRequestCard(int index) {
-    final request = userRequests[index];
+  Widget _buildHeader(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.mediumSpacing),
+      padding: AppTheme.AppTheme.getScreenPadding(context),
+      child: Text(
+        'USER REQUESTS',
+        style: AppTheme.AppTheme.getFontStyle(context),
+      ),
+    );
+  }
+
+  Widget _buildContentArea(BuildContext context) {
+    return Expanded(
+      child: Container(
+        constraints: BoxConstraints(maxWidth: AppTheme.AppTheme.getMaxWidth(context)),
+        margin: EdgeInsets.only(
+          top: AppTheme.AppTheme.getSmallSpacing(context),
+          left: AppTheme.AppTheme.getMediumSpacing(context),
+          right: AppTheme.AppTheme.getMediumSpacing(context),
+          bottom: AppTheme.AppTheme.getMediumSpacing(context), // Added bottom margin
+        ),
+        decoration: BoxDecoration(
+          color: AppTheme.AppTheme.white,
+          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getExtraLargeSpacing(context)), // Full border radius
+        ),
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: _buildRequestsList(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRequestsList(BuildContext context) {
+    return ListView.builder(
+      padding: AppTheme.AppTheme.getScreenPadding(context),
+      itemCount: userRequests.length,
+      itemBuilder: (context, index) => _buildUserRequestCard(context, index),
+    );
+  }
+
+  Widget _buildUserRequestCard(BuildContext context, int index) {
+    final request = userRequests[index];
+
+    return Container(
+      margin: AppTheme.AppTheme.getHistoryCardMargin(context),
       decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        color: AppTheme.AppTheme.white,
+        borderRadius: BorderRadius.circular(AppTheme.AppTheme.getCardBorderRadius(context)),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
             spreadRadius: 2,
-            blurRadius: AppTheme.cardElevation,
+            blurRadius: AppTheme.AppTheme.getCardElevation(context),
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.mediumSpacing),
+        padding: AppTheme.AppTheme.getCardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Request Info
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${index + 1}',
-                      style: AppTheme.buttonTextStyle.copyWith(fontSize: 16),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.mediumSpacing),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Email: ${request.email}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Requested role: ${request.requestedRole}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppTheme.blue600,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.smallSpacing),
-
-            // Status
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _getStatusColor(request.approvalStatus).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: _getStatusColor(request.approvalStatus),
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                request.approvalStatus,
-                style: TextStyle(
-                  color: _getStatusColor(request.approvalStatus),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: AppTheme.mediumSpacing),
-
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        userRequests[index].approvalStatus = 'Approved';
-                      });
-                      _showSuccessSnackBar('Request approved successfully');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: AppTheme.white,
-                      elevation: AppTheme.buttonElevation,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                      ),
-                      minimumSize: const Size(double.infinity, 40),
-                    ),
-                    child: const Text('Approve',style: TextStyle(fontSize: 13),),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.smallSpacing),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _showModifyDialog(index);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.blue600,
-                      foregroundColor: AppTheme.white,
-                      elevation: AppTheme.buttonElevation,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                      ),
-                      minimumSize: const Size(double.infinity, 40),
-                    ),
-                    child: const Text('Modify',style: TextStyle(fontSize: 13),),
-                  ),
-                ),
-                const SizedBox(width: AppTheme.smallSpacing),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        userRequests[index].approvalStatus = 'Declined';
-                      });
-                      _showErrorSnackBar('Request declined');
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: AppTheme.white,
-                      elevation: AppTheme.buttonElevation,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                      ),
-                      minimumSize: const Size(double.infinity, 40),
-                    ),
-                    child: const Text('Decline',style: TextStyle(fontSize: 13),),
-                  ),
-                ),
-              ],
-            ),
+            _buildRequestInfo(context, index, request),
+            SizedBox(height: AppTheme.AppTheme.getSmallSpacing(context)),
+            _buildStatusBadge(context, request),
+            SizedBox(height: AppTheme.AppTheme.getMediumSpacing(context)),
+            _buildActionButtons(context, index),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildRequestInfo(BuildContext context, int index, UserRequest request) {
+    return Row(
+      children: [
+        _buildRequestNumber(context, index),
+        SizedBox(width: AppTheme.AppTheme.getMediumSpacing(context)),
+        Expanded(child: _buildRequestDetails(context, request)),
+      ],
+    );
+  }
+
+  Widget _buildRequestNumber(BuildContext context, int index) {
+    final iconSize = AppTheme.AppTheme.getIconSize(context);
+
+    return Container(
+      width: iconSize * 1.5,
+      height: iconSize * 1.5,
+      decoration: BoxDecoration(
+        gradient: AppTheme.AppTheme.primaryGradient,
+        borderRadius: BorderRadius.circular(iconSize * 0.75),
+      ),
+      child: Center(
+        child: Text(
+          '${index + 1}',
+          style: AppTheme.AppTheme.getButtonTextStyle(context).copyWith(
+            fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRequestDetails(BuildContext context, UserRequest request) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Email: ${request.email}',
+          style: AppTheme.AppTheme.getHeadingStyle(context),
+        ),
+        SizedBox(height: AppTheme.AppTheme.getSmallSpacing(context) * 0.4),
+        Text(
+          'Requested role: ${request.requestedRole}',
+          style: AppTheme.AppTheme.getSubHeadingStyle(context).copyWith(
+            color: AppTheme.AppTheme.blue600,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge(BuildContext context, UserRequest request) {
+    return Container(
+      padding: AppTheme.AppTheme.getStatusBadgePadding(context),
+      decoration: BoxDecoration(
+        color: _getStatusColor(request.approvalStatus).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: _getStatusColor(request.approvalStatus),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        request.approvalStatus,
+        style: TextStyle(
+          color: _getStatusColor(request.approvalStatus),
+          fontSize: AppTheme.AppTheme.getStatusBadgeFontSize(context),
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, int index) {
+    if (AppTheme.AppTheme.isMobile(context)) {
+      return _buildMobileActionButtons(context, index);
+    }
+    return _buildDesktopActionButtons(context, index);
+  }
+
+  Widget _buildMobileActionButtons(BuildContext context, int index) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: _buildApproveButton(context, index)),
+            SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+            Expanded(child: _buildModifyButton(context, index)),
+          ],
+        ),
+        SizedBox(height: AppTheme.AppTheme.getSmallSpacing(context)),
+        SizedBox(
+          width: double.infinity,
+          child: _buildDeclineButton(context, index),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopActionButtons(BuildContext context, int index) {
+    return Row(
+      children: [
+        Expanded(child: _buildApproveButton(context, index)),
+        SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+        Expanded(child: _buildModifyButton(context, index)),
+        SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+        Expanded(child: _buildDeclineButton(context, index)),
+      ],
+    );
+  }
+
+  Widget _buildApproveButton(BuildContext context, int index) {
+    return ElevatedButton(
+      onPressed: () => _handleApprove(index),
+      style: _getButtonStyle(context, Colors.green),
+      child: Text(
+        'Approve',
+        style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+      ),
+    );
+  }
+
+  Widget _buildModifyButton(BuildContext context, int index) {
+    return ElevatedButton(
+      onPressed: () => _showModifyDialog(index),
+      style: _getButtonStyle(context, AppTheme.AppTheme.blue600),
+      child: Text(
+        'Modify',
+        style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+      ),
+    );
+  }
+
+  Widget _buildDeclineButton(BuildContext context, int index) {
+    return ElevatedButton(
+      onPressed: () => _handleDecline(index),
+      style: _getButtonStyle(context, Colors.red),
+      child: Text(
+        'Decline',
+        style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+      ),
+    );
+  }
+
+  ButtonStyle _getButtonStyle(BuildContext context, Color backgroundColor) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: backgroundColor,
+      foregroundColor: AppTheme.AppTheme.white,
+      elevation: AppTheme.AppTheme.getButtonElevation(context),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.AppTheme.getButtonBorderRadius(context)),
+      ),
+      minimumSize: Size(double.infinity, AppTheme.AppTheme.getButtonHeight(context) * 0.8),
+    );
+  }
+
+  void _handleApprove(int index) {
+    setState(() {
+      userRequests[index].approvalStatus = 'Approved';
+    });
+    _showSuccessSnackBar('Request approved successfully');
+  }
+
+  void _handleDecline(int index) {
+    setState(() {
+      userRequests[index].approvalStatus = 'Declined';
+    });
+    _showErrorSnackBar('Request declined');
+  }
+
   void _showModifyDialog(int index) {
-    final TextEditingController roleController = TextEditingController();
-    roleController.text = userRequests[index].requestedRole;
+    final roleController = TextEditingController(text: userRequests[index].requestedRole);
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getCardBorderRadius(context)),
+        ),
+        child: Container(
+          width: AppTheme.AppTheme.getDialogWidth(context),
+          padding: AppTheme.AppTheme.getScreenPadding(context),
+          decoration: BoxDecoration(
+            gradient: AppTheme.AppTheme.primaryGradient,
+            borderRadius: BorderRadius.circular(AppTheme.AppTheme.getCardBorderRadius(context)),
           ),
-          child: Container(
-            padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-            decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-              borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Modify Request',
-                  style: AppTheme.FontStyle.copyWith(fontSize: 20),
-                ),
-                const SizedBox(height: AppTheme.defaultSpacing),
-                TextField(
-                  controller: roleController,
-                  style: const TextStyle(color: AppTheme.white),
-                  decoration: InputDecoration(
-                    labelText: 'Requested Role',
-                    labelStyle: const TextStyle(color: AppTheme.white70),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                      borderSide: const BorderSide(color: AppTheme.white70),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                      borderSide: const BorderSide(color: AppTheme.white, width: AppTheme.focusedBorderWidth),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppTheme.defaultSpacing),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.white.withOpacity(0.2),
-                          foregroundColor: AppTheme.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                          ),
-                          side: const BorderSide(color: AppTheme.white70),
-                        ),
-                        child: const Text('Cancel'),
-                      ),
-                    ),
-                    const SizedBox(width: AppTheme.smallSpacing),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (roleController.text.trim().isNotEmpty) {
-                            setState(() {
-                              userRequests[index].requestedRole = roleController.text.trim();
-                              userRequests[index].approvalStatus = 'Approved';
-                            });
-                            Navigator.pop(context);
-                            _showSuccessSnackBar('Request modified and approved successfully');
-                          } else {
-                            _showErrorSnackBar('Please enter a valid role');
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.white,
-                          foregroundColor: AppTheme.primaryBlue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                          ),
-                        ),
-                        child: const Text('Save'),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildDialogTitle(context),
+              SizedBox(height: AppTheme.AppTheme.getDefaultSpacing(context)),
+              _buildDialogTextField(context, roleController),
+              SizedBox(height: AppTheme.AppTheme.getDefaultSpacing(context)),
+              _buildDialogActions(context, index, roleController),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
+  }
+
+  Widget _buildDialogTitle(BuildContext context) {
+    return Text(
+      'Modify Request',
+      style: AppTheme.AppTheme.getFontStyle(context).copyWith(
+        fontSize: AppTheme.AppTheme.getSubHeadingStyle(context).fontSize! * 1.25,
+      ),
+    );
+  }
+
+  Widget _buildDialogTextField(BuildContext context, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      style: TextStyle(
+        color: AppTheme.AppTheme.white,
+        fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize,
+      ),
+      decoration: InputDecoration(
+        labelText: 'Requested Role',
+        labelStyle: TextStyle(
+          color: AppTheme.AppTheme.white70,
+          fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getInputBorderRadius(context)),
+          borderSide: const BorderSide(color: AppTheme.AppTheme.white70),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getInputBorderRadius(context)),
+          borderSide: BorderSide(
+            color: AppTheme.AppTheme.white,
+            width: AppTheme.AppTheme.getFocusedBorderWidth(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDialogActions(BuildContext context, int index, TextEditingController controller) {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.AppTheme.white.withOpacity(0.2),
+              foregroundColor: AppTheme.AppTheme.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.AppTheme.getButtonBorderRadius(context)),
+              ),
+              side: const BorderSide(color: AppTheme.AppTheme.white70),
+              minimumSize: Size(double.infinity, AppTheme.AppTheme.getButtonHeight(context) * 0.8),
+            ),
+            child: Text(
+              'Cancel',
+              style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+            ),
+          ),
+        ),
+        SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () => _handleModifySave(context, index, controller),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.AppTheme.white,
+              foregroundColor: AppTheme.AppTheme.primaryBlue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.AppTheme.getButtonBorderRadius(context)),
+              ),
+              minimumSize: Size(double.infinity, AppTheme.AppTheme.getButtonHeight(context) * 0.8),
+            ),
+            child: Text(
+              'Save',
+              style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _handleModifySave(BuildContext context, int index, TextEditingController controller) {
+    final newRole = controller.text.trim();
+
+    if (newRole.isEmpty) {
+      _showErrorSnackBar('Please enter a valid role');
+      return;
+    }
+
+    setState(() {
+      userRequests[index].requestedRole = newRole;
+      userRequests[index].approvalStatus = 'Approved';
+    });
+
+    Navigator.pop(context);
+    _showSuccessSnackBar('Request modified and approved successfully');
   }
 
   void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-        ),
-        margin: const EdgeInsets.all(AppTheme.defaultSpacing),
-      ),
-    );
+    _showSnackBar(message, Colors.green);
   }
 
   void _showErrorSnackBar(String message) {
+    _showSnackBar(message, Colors.red);
+  }
+
+  void _showSnackBar(String message, Color backgroundColor) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
+        content: Text(
+          message,
+          style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+        ),
+        backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getInputBorderRadius(context)),
         ),
-        margin: const EdgeInsets.all(AppTheme.defaultSpacing),
+        margin: AppTheme.AppTheme.getScreenPadding(context),
       ),
     );
   }
-}
-
-class UserRequest {
-  String id;
-  String email;
-  String approvalStatus;
-  String requestedRole;
-
-  UserRequest({
-    required this.id,
-    required this.email,
-    required this.approvalStatus,
-    required this.requestedRole,
-  });
 }

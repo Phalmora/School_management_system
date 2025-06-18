@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -45,5 +46,44 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- File access permissions -->
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>This app needs access to photo library to select images for admission documents.</string>
+
+        <key>NSCameraUsageDescription</key>
+        <string>This app needs access to camera to capture images for admission documents.</string>
+
+        <key>NSDocumentPickerUsageDescription</key>
+        <string>This app needs access to documents to select files for admission.</string>
+
+        <key>NSAppleMusicUsageDescription</key>
+        <string>This app needs access to media library to select files.</string>
+
+        <!-- File sharing capability -->
+        <key>UIFileSharingEnabled</key>
+        <true/>
+
+        <key>LSSupportsOpeningDocumentsInPlace</key>
+        <true/>
+
+        <!-- Supported document types -->
+        <key>CFBundleDocumentTypes</key>
+        <array>
+            <dict>
+                <key>CFBundleTypeName</key>
+                <string>Public Data</string>
+                <key>CFBundleTypeRole</key>
+                <string>Viewer</string>
+                <key>LSHandlerRank</key>
+                <string>Alternate</string>
+                <key>LSItemContentTypes</key>
+                <array>
+                    <string>public.data</string>
+                    <string>public.content</string>
+                    <string>public.item</string>
+                </array>
+            </dict>
+        </array>
 </dict>
 </plist>

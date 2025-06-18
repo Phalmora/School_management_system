@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
 import 'package:school/customWidgets/appBar.dart';
 import 'package:school/model/NotificationModel.dart';
+import 'package:school/customWidgets/theme.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();

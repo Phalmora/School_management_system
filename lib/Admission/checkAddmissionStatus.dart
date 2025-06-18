@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school/customWidgets/appBar.dart';
 import 'package:school/customWidgets/theme.dart';
 
 class AdmissionStatusScreen extends StatefulWidget {
@@ -100,6 +101,7 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
           gradient: AppTheme.primaryGradient,
@@ -107,21 +109,39 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
         child: SafeArea(
           child: Column(
             children: [
-              _buildAnimatedHeader(),
+              SizedBox(height: AppTheme.getSmallSpacing(context)),
+              Padding(
+                padding: AppTheme.getHorizontalPadding(context),
+                child: Text(
+                  'Check Admission Status',
+                  style: AppTheme.getFontStyle(context),
+                  textAlign: TextAlign.center,
+                ),
+              ),
               Expanded(
                 child: SlideTransition(
                   position: _slideAnimation,
                   child: FadeTransition(
                     opacity: _fadeAnimation,
                     child: Container(
-                      margin: EdgeInsets.all(AppTheme.defaultSpacing),
+                      constraints: BoxConstraints(
+                        maxWidth: AppTheme.getMaxWidth(context),
+                      ),
+                      margin: EdgeInsets.symmetric(
+                        horizontal: AppTheme.getDashboardHorizontalPadding(context),
+                        vertical: AppTheme.getDashboardVerticalPadding(context),
+                      ),
                       child: Card(
-                        elevation: AppTheme.cardElevation,
+                        elevation: AppTheme.getCardElevation(context),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+                          borderRadius: BorderRadius.circular(
+                            AppTheme.getCardBorderRadius(context),
+                          ),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(AppTheme.extraLargeSpacing),
+                          padding: EdgeInsets.all(
+                            AppTheme.getExtraLargeSpacing(context),
+                          ),
                           child: Scrollbar(
                             controller: _scrollController,
                             child: SingleChildScrollView(
@@ -130,14 +150,14 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildTitle(),
-                                  SizedBox(height: AppTheme.extraLargeSpacing),
+                                  SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
                                   _buildSearchMethodSelector(),
-                                  SizedBox(height: AppTheme.defaultSpacing),
+                                  SizedBox(height: AppTheme.getDefaultSpacing(context)),
                                   _buildSearchForm(),
-                                  SizedBox(height: AppTheme.extraLargeSpacing),
+                                  SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
                                   _buildTrackButton(),
                                   if (_showStatus) ...[
-                                    SizedBox(height: AppTheme.extraLargeSpacing),
+                                    SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
                                     _buildStatusSection(),
                                   ],
                                 ],
@@ -150,40 +170,6 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnimatedHeader() {
-    return FadeTransition(
-      opacity: _headerFadeAnimation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: Offset(0, -1),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(
-          parent: _headerAnimationController,
-          curve: Curves.easeOutBack,
-        )),
-        child: Padding(
-          padding: EdgeInsets.all(AppTheme.defaultSpacing),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(Icons.arrow_back, color: AppTheme.white),
-              ),
-              Expanded(
-                child: Text(
-                  'Check Admission Status',
-                  style: AppTheme.FontStyle.copyWith(fontSize: 22),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(width: 48),
             ],
           ),
         ),
@@ -205,19 +191,14 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
               children: [
                 Text(
                   'Track Your Application',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  style: AppTheme.getSectionTitleStyle(context).copyWith(
                     color: AppTheme.blue800,
                   ),
                 ),
-                SizedBox(height: AppTheme.smallSpacing),
+                SizedBox(height: AppTheme.getSmallSpacing(context)),
                 Text(
                   'Enter your admission number or email with date of birth to check your application status',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
+                  style: AppTheme.getSubHeadingStyle(context),
                 ),
               ],
             ),
@@ -241,20 +222,41 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
               children: [
                 Text(
                   'Search Method',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  style: AppTheme.getHeadingStyle(context).copyWith(
                     color: AppTheme.blue800,
                   ),
                 ),
-                SizedBox(height: AppTheme.smallSpacing),
+                SizedBox(height: AppTheme.getSmallSpacing(context)),
                 Container(
                   decoration: BoxDecoration(
                     color: AppTheme.blue50,
-                    borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.getInputBorderRadius(context),
+                    ),
                     border: Border.all(color: AppTheme.blue200),
                   ),
-                  child: Row(
+                  child: AppTheme.isSmallPhone(context)
+                      ? Column(
+                    children: [
+                      _buildMethodOption(
+                        'admission',
+                        'Admission Number',
+                        Icons.confirmation_number,
+                        isFullWidth: true,
+                      ),
+                      Container(
+                        height: 1,
+                        color: AppTheme.blue200,
+                      ),
+                      _buildMethodOption(
+                        'email',
+                        'Email Address',
+                        Icons.email,
+                        isFullWidth: true,
+                      ),
+                    ],
+                  )
+                      : Row(
                     children: [
                       Expanded(
                         child: _buildMethodOption(
@@ -286,7 +288,12 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
     );
   }
 
-  Widget _buildMethodOption(String method, String title, IconData icon) {
+  Widget _buildMethodOption(
+      String method,
+      String title,
+      IconData icon, {
+        bool isFullWidth = false,
+      }) {
     bool isSelected = _searchMethod == method;
     return GestureDetector(
       onTap: () {
@@ -301,12 +308,14 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
       },
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: AppTheme.defaultSpacing,
-          horizontal: AppTheme.smallSpacing,
+          vertical: AppTheme.getDefaultSpacing(context),
+          horizontal: AppTheme.getSmallSpacing(context),
         ),
         decoration: BoxDecoration(
           color: isSelected ? AppTheme.primaryBlue : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(
+            AppTheme.getInputBorderRadius(context),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -314,18 +323,19 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
             Icon(
               icon,
               color: isSelected ? Colors.white : AppTheme.blue600,
-              size: 18,
+              size: AppTheme.getIconSize(context) * 0.8,
             ),
-            SizedBox(width: 8),
+            SizedBox(width: AppTheme.getSmallSpacing(context) / 2),
             Flexible(
               child: Text(
                 title,
-                style: TextStyle(
+                style: AppTheme.getBodyTextStyle(context).copyWith(
                   color: isSelected ? Colors.white : AppTheme.blue800,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  fontSize: 14,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: AppTheme.isSmallPhone(context) ? 2 : 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -357,7 +367,7 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
               delay: 100,
             ),
           ],
-          SizedBox(height: AppTheme.defaultSpacing),
+          SizedBox(height: AppTheme.getDefaultSpacing(context)),
           _buildAnimatedDateField(
             controller: _dobController,
             label: 'Date of Birth',
@@ -388,18 +398,34 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
             child: TextFormField(
               controller: controller,
               keyboardType: keyboardType,
+              style: AppTheme.getBodyTextStyle(context),
               decoration: InputDecoration(
-                prefixIcon: Icon(icon, color: AppTheme.blue600),
+                prefixIcon: Icon(
+                  icon,
+                  color: AppTheme.blue600,
+                  size: AppTheme.getIconSize(context),
+                ),
                 labelText: label,
+                labelStyle: AppTheme.getBodyTextStyle(context).copyWith(
+                  color: Colors.grey[600],
+                ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(
+                    AppTheme.getInputBorderRadius(context),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(
+                    AppTheme.getInputBorderRadius(context),
+                  ),
                   borderSide: BorderSide(
                     color: AppTheme.primaryBlue,
-                    width: AppTheme.focusedBorderWidth,
+                    width: AppTheme.getFocusedBorderWidth(context),
                   ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.getDefaultSpacing(context),
+                  vertical: AppTheme.getMediumSpacing(context),
                 ),
               ),
               validator: validator,
@@ -427,18 +453,34 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
             child: TextFormField(
               controller: controller,
               readOnly: true,
+              style: AppTheme.getBodyTextStyle(context),
               decoration: InputDecoration(
-                prefixIcon: Icon(icon, color: AppTheme.blue600),
+                prefixIcon: Icon(
+                  icon,
+                  color: AppTheme.blue600,
+                  size: AppTheme.getIconSize(context),
+                ),
                 labelText: label,
+                labelStyle: AppTheme.getBodyTextStyle(context).copyWith(
+                  color: Colors.grey[600],
+                ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(
+                    AppTheme.getInputBorderRadius(context),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(
+                    AppTheme.getInputBorderRadius(context),
+                  ),
                   borderSide: BorderSide(
                     color: AppTheme.primaryBlue,
-                    width: AppTheme.focusedBorderWidth,
+                    width: AppTheme.getFocusedBorderWidth(context),
                   ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppTheme.getDefaultSpacing(context),
+                  vertical: AppTheme.getMediumSpacing(context),
                 ),
               ),
               onTap: () async {
@@ -478,35 +520,40 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
             opacity: value,
             child: SizedBox(
               width: double.infinity,
-              height: AppTheme.buttonHeight,
+              height: AppTheme.getButtonHeight(context),
               child: ElevatedButton(
                 onPressed: _isSearching ? null : _handleTrackApplication,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryBlue,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+                    borderRadius: BorderRadius.circular(
+                      AppTheme.getButtonBorderRadius(context),
+                    ),
                   ),
-                  elevation: AppTheme.buttonElevation,
+                  elevation: AppTheme.getButtonElevation(context),
                 ),
                 child: _isSearching
                     ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 20,
-                      height: 20,
+                      width: AppTheme.getIconSize(context) * 0.8,
+                      height: AppTheme.getIconSize(context) * 0.8,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     ),
-                    SizedBox(width: 12),
-                    Text('Searching...', style: AppTheme.buttonTextStyle),
+                    SizedBox(width: AppTheme.getSmallSpacing(context)),
+                    Text(
+                      'Searching...',
+                      style: AppTheme.getButtonTextStyle(context),
+                    ),
                   ],
                 )
                     : Text(
                   'Track My Application',
-                  style: AppTheme.buttonTextStyle,
+                  style: AppTheme.getButtonTextStyle(context),
                 ),
               ),
             ),
@@ -524,13 +571,11 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
         children: [
           Text(
             'Application Status',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            style: AppTheme.getSectionTitleStyle(context).copyWith(
               color: AppTheme.blue800,
             ),
           ),
-          SizedBox(height: AppTheme.defaultSpacing),
+          SizedBox(height: AppTheme.getDefaultSpacing(context)),
           _buildStatusCard(),
         ],
       ),
@@ -541,10 +586,12 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
     if (_statusData == null) return SizedBox.shrink();
 
     return Container(
-      padding: EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppTheme.getDefaultSpacing(context)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(
+          AppTheme.getCardBorderRadius(context),
+        ),
         border: Border.all(color: AppTheme.blue200),
         boxShadow: [
           BoxShadow(
@@ -556,15 +603,36 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
       ),
       child: Column(
         children: [
-          _buildStatusRow('Admission Number', _statusData!.admissionNumber, Icons.confirmation_number),
+          _buildStatusRow(
+            'Admission Number',
+            _statusData!.admissionNumber,
+            Icons.confirmation_number,
+          ),
           _buildDivider(),
-          _buildStatusRow('Student Name', _statusData!.studentName, Icons.person),
+          _buildStatusRow(
+            'Student Name',
+            _statusData!.studentName,
+            Icons.person,
+          ),
           _buildDivider(),
-          _buildStatusRow('Class Applied', _statusData!.classApplied, Icons.school),
+          _buildStatusRow(
+            'Class Applied',
+            _statusData!.classApplied,
+            Icons.school,
+          ),
           _buildDivider(),
-          _buildStatusRowWithIcon('Status', _statusData!.status, _getStatusIcon(_statusData!.status), _getStatusColor(_statusData!.status)),
+          _buildStatusRowWithIcon(
+            'Status',
+            _statusData!.status,
+            _getStatusIcon(_statusData!.status),
+            _getStatusColor(_statusData!.status),
+          ),
           _buildDivider(),
-          _buildStatusRow('Status Updated On', _statusData!.statusUpdatedOn, Icons.access_time),
+          _buildStatusRow(
+            'Status Updated On',
+            _statusData!.statusUpdatedOn,
+            Icons.access_time,
+          ),
           if (_statusData!.remarks.isNotEmpty) ...[
             _buildDivider(),
             _buildRemarksSection(),
@@ -576,36 +644,41 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
 
   Widget _buildStatusRow(String label, String value, IconData icon) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppTheme.smallSpacing),
+      padding: EdgeInsets.symmetric(
+        vertical: AppTheme.getSmallSpacing(context),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(
+              AppTheme.getSmallSpacing(context),
+            ),
             decoration: BoxDecoration(
               color: AppTheme.blue50,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: AppTheme.blue600, size: 16),
+            child: Icon(
+              icon,
+              color: AppTheme.blue600,
+              size: AppTheme.getIconSize(context) * 0.7,
+            ),
           ),
-          SizedBox(width: AppTheme.defaultSpacing),
+          SizedBox(width: AppTheme.getDefaultSpacing(context)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                  style: AppTheme.getCaptionTextStyle(context).copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(height: 2),
                 Text(
                   value,
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppTheme.getBodyTextStyle(context).copyWith(
                     color: AppTheme.blue800,
                     fontWeight: FontWeight.w600,
                   ),
@@ -618,44 +691,60 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
     );
   }
 
-  Widget _buildStatusRowWithIcon(String label, String value, IconData statusIcon, Color statusColor) {
+  Widget _buildStatusRowWithIcon(
+      String label,
+      String value,
+      IconData statusIcon,
+      Color statusColor,
+      ) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppTheme.smallSpacing),
+      padding: EdgeInsets.symmetric(
+        vertical: AppTheme.getSmallSpacing(context),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(
+              AppTheme.getSmallSpacing(context),
+            ),
             decoration: BoxDecoration(
               color: statusColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(statusIcon, color: statusColor, size: 16),
+            child: Icon(
+              statusIcon,
+              color: statusColor,
+              size: AppTheme.getIconSize(context) * 0.7,
+            ),
           ),
-          SizedBox(width: AppTheme.defaultSpacing),
+          SizedBox(width: AppTheme.getDefaultSpacing(context)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                  style: AppTheme.getCaptionTextStyle(context).copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(height: 2),
                 Row(
                   children: [
-                    Icon(statusIcon, color: statusColor, size: 16),
+                    Icon(
+                      statusIcon,
+                      color: statusColor,
+                      size: AppTheme.getIconSize(context) * 0.7,
+                    ),
                     SizedBox(width: 4),
-                    Text(
-                      value,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: statusColor,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        value,
+                        style: AppTheme.getBodyTextStyle(context).copyWith(
+                          color: statusColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -670,43 +759,52 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen>
 
   Widget _buildRemarksSection() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppTheme.smallSpacing),
+      padding: EdgeInsets.symmetric(
+        vertical: AppTheme.getSmallSpacing(context),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(
+              AppTheme.getSmallSpacing(context),
+            ),
             decoration: BoxDecoration(
               color: Colors.orange.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(Icons.info_outline, color: Colors.orange, size: 16),
+            child: Icon(
+              Icons.info_outline,
+              color: Colors.orange,
+              size: AppTheme.getIconSize(context) * 0.7,
+            ),
           ),
-          SizedBox(width: AppTheme.defaultSpacing),
+          SizedBox(width: AppTheme.getDefaultSpacing(context)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Remarks',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
+                  style: AppTheme.getCaptionTextStyle(context).copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(height: 2),
                 Container(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.all(
+                    AppTheme.getSmallSpacing(context),
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.orange.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                    border: Border.all(
+                      color: Colors.orange.withOpacity(0.2),
+                    ),
                   ),
                   child: Text(
                     _statusData!.remarks,
-                    style: TextStyle(
-                      fontSize: 13,
+                    style: AppTheme.getBodyTextStyle(context).copyWith(
                       color: Colors.orange[700],
                       fontWeight: FontWeight.w500,
                     ),

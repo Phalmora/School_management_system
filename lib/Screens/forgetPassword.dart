@@ -83,8 +83,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           _buildHeader(),
                           SizedBox(height: AppTheme.extraLargeSpacing),
                           _buildMainCard(),
-                          SizedBox(height: AppTheme.defaultSpacing),
-                          _buildBackToLoginButton(),
+
                         ],
                       ),
                     ),
@@ -604,19 +603,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     );
   }
 
-  Widget _buildBackToLoginButton() {
-    return TextButton.icon(
-      onPressed: () => Navigator.pop(context),
-      icon: Icon(Icons.arrow_back, color: Colors.white),
-      label: Text(
-        'Back to Login',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
 
   void _sendResetRequest() async {
     if (_formKey.currentState!.validate()) {

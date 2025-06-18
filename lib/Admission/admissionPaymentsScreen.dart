@@ -20,101 +20,176 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
         decoration: BoxDecoration(
           gradient: AppTheme.primaryGradient,
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 40),
-
-              // Title
-              const Text(
-                'Choose Payment Method',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
-                textAlign: TextAlign.center,
+        child: SafeArea(
+          child: Center(
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: AppTheme.getMaxWidth(context),
               ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppTheme.getDashboardHorizontalPadding(context),
+                    vertical: AppTheme.getDashboardVerticalPadding(context),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: AppTheme.getLargeSpacing(context)),
 
-              const SizedBox(height: 20),
+                      // Title Section with responsive spacing and text
+                      _buildTitleSection(),
 
-              const Text(
-                'Select your preferred payment option',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 16,
-                ),
-                textAlign: TextAlign.center,
-              ),
+                      SizedBox(height: AppTheme.getLargeSpacing(context)),
 
-              const SizedBox(height: 50),
+                      // Payment Options Card with responsive layout
+                      _buildPaymentOptionsCard(),
 
-              // UPI Payment Option
-              _buildPaymentOption(
-                icon: Icons.account_balance_wallet,
-                title: 'UPI Payment',
-                subtitle: 'Pay using Google Pay, PhonePe, Paytm, etc.',
-                paymentMethod: 'UPI',
-                onTap: () => _handleUPIPayment(),
-              ),
+                      SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
 
-              const SizedBox(height: 20),
+                      // Amount Display Card with responsive design
+                      _buildAmountDisplayCard(),
 
-              // Card Payment Option
-              _buildPaymentOption(
-                icon: Icons.credit_card,
-                title: 'Card Payment',
-                subtitle: 'Pay using Debit/Credit Card',
-                paymentMethod: 'CARD',
-                onTap: () => _handleCardPayment(),
-              ),
+                      SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
 
-              const Spacer(),
+                      // Navigation Buttons with responsive sizing
+                      _buildNavigationButtons(),
 
-              // Payment Amount Display
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: Colors.white.withOpacity(0.3)),
-                ),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Total Amount',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      '₹ 5,000',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Admission Fee',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+                      SizedBox(height: AppTheme.getDefaultSpacing(context)),
+                    ],
+                  ),
                 ),
               ),
-
-              const SizedBox(height: 30),
-            ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitleSection() {
+    return Column(
+      children: [
+        Text(
+          'Choose Payment Method',
+          style: AppTheme.getFontStyle(context).copyWith(
+            fontSize: AppTheme.isSmallPhone(context) ? 22.0 :
+            AppTheme.isMediumPhone(context) ? 26.0 :
+            AppTheme.isLargePhone(context) ? 28.0 :
+            AppTheme.isTablet(context) ? 32.0 : 36.0,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppTheme.getSmallSpacing(context)),
+        Text(
+          'Select your preferred payment option',
+          style: AppTheme.getSplashSubtitleStyle(context).copyWith(
+            fontSize: AppTheme.isSmallPhone(context) ? 12.0 :
+            AppTheme.isMediumPhone(context) ? 14.0 :
+            AppTheme.isLargePhone(context) ? 15.0 :
+            AppTheme.isTablet(context) ? 16.0 : 18.0,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPaymentOptionsCard() {
+    return Card(
+      elevation: AppTheme.getCardElevation(context),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+      ),
+      child: Container(
+        padding: EdgeInsets.all(
+          AppTheme.isSmallPhone(context) ? 16.0 :
+          AppTheme.isMediumPhone(context) ? 20.0 :
+          AppTheme.isLargePhone(context) ? 24.0 :
+          AppTheme.isTablet(context) ? 28.0 : 32.0,
+        ),
+        child: Column(
+          children: [
+            // UPI Payment Option
+            _buildPaymentOption(
+              icon: Icons.account_balance_wallet,
+              title: 'UPI Payment',
+              subtitle: 'Pay using Google Pay, PhonePe, Paytm, etc.',
+              paymentMethod: 'UPI',
+              onTap: () => _handleUPIPayment(),
+            ),
+
+            SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+            // Card Payment Option
+            _buildPaymentOption(
+              icon: Icons.credit_card,
+              title: 'Card Payment',
+              subtitle: 'Pay using Debit/Credit Card',
+              paymentMethod: 'CARD',
+              onTap: () => _handleCardPayment(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAmountDisplayCard() {
+    return Card(
+      elevation: AppTheme.getCardElevation(context),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+      ),
+      color: AppTheme.white.withOpacity(0.1),
+      child: Container(
+        padding: EdgeInsets.all(
+          AppTheme.isSmallPhone(context) ? 20.0 :
+          AppTheme.isMediumPhone(context) ? 24.0 :
+          AppTheme.isLargePhone(context) ? 28.0 :
+          AppTheme.isTablet(context) ? 32.0 : 36.0,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+          border: Border.all(
+            color: AppTheme.white.withOpacity(0.3),
+          ),
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Total Amount',
+              style: AppTheme.getSubHeadingStyle(context).copyWith(
+                color: AppTheme.white70,
+                fontSize: AppTheme.isSmallPhone(context) ? 12.0 :
+                AppTheme.isMediumPhone(context) ? 14.0 :
+                AppTheme.isLargePhone(context) ? 15.0 :
+                AppTheme.isTablet(context) ? 16.0 : 18.0,
+              ),
+            ),
+            SizedBox(height: AppTheme.getSmallSpacing(context)),
+            Text(
+              '₹ 5,000',
+              style: AppTheme.getFontStyle(context).copyWith(
+                fontSize: AppTheme.isSmallPhone(context) ? 24.0 :
+                AppTheme.isMediumPhone(context) ? 28.0 :
+                AppTheme.isLargePhone(context) ? 32.0 :
+                AppTheme.isTablet(context) ? 36.0 : 40.0,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            SizedBox(height: AppTheme.getSmallSpacing(context)),
+            Text(
+              'Admission Fee',
+              style: AppTheme.getCaptionTextStyle(context).copyWith(
+                color: AppTheme.white.withOpacity(0.8),
+                fontSize: AppTheme.isSmallPhone(context) ? 10.0 :
+                AppTheme.isMediumPhone(context) ? 11.0 :
+                AppTheme.isLargePhone(context) ? 12.0 :
+                AppTheme.isTablet(context) ? 13.0 : 14.0,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -129,6 +204,22 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
   }) {
     bool isSelected = selectedPaymentMethod == paymentMethod;
 
+    // Responsive padding and sizing
+    double containerPadding = AppTheme.isSmallPhone(context) ? 12.0 :
+    AppTheme.isMediumPhone(context) ? 16.0 :
+    AppTheme.isLargePhone(context) ? 18.0 :
+    AppTheme.isTablet(context) ? 20.0 : 22.0;
+
+    double iconContainerPadding = AppTheme.isSmallPhone(context) ? 8.0 :
+    AppTheme.isMediumPhone(context) ? 10.0 :
+    AppTheme.isLargePhone(context) ? 12.0 :
+    AppTheme.isTablet(context) ? 14.0 : 16.0;
+
+    double iconSize = AppTheme.isSmallPhone(context) ? 20.0 :
+    AppTheme.isMediumPhone(context) ? 22.0 :
+    AppTheme.isLargePhone(context) ? 24.0 :
+    AppTheme.isTablet(context) ? 28.0 : 32.0;
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -137,25 +228,25 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
         onTap();
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(20),
+        duration: AppTheme.buttonAnimationDuration,
+        padding: EdgeInsets.all(containerPadding),
         decoration: BoxDecoration(
           color: isSelected
-              ? Colors.white.withOpacity(0.2)
-              : Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(15),
+              ? AppTheme.blue50.withOpacity(0.3)
+              : AppTheme.greylight.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
           border: Border.all(
             color: isSelected
-                ? Colors.white.withOpacity(0.6)
-                : Colors.white.withOpacity(0.3),
-            width: isSelected ? 2 : 1,
+                ? AppTheme.blue600
+                : Colors.grey.withOpacity(0.3),
+            width: isSelected ? AppTheme.getFocusedBorderWidth(context) : 1,
           ),
           boxShadow: isSelected
               ? [
             BoxShadow(
-              color: Colors.white.withOpacity(0.1),
-              blurRadius: 10,
-              spreadRadius: 2,
+              color: AppTheme.blue600.withOpacity(0.1),
+              blurRadius: AppTheme.isMobile(context) ? 6 : 8,
+              spreadRadius: AppTheme.isMobile(context) ? 1 : 2,
             )
           ]
               : null,
@@ -163,36 +254,42 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: EdgeInsets.all(iconContainerPadding),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
+                color: isSelected
+                    ? AppTheme.blue600.withOpacity(0.1)
+                    : Colors.grey.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
               ),
               child: Icon(
                 icon,
-                color: Colors.white,
-                size: 28,
+                color: isSelected ? AppTheme.blue600 : Colors.grey[600],
+                size: iconSize,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: AppTheme.getDefaultSpacing(context)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                    style: AppTheme.getHeadingStyle(context).copyWith(
+                      color: isSelected ? AppTheme.blue600 : Colors.grey[800],
+                      fontSize: AppTheme.isSmallPhone(context) ? 14.0 :
+                      AppTheme.isMediumPhone(context) ? 15.0 :
+                      AppTheme.isLargePhone(context) ? 16.0 :
+                      AppTheme.isTablet(context) ? 18.0 : 20.0,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: AppTheme.getSmallSpacing(context) / 2),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
-                      fontSize: 14,
+                    style: AppTheme.getSubHeadingStyle(context).copyWith(
+                      fontSize: AppTheme.isSmallPhone(context) ? 11.0 :
+                      AppTheme.isMediumPhone(context) ? 12.0 :
+                      AppTheme.isLargePhone(context) ? 13.0 :
+                      AppTheme.isTablet(context) ? 14.0 : 15.0,
                     ),
                   ),
                 ],
@@ -200,8 +297,8 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
             ),
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: Colors.white,
-              size: 24,
+              color: isSelected ? AppTheme.blue600 : Colors.grey[400],
+              size: iconSize * 0.9,
             ),
           ],
         ),
@@ -209,8 +306,118 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
     );
   }
 
+  Widget _buildNavigationButtons() {
+    // Responsive button layout - stack vertically on small phones
+    if (AppTheme.isSmallPhone(context)) {
+      return Column(
+        children: [
+          Container(
+            width: double.infinity,
+            height: AppTheme.getButtonHeight(context),
+            child: ElevatedButton(
+              onPressed: selectedPaymentMethod.isEmpty ? null : () {
+                if (selectedPaymentMethod == 'UPI') {
+                  _handleUPIPayment();
+                } else if (selectedPaymentMethod == 'CARD') {
+                  _handleCardPayment();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.blue600,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                ),
+                elevation: AppTheme.getButtonElevation(context),
+              ),
+              child: Text(
+                'Proceed to Pay',
+                style: AppTheme.getButtonTextStyle(context).copyWith(
+                  fontSize: AppTheme.isSmallPhone(context) ? 14.0 : 16.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: AppTheme.getMediumSpacing(context)),
+          Container(
+            width: double.infinity,
+            height: AppTheme.getButtonHeight(context),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                ),
+                elevation: AppTheme.getButtonElevation(context),
+              ),
+              child: Text(
+                'Back',
+                style: AppTheme.getButtonTextStyle(context).copyWith(
+                  color: Colors.grey[700],
+                  fontSize: AppTheme.isSmallPhone(context) ? 14.0 : 16.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Horizontal layout for larger screens
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: AppTheme.getButtonHeight(context),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                ),
+                elevation: AppTheme.getButtonElevation(context),
+              ),
+              child: Text(
+                'Back',
+                style: AppTheme.getButtonTextStyle(context).copyWith(
+                  color: Colors.grey[700],
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: AppTheme.getMediumSpacing(context)),
+        Expanded(
+          child: Container(
+            height: AppTheme.getButtonHeight(context),
+            child: ElevatedButton(
+              onPressed: selectedPaymentMethod.isEmpty ? null : () {
+                if (selectedPaymentMethod == 'UPI') {
+                  _handleUPIPayment();
+                } else if (selectedPaymentMethod == 'CARD') {
+                  _handleCardPayment();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.blue600,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                ),
+                elevation: AppTheme.getButtonElevation(context),
+              ),
+              child: Text(
+                'Proceed to Pay',
+                style: AppTheme.getButtonTextStyle(context),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   void _handleUPIPayment() {
-    // Show UPI payment options
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -219,7 +426,6 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
   }
 
   void _handleCardPayment() {
-    // Navigate to card payment screen or show card input form
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -230,178 +436,317 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
 
   Widget _buildUPIBottomSheet() {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppTheme.getCardBorderRadius(context)),
+        ),
       ),
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(
+        AppTheme.isSmallPhone(context) ? 16.0 :
+        AppTheme.isMediumPhone(context) ? 20.0 :
+        AppTheme.isLargePhone(context) ? 24.0 :
+        AppTheme.isTablet(context) ? 28.0 : 32.0,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Handle bar with responsive width
           Container(
-            width: 40,
+            width: AppTheme.isSmallPhone(context) ? 30 :
+            AppTheme.isMobile(context) ? 40 : 50,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.greydark,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: AppTheme.getDefaultSpacing(context)),
+          Text(
             'Choose UPI App',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            style: AppTheme.getHeadingStyle(context).copyWith(
+              fontSize: AppTheme.isSmallPhone(context) ? 16.0 :
+              AppTheme.isMediumPhone(context) ? 18.0 :
+              AppTheme.isLargePhone(context) ? 20.0 :
+              AppTheme.isTablet(context) ? 22.0 : 24.0,
             ),
           ),
-          const SizedBox(height: 20),
-          _buildUPIOption('Google Pay', Icons.account_balance_wallet, Colors.blue),
-          _buildUPIOption('PhonePe', Icons.phone_android, Colors.purple),
-          _buildUPIOption('Paytm', Icons.account_balance, Colors.blue),
+          SizedBox(height: AppTheme.getDefaultSpacing(context)),
+          _buildUPIOption('Google Pay', Icons.account_balance_wallet, AppTheme.blue600),
+          _buildUPIOption('PhonePe', Icons.phone_android, AppTheme.primaryPurple),
+          _buildUPIOption('Paytm', Icons.account_balance, AppTheme.primaryBlue),
           _buildUPIOption('Other UPI Apps', Icons.more_horiz, Colors.grey),
-          const SizedBox(height: 20),
+          SizedBox(height: AppTheme.getDefaultSpacing(context)),
         ],
       ),
     );
   }
 
   Widget _buildUPIOption(String name, IconData icon, Color color) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: color.withOpacity(0.1),
-        child: Icon(icon, color: color),
+    double iconRadius = AppTheme.isSmallPhone(context) ? 18.0 :
+    AppTheme.isMediumPhone(context) ? 20.0 :
+    AppTheme.isLargePhone(context) ? 22.0 :
+    AppTheme.isTablet(context) ? 26.0 : 30.0;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: AppTheme.getSmallSpacing(context)),
+      child: ListTile(
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppTheme.isSmallPhone(context) ? 12.0 :
+          AppTheme.isMediumPhone(context) ? 16.0 :
+          AppTheme.isLargePhone(context) ? 20.0 :
+          AppTheme.isTablet(context) ? 24.0 : 28.0,
+          vertical: AppTheme.getSmallSpacing(context),
+        ),
+        leading: CircleAvatar(
+          backgroundColor: color.withOpacity(0.1),
+          radius: iconRadius,
+          child: Icon(
+            icon,
+            color: color,
+            size: iconRadius * 0.8,
+          ),
+        ),
+        title: Text(
+          name,
+          style: AppTheme.getBodyTextStyle(context).copyWith(
+            fontWeight: FontWeight.w500,
+            fontSize: AppTheme.isSmallPhone(context) ? 12.0 :
+            AppTheme.isMediumPhone(context) ? 13.0 :
+            AppTheme.isLargePhone(context) ? 14.0 :
+            AppTheme.isTablet(context) ? 15.0 : 16.0,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: AppTheme.getIconSize(context) * 0.6,
+          color: Colors.grey,
+        ),
+        onTap: () {
+          Navigator.pop(context);
+          _processPayment('UPI', name);
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+        ),
       ),
-      title: Text(name),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: () {
-        Navigator.pop(context);
-        _processPayment('UPI', name);
-      },
     );
   }
 
   Widget _buildCardBottomSheet() {
+    // Responsive height calculation
+    double sheetHeight = AppTheme.isSmallPhone(context)
+        ? AppTheme.getScreenHeight(context) * 0.8
+        : AppTheme.isMobile(context)
+        ? AppTheme.getScreenHeight(context) * 0.7
+        : AppTheme.getScreenHeight(context) * 0.6;
+
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppTheme.getCardBorderRadius(context)),
+        ),
       ),
-      padding: const EdgeInsets.all(20),
-      height: MediaQuery.of(context).size.height * 0.7,
+      padding: EdgeInsets.all(
+        AppTheme.isSmallPhone(context) ? 16.0 :
+        AppTheme.isMediumPhone(context) ? 20.0 :
+        AppTheme.isLargePhone(context) ? 24.0 :
+        AppTheme.isTablet(context) ? 28.0 : 32.0,
+      ),
+      height: sheetHeight,
       child: Column(
         children: [
+          // Handle bar
           Container(
-            width: 40,
+            width: AppTheme.isSmallPhone(context) ? 30 :
+            AppTheme.isMobile(context) ? 40 : 50,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey[300],
+              color: AppTheme.greydark,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: AppTheme.getDefaultSpacing(context)),
+          Text(
             'Card Details',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+            style: AppTheme.getHeadingStyle(context).copyWith(
+              fontSize: AppTheme.isSmallPhone(context) ? 16.0 :
+              AppTheme.isMediumPhone(context) ? 18.0 :
+              AppTheme.isLargePhone(context) ? 20.0 :
+              AppTheme.isTablet(context) ? 22.0 : 24.0,
             ),
           ),
-          const SizedBox(height: 30),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Card Number',
-              hintText: '1234 5678 9012 3456',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              prefixIcon: const Icon(Icons.credit_card),
-            ),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Expiry Date',
-                    hintText: 'MM/YY',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+          SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Card Number Field
+                  _buildCardInputField(
+                    label: 'Card Number',
+                    hint: '1234 5678 9012 3456',
+                    icon: Icons.credit_card,
+                    keyboardType: TextInputType.number,
                   ),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'CVV',
-                    hintText: '123',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+
+                  SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                  // Expiry and CVV Row - Stack on small phones
+                  AppTheme.isSmallPhone(context)
+                      ? Column(
+                    children: [
+                      _buildCardInputField(
+                        label: 'Expiry Date',
+                        hint: 'MM/YY',
+                        keyboardType: TextInputType.number,
+                      ),
+                      SizedBox(height: AppTheme.getMediumSpacing(context)),
+                      _buildCardInputField(
+                        label: 'CVV',
+                        hint: '123',
+                        keyboardType: TextInputType.number,
+                        obscureText: true,
+                      ),
+                    ],
+                  )
+                      : Row(
+                    children: [
+                      Expanded(
+                        child: _buildCardInputField(
+                          label: 'Expiry Date',
+                          hint: 'MM/YY',
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      SizedBox(width: AppTheme.getMediumSpacing(context)),
+                      Expanded(
+                        child: _buildCardInputField(
+                          label: 'CVV',
+                          hint: '123',
+                          keyboardType: TextInputType.number,
+                          obscureText: true,
+                        ),
+                      ),
+                    ],
                   ),
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                ),
+
+                  SizedBox(height: AppTheme.getMediumSpacing(context)),
+
+                  // Cardholder Name Field
+                  _buildCardInputField(
+                    label: 'Cardholder Name',
+                    hint: 'John Doe',
+                    icon: Icons.person,
+                  ),
+                ],
               ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Cardholder Name',
-              hintText: 'John Doe',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              prefixIcon: const Icon(Icons.person),
             ),
           ),
-          const Spacer(),
-          SizedBox(
+
+          SizedBox(height: AppTheme.getDefaultSpacing(context)),
+
+          // Pay Button
+          Container(
             width: double.infinity,
-            height: 50,
+            height: AppTheme.getButtonHeight(context),
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
                 _processPayment('Card', 'Credit/Debit Card');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: AppTheme.blue600,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
                 ),
+                elevation: AppTheme.getButtonElevation(context),
               ),
-              child: const Text(
+              child: Text(
                 'Pay ₹5,000',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: AppTheme.getButtonTextStyle(context),
               ),
             ),
           ),
-          const SizedBox(height: 20),
         ],
       ),
     );
   }
 
+  Widget _buildCardInputField({
+    required String label,
+    required String hint,
+    IconData? icon,
+    TextInputType? keyboardType,
+    bool obscureText = false,
+  }) {
+    return TextFormField(
+      style: AppTheme.getBodyTextStyle(context),
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: AppTheme.getSubHeadingStyle(context),
+        hintText: hint,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+          borderSide: BorderSide(
+            color: AppTheme.blue600,
+            width: AppTheme.getFocusedBorderWidth(context),
+          ),
+        ),
+        prefixIcon: icon != null ? Icon(
+          icon,
+          size: AppTheme.getIconSize(context),
+        ) : null,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppTheme.isSmallPhone(context) ? 12.0 :
+          AppTheme.isMediumPhone(context) ? 16.0 :
+          AppTheme.isLargePhone(context) ? 20.0 :
+          AppTheme.isTablet(context) ? 24.0 : 28.0,
+          vertical: AppTheme.getMediumSpacing(context),
+        ),
+      ),
+    );
+  }
+
   void _processPayment(String method, String provider) {
-    // Show loading dialog
+    // Show loading dialog with responsive sizing
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AlertDialog(
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+        ),
+        contentPadding: EdgeInsets.all(
+          AppTheme.isSmallPhone(context) ? 16.0 :
+          AppTheme.isMediumPhone(context) ? 20.0 :
+          AppTheme.isLargePhone(context) ? 24.0 :
+          AppTheme.isTablet(context) ? 28.0 : 32.0,
+        ),
         content: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 20),
-            Text('Processing payment...'),
+            SizedBox(
+              width: AppTheme.isSmallPhone(context) ? 20.0 : 24.0,
+              height: AppTheme.isSmallPhone(context) ? 20.0 : 24.0,
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.blue600),
+                strokeWidth: 2.5,
+              ),
+            ),
+            SizedBox(width: AppTheme.getDefaultSpacing(context)),
+            Flexible(
+              child: Text(
+                'Processing payment...',
+                style: AppTheme.getBodyTextStyle(context),
+              ),
+            ),
           ],
         ),
       ),
@@ -411,24 +756,259 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pop(context); // Close loading dialog
 
-      // Show success dialog
+      // Show success dialog with responsive design
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          icon: const Icon(Icons.check_circle, color: Colors.green, size: 50),
-          title: const Text('Payment Successful!'),
-          content: Text('Payment of ₹5,000 via $provider was successful.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Navigate back or to confirmation screen
-              },
-              child: const Text('OK'),
+          context: context,
+          builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+    ),
+    contentPadding: EdgeInsets.all(
+    AppTheme.isSmallPhone(context) ? 16.0 :
+    AppTheme.isMediumPhone(context) ? 20.0 :
+    AppTheme.isLargePhone(context) ? 24.0 :
+    AppTheme.isTablet(context) ? 28.0 : 32.0,
+    ),
+    icon: Icon(
+    Icons.check_circle,
+    color: Colors.green,
+      size: AppTheme.isSmallPhone(context) ? 40.0 :
+      AppTheme.isMediumPhone(context) ? 48.0 :
+      AppTheme.isLargePhone(context) ? 56.0 :
+      AppTheme.isTablet(context) ? 64.0 : 72.0,
+    ),
+            title: Text(
+              'Payment Successful!',
+              style: AppTheme.getHeadingStyle(context).copyWith(
+                color: Colors.green,
+                fontSize: AppTheme.isSmallPhone(context) ? 16.0 :
+                AppTheme.isMediumPhone(context) ? 18.0 :
+                AppTheme.isLargePhone(context) ? 20.0 :
+                AppTheme.isTablet(context) ? 22.0 : 24.0,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Your admission fee has been successfully paid using $provider.',
+                  style: AppTheme.getBodyTextStyle(context).copyWith(
+                    fontSize: AppTheme.isSmallPhone(context) ? 12.0 :
+                    AppTheme.isMediumPhone(context) ? 13.0 :
+                    AppTheme.isLargePhone(context) ? 14.0 :
+                    AppTheme.isTablet(context) ? 15.0 : 16.0,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: AppTheme.getMediumSpacing(context)),
+                Container(
+                  padding: EdgeInsets.all(
+                    AppTheme.isSmallPhone(context) ? 12.0 :
+                    AppTheme.isMediumPhone(context) ? 16.0 :
+                    AppTheme.isLargePhone(context) ? 20.0 :
+                    AppTheme.isTablet(context) ? 24.0 : 28.0,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                    border: Border.all(
+                      color: Colors.green.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Transaction ID:',
+                            style: AppTheme.getCaptionTextStyle(context).copyWith(
+                              fontSize: AppTheme.isSmallPhone(context) ? 10.0 :
+                              AppTheme.isMediumPhone(context) ? 11.0 :
+                              AppTheme.isLargePhone(context) ? 12.0 :
+                              AppTheme.isTablet(context) ? 13.0 : 14.0,
+                            ),
+                          ),
+                          Text(
+                            'TXN${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}',
+                            style: AppTheme.getBodyTextStyle(context).copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: AppTheme.isSmallPhone(context) ? 10.0 :
+                              AppTheme.isMediumPhone(context) ? 11.0 :
+                              AppTheme.isLargePhone(context) ? 12.0 :
+                              AppTheme.isTablet(context) ? 13.0 : 14.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: AppTheme.getSmallSpacing(context)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Amount Paid:',
+                            style: AppTheme.getCaptionTextStyle(context).copyWith(
+                              fontSize: AppTheme.isSmallPhone(context) ? 10.0 :
+                              AppTheme.isMediumPhone(context) ? 11.0 :
+                              AppTheme.isLargePhone(context) ? 12.0 :
+                              AppTheme.isTablet(context) ? 13.0 : 14.0,
+                            ),
+                          ),
+                          Text(
+                            '₹ 5,000',
+                            style: AppTheme.getBodyTextStyle(context).copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green,
+                              fontSize: AppTheme.isSmallPhone(context) ? 12.0 :
+                              AppTheme.isMediumPhone(context) ? 13.0 :
+                              AppTheme.isLargePhone(context) ? 14.0 :
+                              AppTheme.isTablet(context) ? 15.0 : 16.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: AppTheme.getSmallSpacing(context)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Date & Time:',
+                            style: AppTheme.getCaptionTextStyle(context).copyWith(
+                              fontSize: AppTheme.isSmallPhone(context) ? 10.0 :
+                              AppTheme.isMediumPhone(context) ? 11.0 :
+                              AppTheme.isLargePhone(context) ? 12.0 :
+                              AppTheme.isTablet(context) ? 13.0 : 14.0,
+                            ),
+                          ),
+                          Text(
+                            '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
+                            style: AppTheme.getBodyTextStyle(context).copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: AppTheme.isSmallPhone(context) ? 10.0 :
+                              AppTheme.isMediumPhone(context) ? 11.0 :
+                              AppTheme.isLargePhone(context) ? 12.0 :
+                              AppTheme.isTablet(context) ? 13.0 : 14.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              Container(
+                width: double.infinity,
+                height: AppTheme.getButtonHeight(context) * 0.8,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close success dialog
+                    Navigator.of(context).pop(); // Go back to previous screen
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                    ),
+                    elevation: AppTheme.getButtonElevation(context),
+                  ),
+                  child: Text(
+                    'Continue',
+                    style: AppTheme.getButtonTextStyle(context).copyWith(
+                      fontSize: AppTheme.isSmallPhone(context) ? 13.0 :
+                      AppTheme.isMediumPhone(context) ? 14.0 :
+                      AppTheme.isLargePhone(context) ? 15.0 :
+                      AppTheme.isTablet(context) ? 16.0 : 17.0,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: AppTheme.getSmallSpacing(context)),
+              Container(
+                width: double.infinity,
+                height: AppTheme.getButtonHeight(context) * 0.8,
+                child: OutlinedButton(
+                  onPressed: () {
+                    _downloadReceipt();
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: Colors.green,
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.download,
+                        color: Colors.green,
+                        size: AppTheme.getIconSize(context) * 0.8,
+                      ),
+                      SizedBox(width: AppTheme.getSmallSpacing(context)),
+                      Text(
+                        'Download Receipt',
+                        style: AppTheme.getButtonTextStyle(context).copyWith(
+                          color: Colors.green,
+                          fontSize: AppTheme.isSmallPhone(context) ? 13.0 :
+                          AppTheme.isMediumPhone(context) ? 14.0 :
+                          AppTheme.isLargePhone(context) ? 15.0 :
+                          AppTheme.isTablet(context) ? 16.0 : 17.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+      );
+    });
+  }
+
+  void _downloadReceipt() {
+    // Show a simple snackbar for receipt download simulation
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: Colors.white,
+              size: AppTheme.getIconSize(context) * 0.8,
+            ),
+            SizedBox(width: AppTheme.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Payment receipt downloaded successfully!',
+                style: AppTheme.getBodyTextStyle(context).copyWith(
+                  color: Colors.white,
+                  fontSize: AppTheme.isSmallPhone(context) ? 12.0 :
+                  AppTheme.isMediumPhone(context) ? 13.0 :
+                  AppTheme.isLargePhone(context) ? 14.0 :
+                  AppTheme.isTablet(context) ? 15.0 : 16.0,
+                ),
+              ),
             ),
           ],
         ),
-      );
-    });
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+        ),
+        margin: EdgeInsets.all(
+          AppTheme.isSmallPhone(context) ? 12.0 :
+          AppTheme.isMediumPhone(context) ? 16.0 :
+          AppTheme.isLargePhone(context) ? 20.0 :
+          AppTheme.isTablet(context) ? 24.0 : 28.0,
+        ),
+      ),
+    );
   }
 }

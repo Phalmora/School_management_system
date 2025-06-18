@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/StudentDashboardPages/subjectAndMarks.dart';
+import 'package:school/customWidgets/theme.dart';
 
 
 class TeacherProfilePage extends StatefulWidget {
