@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart'; // Assuming this provides AppTheme.FontStyle and primaryGradient
-import 'package:school/customWidgets/theme.dart'; // Assuming this provides AppTheme constants // Import the MessageService
 import 'package:intl/intl.dart';
 import 'package:school/model/messageModelTeacher.dart';
 import 'package:school/model/messageServiceTeacher.dart'; // For formatting timestamps
-
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 /// A page to display and send messages to/from an admin or academic officer.
 class MessagePageTeacher extends StatefulWidget {
@@ -110,14 +108,14 @@ class _MessagePageTeacherState extends State<MessagePageTeacher> {
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
+        decoration: const BoxDecoration(gradient: AppThemeColor.primaryGradient),
         child: SafeArea(
           child: Column(
             children: [
               _buildHeader(),
               Expanded(
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator(color: AppTheme.white))
+                    ? const Center(child: CircularProgressIndicator(color: AppThemeColor.white))
                     : _messages.isEmpty
                     ? _buildNoMessagesPlaceholder()
                     : _buildMessageList(),
@@ -133,13 +131,13 @@ class _MessagePageTeacherState extends State<MessagePageTeacher> {
   /// Builds the header section of the page.
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: const EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: Row(
         children: [
-          const SizedBox(width: AppTheme.smallSpacing),
-          const Icon(Icons.message, color: AppTheme.white, size: 30),
-          const SizedBox(width: AppTheme.smallSpacing),
-          const Text('Messages', style: AppTheme.FontStyle),
+          const SizedBox(width: AppThemeColor.smallSpacing),
+          const Icon(Icons.message, color: AppThemeColor.white, size: 30),
+          const SizedBox(width: AppThemeColor.smallSpacing),
+          const Text('Messages', style: AppThemeResponsiveness.FontStyle),
         ],
       ),
     );
@@ -148,7 +146,7 @@ class _MessagePageTeacherState extends State<MessagePageTeacher> {
   Widget _buildMessageList() {
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing, vertical: AppTheme.smallSpacing),
+      padding: const EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing, vertical: AppThemeColor.smallSpacing),
       itemCount: _messages.length,
       itemBuilder: (context, index) {
         final message = _messages[index];
@@ -165,19 +163,19 @@ class _MessagePageTeacherState extends State<MessagePageTeacher> {
   /// Builds a placeholder when there are no messages.
   Widget _buildNoMessagesPlaceholder() {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
-      margin: const EdgeInsets.all(AppTheme.defaultSpacing),
+      margin: const EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: const Padding(
-        padding: EdgeInsets.all(AppTheme.largeSpacing),
+        padding: EdgeInsets.all(AppThemeColor.largeSpacing),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.chat_bubble_outline, size: 60, color: Colors.grey),
-              SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(height: AppThemeColor.mediumSpacing),
               Text(
                 'No messages yet. Send your first message!',
                 textAlign: TextAlign.center,
@@ -193,7 +191,7 @@ class _MessagePageTeacherState extends State<MessagePageTeacher> {
   /// Builds the message input field at the bottom.
   Widget _buildMessageInput() {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: const EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: Row(
         children: [
           Expanded(
@@ -202,24 +200,24 @@ class _MessagePageTeacherState extends State<MessagePageTeacher> {
               decoration: InputDecoration(
                 hintText: 'Type your message...',
                 filled: true,
-                fillColor: AppTheme.white,
+                fillColor: AppThemeColor.white,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing, vertical: AppTheme.smallSpacing),
+                contentPadding: const EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing, vertical: AppThemeColor.smallSpacing),
               ),
               maxLines: null, // Allows for multi-line input
               keyboardType: TextInputType.multiline,
               textCapitalization: TextCapitalization.sentences,
             ),
           ),
-          const SizedBox(width: AppTheme.smallSpacing),
+          const SizedBox(width: AppThemeColor.smallSpacing),
           FloatingActionButton(
             onPressed: _sendMessage,
             mini: true,
-            backgroundColor: AppTheme.white,
-            foregroundColor: AppTheme.primaryBlue,
+            backgroundColor: AppThemeColor.white,
+            foregroundColor: AppThemeColor.primaryBlue,
             child: const Icon(Icons.send),
           ),
         ],
@@ -246,30 +244,30 @@ class _MessageBubble extends StatelessWidget {
     // Determine alignment based on sender.
     final alignment = isSentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     // Determine bubble color based on sender.
-    final color = isSentByMe ? AppTheme.primaryBlue.withOpacity(0.9) : Colors.grey.shade300;
+    final color = isSentByMe ? AppThemeColor.primaryBlue.withOpacity(0.9) : Colors.grey.shade300;
     // Determine text color based on bubble color.
-    final textColor = isSentByMe ? AppTheme.white : Colors.black;
+    final textColor = isSentByMe ? AppThemeColor.white : Colors.black;
     // Determine border radius based on sender for a chat bubble look.
     final borderRadius = BorderRadius.only(
-      topLeft: const Radius.circular(AppTheme.inputBorderRadius),
-      topRight: const Radius.circular(AppTheme.inputBorderRadius),
-      bottomLeft: isSentByMe ? const Radius.circular(AppTheme.inputBorderRadius) : const Radius.circular(0),
-      bottomRight: isSentByMe ? const Radius.circular(0) : const Radius.circular(AppTheme.inputBorderRadius),
+      topLeft: const Radius.circular(AppThemeColor.inputBorderRadius),
+      topRight: const Radius.circular(AppThemeColor.inputBorderRadius),
+      bottomLeft: isSentByMe ? const Radius.circular(AppThemeColor.inputBorderRadius) : const Radius.circular(0),
+      bottomRight: isSentByMe ? const Radius.circular(0) : const Radius.circular(AppThemeColor.inputBorderRadius),
     );
 
     // Get formatted timestamp.
     final timeFormatted = DateFormat('hh:mm a').format(message.timestamp);
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: AppTheme.defaultSpacing),
+      margin: const EdgeInsets.symmetric(vertical: AppThemeColor.defaultSpacing),
       alignment: isSentByMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Column(
         crossAxisAlignment: alignment,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.mediumSpacing,
-              vertical: AppTheme.smallSpacing,
+              horizontal: AppThemeColor.mediumSpacing,
+              vertical: AppThemeColor.smallSpacing,
             ),
             decoration: BoxDecoration(
               color: color,
@@ -290,7 +288,7 @@ class _MessageBubble extends StatelessWidget {
               style: TextStyle(color: textColor),
             ),
           ),
-          const SizedBox(height: AppTheme.defaultSpacing),
+          const SizedBox(height: AppThemeColor.defaultSpacing),
           Text(
             timeFormatted,
             style: TextStyle(

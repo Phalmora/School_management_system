@@ -1,5 +1,7 @@
 // Add House Group Screen
 import 'package:flutter/material.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeColor.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeResponsiveness.dart';
 
 class AddHouseGroupScreen extends StatefulWidget {
   @override
@@ -19,11 +21,7 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF42A5F5), Color(0xFF8E24AA)],
-          ),
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -31,13 +29,17 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
               _buildHeader('Create House Group'),
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+                    color: AppThemeColor.white,
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppThemeColor.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
                   ),
                   child: _buildHouseGroupForm(),
                 ),
@@ -51,23 +53,29 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
 
   Widget _buildHeader(String title) {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 28),
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
+            ),
             onPressed: () => Navigator.pop(context),
           ),
-          SizedBox(width: 10),
-          Icon(Icons.home, color: Colors.white, size: 32),
-          SizedBox(width: 15),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+          Icon(
+            Icons.home,
+            color: AppThemeColor.white,
+            size: AppThemeResponsiveness.getHeaderIconSize(context),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
+            child: Text(
+              title,
+              style: AppThemeResponsiveness.getFontStyle(context),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -77,13 +85,13 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
 
   Widget _buildHouseGroupForm() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(20),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _houseNameController,
               label: 'House Name',
@@ -91,9 +99,9 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
               icon: Icons.home,
               validator: (value) => value!.isEmpty ? 'Please enter house name' : null,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildColorDropdown(),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _captainController,
               label: 'House Captain',
@@ -101,7 +109,7 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
               icon: Icons.person,
               validator: (value) => value!.isEmpty ? 'Please enter captain name' : null,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _viceCaptainController,
               label: 'Vice Captain',
@@ -109,8 +117,9 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
               icon: Icons.person_outline,
               validator: (value) => value!.isEmpty ? 'Please enter vice captain name' : null,
             ),
-            SizedBox(height: 40),
+            SizedBox(height: AppThemeResponsiveness.getLargeSpacing(context)),
             _buildSubmitButton('Create House Group'),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
           ],
         ),
       ),
@@ -123,44 +132,70 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
       children: [
         Text(
           'House Color',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getSubtitleTextStyle(context),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         DropdownButtonFormField<String>(
           value: _selectedColor,
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.palette, color: Color(0xFF42A5F5)),
+            prefixIcon: Icon(
+              Icons.palette,
+              color: AppThemeColor.primaryBlue,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyd),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFF42A5F5), width: 2),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: AppThemeColor.primaryBlue,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyl),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.red400),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: AppThemeColor.red600,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: AppThemeColor.blue50,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+              vertical: AppThemeResponsiveness.getMediumSpacing(context),
+            ),
           ),
+          style: AppThemeResponsiveness.getBodyTextStyle(context),
           items: _houseColors.map((String color) {
             return DropdownMenuItem<String>(
               value: color,
               child: Row(
                 children: [
                   Container(
-                    width: 20,
-                    height: 20,
+                    width: AppThemeResponsiveness.getIconSize(context),
+                    height: AppThemeResponsiveness.getIconSize(context),
                     decoration: BoxDecoration(
                       color: _getColorFromString(color),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade400),
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getIconSize(context) / 2),
+                      border: Border.all(color: AppThemeColor.greyl),
                     ),
                   ),
-                  SizedBox(width: 10),
-                  Text(color),
+                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+                  Text(
+                    color,
+                    style: AppThemeResponsiveness.getBodyTextStyle(context),
+                  ),
                 ],
               ),
             );
@@ -178,9 +213,9 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
   Color _getColorFromString(String colorName) {
     switch (colorName.toLowerCase()) {
       case 'red':
-        return Colors.red;
+        return AppThemeColor.red;
       case 'blue':
-        return Colors.blue;
+        return AppThemeColor.primaryBlue;
       case 'green':
         return Colors.green;
       case 'yellow':
@@ -206,30 +241,55 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getSubtitleTextStyle(context),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         TextFormField(
           controller: controller,
           validator: validator,
+          maxLines: AppThemeResponsiveness.getTextFieldMaxLines(context),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: Color(0xFF42A5F5)),
+            hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+            prefixIcon: Icon(
+              icon,
+              color: AppThemeColor.primaryBlue,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyd),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFF42A5F5), width: 2),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: AppThemeColor.primaryBlue,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyl),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: Colors.red.shade400),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: Colors.red.shade600,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: AppThemeColor.blue50,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+              vertical: AppThemeResponsiveness.getMediumSpacing(context),
+            ),
           ),
+          style: AppThemeResponsiveness.getBodyTextStyle(context),
         ),
       ],
     );
@@ -237,23 +297,21 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
 
   Widget _buildSubmitButton(String text) {
     return Container(
-      height: 50,
+      height: AppThemeResponsiveness.getButtonHeight(context),
       child: ElevatedButton(
         onPressed: () => _submitForm(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF42A5F5),
+          backgroundColor: AppThemeColor.primaryBlue,
+          foregroundColor: AppThemeColor.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
           ),
-          elevation: 5,
+          elevation: AppThemeResponsiveness.getButtonElevation(context),
+          shadowColor: AppThemeColor.primaryBlue.withOpacity(0.3),
         ),
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: AppThemeResponsiveness.getButtonTextStyle(context),
         ),
       ),
     );
@@ -261,14 +319,50 @@ class _AddHouseGroupScreenState extends State<AddHouseGroupScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('House group created successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      // Here you would typically save to database
+      _showSuccessMessage();
       Navigator.pop(context);
     }
   }
-}
 
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'House group created successfully!',
+                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                  color: AppThemeColor.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
+        margin: AppThemeResponsiveness.getScreenPadding(context),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _houseNameController.dispose();
+    _captainController.dispose();
+    _viceCaptainController.dispose();
+    super.dispose();
+  }
+}

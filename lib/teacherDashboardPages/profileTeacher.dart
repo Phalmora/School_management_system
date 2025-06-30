@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/theme.dart';
-
+import 'package:school/model/teacherProfile.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class TeacherProfilePage extends StatefulWidget {
   const TeacherProfilePage({Key? key}) : super(key: key);
@@ -39,7 +39,7 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AppTheme.slideAnimationDuration,
+      duration: AppThemeColor.slideAnimationDuration,
       vsync: this,
     );
 
@@ -71,9 +71,10 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -87,11 +88,11 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
                       position: _slideAnimation,
                       child: Column(
                         children: [
-                          _buildProfileCard(),
-                          _buildStatsCard(),
-                          _buildInfoSection(),
-                          _buildMenuSection(),
-                          const SizedBox(height: AppTheme.defaultSpacing),
+                          _buildProfileCard(context),
+                          _buildStatsCard(context),
+                          _buildInfoSection(context),
+                          _buildMenuSection(context),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                         ],
                       ),
                     ),
@@ -107,36 +108,21 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              padding: const EdgeInsets.all(AppTheme.smallSpacing),
-              decoration: BoxDecoration(
-                color: AppTheme.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios,
-                color: AppTheme.white,
-                size: 20,
-              ),
-            ),
-          ),
-          const SizedBox(width: AppTheme.mediumSpacing),
-          const Expanded(
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'My Profile',
-                  style: AppTheme.FontStyle,
+                  style: AppThemeResponsiveness.getFontStyle(context),
                 ),
                 Text(
                   'Manage your account information',
-                  style: AppTheme.splashSubtitleStyle,
+                  style: AppThemeResponsiveness.getSplashSubtitleStyle(context),
                 ),
               ],
             ),
@@ -144,15 +130,15 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
           GestureDetector(
             onTap: () => _showEditDialog(context),
             child: Container(
-              padding: const EdgeInsets.all(AppTheme.smallSpacing),
+              padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
               decoration: BoxDecoration(
-                color: AppTheme.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                color: AppThemeColor.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.edit,
-                color: AppTheme.white,
-                size: 24,
+                color: AppThemeColor.white,
+                size: AppThemeResponsiveness.getIconSize(context),
               ),
             ),
           ),
@@ -161,22 +147,22 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildProfileCard() {
+  Widget _buildProfileCard(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
+      margin: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getMediumSpacing(context)),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation, // Keep as constant or make responsive if needed
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
         child: Container(
-          padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+          padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [AppTheme.white, AppTheme.blue50],
+              colors: [AppThemeColor.white, AppThemeColor.blue50],
             ),
           ),
           child: Column(
@@ -184,23 +170,23 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
               Stack(
                 children: [
                   CircleAvatar(
-                    radius: 50,
-                    backgroundColor: AppTheme.blue100,
+                    radius: AppThemeResponsiveness.getResponsiveRadius(context, 50),
+                    backgroundColor: AppThemeColor.blue100,
                     child: teacherData.profileImageUrl.isEmpty
                         ? Text(
                       teacherData.name.split(' ').map((e) => e[0]).take(2).join(),
                       style: TextStyle(
-                        fontSize: 32,
+                        fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 32),
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.blue800,
+                        color: AppThemeColor.blue800,
                       ),
                     )
                         : ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getResponsiveRadius(context, 50)),
                       child: Image.network(
                         teacherData.profileImageUrl,
-                        width: 100,
-                        height: 100,
+                        width: AppThemeResponsiveness.getResponsiveSize(context, 100, 120, 140),
+                        height: AppThemeResponsiveness.getResponsiveSize(context, 100, 120, 140),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -209,27 +195,27 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(6),
+                      padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context) / 1.5),
                       decoration: const BoxDecoration(
-                        gradient: AppTheme.primaryGradient,
+                        gradient: AppThemeColor.primaryGradient,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.camera_alt,
-                        color: AppTheme.white,
-                        size: 16,
+                        color: AppThemeColor.white,
+                        size: AppThemeResponsiveness.getResponsiveIconSize(context, 16),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
               Text(
                 teacherData.name,
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 24),
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.blue800,
+                  color: AppThemeColor.blue800,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -237,8 +223,8 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
               Text(
                 teacherData.designation,
                 style: TextStyle(
-                  fontSize: 16,
-                  color: AppTheme.blue600,
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 16),
+                  color: AppThemeColor.blue600,
                   fontWeight: FontWeight.w500,
                 ),
                 textAlign: TextAlign.center,
@@ -246,8 +232,8 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
               const SizedBox(height: 4),
               Text(
                 teacherData.department,
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14),
                   color: Colors.grey,
                 ),
                 textAlign: TextAlign.center,
@@ -259,33 +245,36 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildStatsCard() {
+  Widget _buildStatsCard(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(AppTheme.mediumSpacing),
+      margin: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
         child: Container(
-          padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+          padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
           child: Row(
             children: [
               _buildStatItem(
+                context,
                 Icons.group,
                 '${teacherData.totalStudents}',
                 'Students',
-                AppTheme.primaryBlue,
+                AppThemeColor.primaryBlue,
               ),
               _buildStatDivider(),
               _buildStatItem(
+                context,
                 Icons.book,
                 '${teacherData.completedLessons}',
                 'Lessons',
-                AppTheme.primaryPurple,
+                AppThemeColor.primaryIndigo,
               ),
               _buildStatDivider(),
               _buildStatItem(
+                context,
                 Icons.trending_up,
                 '${teacherData.attendanceRate}%',
                 'Attendance',
@@ -298,33 +287,26 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildStatItem(IconData icon, String value, String label, Color color) {
+  Widget _buildStatItem(BuildContext context, IconData icon, String value, String label, Color color) {
     return Expanded(
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context) + 4),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: color, size: 24),
+            child: Icon(icon, color: color, size: AppThemeResponsiveness.getHeaderIconSize(context)),
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+            style: AppThemeResponsiveness.getStatValueStyle(context),
           ),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            style: AppThemeResponsiveness.getStatTitleStyle(context),
           ),
         ],
       ),
@@ -340,39 +322,35 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildInfoSection() {
+  Widget _buildInfoSection(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
+      margin: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getMediumSpacing(context)),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+          padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Personal Information',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.blue800,
-                ),
+                style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(color: AppThemeColor.blue800),
               ),
-              const SizedBox(height: AppTheme.mediumSpacing),
-              _buildInfoRow(Icons.email, 'Email', teacherData.email),
-              _buildInfoRow(Icons.phone, 'Phone', teacherData.phone),
-              _buildInfoRow(Icons.badge, 'Employee ID', teacherData.employeeId),
-              _buildInfoRow(Icons.school, 'Qualification', teacherData.qualification),
-              _buildInfoRow(Icons.work, 'Experience', teacherData.experience),
-              _buildInfoRow(Icons.calendar_today, 'Join Date', teacherData.joinDate),
-              _buildInfoRow(Icons.location_on, 'Address', teacherData.address),
-              const SizedBox(height: AppTheme.mediumSpacing),
-              _buildSubjectsSection(),
-              const SizedBox(height: AppTheme.mediumSpacing),
-              _buildClassesSection(),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              _buildInfoRow(context, Icons.email, 'Email', teacherData.email),
+              _buildInfoRow(context, Icons.phone, 'Phone', teacherData.phone),
+              _buildInfoRow(context, Icons.badge, 'Employee ID', teacherData.employeeId),
+              _buildInfoRow(context, Icons.school, 'Qualification', teacherData.qualification),
+              _buildInfoRow(context, Icons.work, 'Experience', teacherData.experience),
+              _buildInfoRow(context, Icons.calendar_today, 'Join Date', teacherData.joinDate),
+              _buildInfoRow(context, Icons.location_on, 'Address', teacherData.address),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              _buildSubjectsSection(context),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              _buildClassesSection(context),
             ],
           ),
         ),
@@ -380,30 +358,30 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppTheme.smallSpacing),
+      padding: EdgeInsets.only(bottom: AppThemeResponsiveness.getSmallSpacing(context)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: AppTheme.blue600),
-          const SizedBox(width: AppTheme.smallSpacing),
+          Icon(icon, size: AppThemeResponsiveness.getResponsiveIconSize(context, 20), color: AppThemeColor.blue600),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
                     color: Colors.grey,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -415,18 +393,18 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildSubjectsSection() {
+  Widget _buildSubjectsSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.subject, size: 20, color: AppTheme.blue600),
-            const SizedBox(width: AppTheme.smallSpacing),
-            const Text(
+            Icon(Icons.subject, size: AppThemeResponsiveness.getResponsiveIconSize(context, 20), color: AppThemeColor.blue600),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Text(
               'Teaching Subjects',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
                 color: Colors.grey,
                 fontWeight: FontWeight.w500,
               ),
@@ -435,19 +413,19 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
         ),
         const SizedBox(height: 6),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: AppThemeResponsiveness.getSmallSpacing(context) - 2,
+          runSpacing: AppThemeResponsiveness.getSmallSpacing(context) - 2,
           children: teacherData.subjects.map((subject) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getSmallSpacing(context) + 2, vertical: AppThemeResponsiveness.getSmallSpacing(context) / 2),
             decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-              borderRadius: BorderRadius.circular(20),
+              gradient: AppThemeColor.primaryGradient,
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getResponsiveRadius(context, 20)),
             ),
             child: Text(
               subject,
-              style: const TextStyle(
-                color: AppTheme.white,
-                fontSize: 12,
+              style: TextStyle(
+                color: AppThemeColor.white,
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -457,18 +435,18 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildClassesSection() {
+  Widget _buildClassesSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.class_, size: 20, color: AppTheme.blue600),
-            const SizedBox(width: AppTheme.smallSpacing),
-            const Text(
+            Icon(Icons.class_, size: AppThemeResponsiveness.getResponsiveIconSize(context, 20), color: AppThemeColor.blue600),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Text(
               'Assigned Classes',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
                 color: Colors.grey,
                 fontWeight: FontWeight.w500,
               ),
@@ -477,20 +455,20 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
         ),
         const SizedBox(height: 6),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: AppThemeResponsiveness.getSmallSpacing(context) - 2,
+          runSpacing: AppThemeResponsiveness.getSmallSpacing(context) - 2,
           children: teacherData.classes.map((className) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getSmallSpacing(context) + 2, vertical: AppThemeResponsiveness.getSmallSpacing(context) / 2),
             decoration: BoxDecoration(
-              color: AppTheme.blue100,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.blue200),
+              color: AppThemeColor.blue100,
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getResponsiveRadius(context, 20)),
+              border: Border.all(color: AppThemeColor.blue200),
             ),
             child: Text(
               className,
               style: TextStyle(
-                color: AppTheme.blue800,
-                fontSize: 12,
+                color: AppThemeColor.blue800,
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -500,42 +478,42 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
     );
   }
 
-  Widget _buildMenuSection() {
+  Widget _buildMenuSection(BuildContext context) {
     final menuItems = [
-      MenuItemData(Icons.edit, 'Edit Profile', 'Update personal information'),
-      MenuItemData(Icons.lock, 'Change Password', 'Update your password'),
-      MenuItemData(Icons.notifications, 'Notifications', 'Manage notification settings'),
-      MenuItemData(Icons.language, 'Language', 'Change app language'),
-      MenuItemData(Icons.help, 'Help & Support', 'Get help and support'),
-      MenuItemData(Icons.logout, 'Logout', 'Sign out of your account', isLogout: true),
+      MenuItemData(Icons.edit, 'Edit Profile', 'Update personal information','/'),
+      MenuItemData(Icons.lock, 'Change Password', 'Update your password','/'),
+      MenuItemData(Icons.notifications, 'Notifications', 'Manage notification settings',''),
+      MenuItemData(Icons.language, 'Language', 'Change app language', '/'),
+      MenuItemData(Icons.help, 'Help & Support', 'Get help and support', '/'),
+      MenuItemData(Icons.logout, 'Logout', 'Sign out of your account', '/',isLogout: true),
     ];
 
     return Container(
-      margin: const EdgeInsets.all(AppTheme.mediumSpacing),
+      margin: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
         child: Column(
-          children: menuItems.map((item) => _buildMenuItem(item)).toList(),
+          children: menuItems.map((item) => _buildMenuItem(context, item)).toList(),
         ),
       ),
     );
   }
 
-  Widget _buildMenuItem(MenuItemData item) {
+  Widget _buildMenuItem(BuildContext context, MenuItemData item) {
     return ListTile(
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
         decoration: BoxDecoration(
-          color: item.isLogout ? Colors.red.withOpacity(0.1) : AppTheme.blue50,
-          borderRadius: BorderRadius.circular(8),
+          color: item.isLogout ? Colors.red.withOpacity(0.1) : AppThemeColor.blue50,
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
         child: Icon(
           item.icon,
-          color: item.isLogout ? Colors.red : AppTheme.blue600,
-          size: 20,
+          color: item.isLogout ? Colors.red : AppThemeColor.blue600,
+          size: AppThemeResponsiveness.getIconSize(context),
         ),
       ),
       title: Text(
@@ -543,18 +521,19 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
         style: TextStyle(
           fontWeight: FontWeight.w500,
           color: item.isLogout ? Colors.red : Colors.black87,
+          fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 16),
         ),
       ),
       subtitle: Text(
         item.subtitle,
-        style: const TextStyle(
-          fontSize: 12,
+        style: TextStyle(
+          fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
           color: Colors.grey,
         ),
       ),
       trailing: Icon(
         Icons.arrow_forward_ios,
-        size: 16,
+        size: AppThemeResponsiveness.getResponsiveIconSize(context, 16),
         color: item.isLogout ? Colors.red : Colors.grey,
       ),
       onTap: () => _handleMenuTap(item),
@@ -569,7 +548,7 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${item.title} tapped'),
-          backgroundColor: AppTheme.primaryBlue,
+          backgroundColor: AppThemeColor.primaryBlue,
         ),
       );
     }
@@ -580,10 +559,10 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getDialogBorderRadius(context)),
         ),
-        title: const Text('Edit Profile'),
-        content: const Text('Profile editing functionality would be implemented here.'),
+        title: Text('Edit Profile', style: AppThemeResponsiveness.getDialogTitleStyle(context)),
+        content: Text('Profile editing functionality would be implemented here.', style: AppThemeResponsiveness.getDialogContentStyle(context)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -592,12 +571,12 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
           ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryBlue,
+              backgroundColor: AppThemeColor.primaryBlue,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context) / 2),
               ),
             ),
-            child: const Text('Save', style: TextStyle(color: AppTheme.white)),
+            child: const Text('Save', style: TextStyle(color: AppThemeColor.white)),
           ),
         ],
       ),
@@ -609,10 +588,10 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getDialogBorderRadius(context)),
         ),
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text('Logout', style: AppThemeResponsiveness.getDialogTitleStyle(context)),
+        content: Text('Are you sure you want to logout?', style: AppThemeResponsiveness.getDialogContentStyle(context)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -626,10 +605,10 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context) / 2),
               ),
             ),
-            child: const Text('Logout', style: TextStyle(color: AppTheme.white)),
+            child: const Text('Logout', style: TextStyle(color: AppThemeColor.white)),
           ),
         ],
       ),
@@ -637,49 +616,12 @@ class _TeacherProfilePageState extends State<TeacherProfilePage>
   }
 }
 
-class TeacherProfile {
-  final String name;
-  final String email;
-  final String phone;
-  final String employeeId;
-  final String department;
-  final String designation;
-  final String experience;
-  final String qualification;
-  final String address;
-  final String joinDate;
-  final List<String> subjects;
-  final List<String> classes;
-  final int totalStudents;
-  final int completedLessons;
-  final double attendanceRate;
-  final String profileImageUrl;
-
-  TeacherProfile({
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.employeeId,
-    required this.department,
-    required this.designation,
-    required this.experience,
-    required this.qualification,
-    required this.address,
-    required this.joinDate,
-    required this.subjects,
-    required this.classes,
-    required this.totalStudents,
-    required this.completedLessons,
-    required this.attendanceRate,
-    required this.profileImageUrl,
-  });
-}
-
 class MenuItemData {
   final IconData icon;
   final String title;
   final String subtitle;
   final bool isLogout;
+  final path;
 
-  MenuItemData(this.icon, this.title, this.subtitle, {this.isLogout = false});
+  MenuItemData(this.icon, this.title, this.subtitle, this.path ,{this.isLogout = false});
 }

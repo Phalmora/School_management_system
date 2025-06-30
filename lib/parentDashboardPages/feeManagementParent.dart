@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class FeePaymentParentPage extends StatefulWidget {
   @override
@@ -37,32 +36,27 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(AppTheme.defaultSpacing),
+          padding: AppThemeResponsiveness.getScreenPadding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Payment Summary Card
               _buildPaymentSummaryCard(),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
               // Quick Actions
               _buildQuickActionsCard(),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
               // Payment History
               Text(
                 'Payment History',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.white,
-                  fontFamily: 'Roboto',
-                ),
+                style: AppThemeResponsiveness.getSectionTitleStyle(context),
               ),
-              SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
 
               // Payment Records
               ...paymentHistory.map((record) => _buildPaymentCard(record)).toList(),
@@ -85,67 +79,83 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
         : null;
 
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeResponsiveness.getCardElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
       child: Container(
-        color: AppTheme.blue200,
-        padding: EdgeInsets.all(AppTheme.defaultSpacing),
+        decoration: BoxDecoration(
+          color: AppThemeColor.blue200,
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        ),
+        padding: AppThemeResponsiveness.getCardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.account_balance_wallet, color: AppTheme.blue600, size: 28),
-                SizedBox(width: AppTheme.smallSpacing),
+                Icon(
+                  Icons.account_balance_wallet,
+                  color: AppThemeColor.blue600,
+                  size: AppThemeResponsiveness.getHeaderIconSize(context),
+                ),
+                SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
                 Text(
                   'Payment Summary',
-                  style: AppTheme.FontStyle.copyWith(fontSize: 20, color: AppTheme.blue600),
+                  style: AppThemeResponsiveness.getTitleTextStyle(context).copyWith(
+                    color: AppThemeColor.blue600,
+                  ),
                 ),
               ],
             ),
-            SizedBox(height: AppTheme.defaultSpacing),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-            Row(
+            // Responsive layout for pending and last payment
+            AppThemeResponsiveness.isSmallPhone(context)
+                ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPaymentSummaryItem(
+                  'Pending Amount',
+                  '₹${pendingAmount.toStringAsFixed(0)}',
+                  context,
+                ),
+                SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                _buildPaymentSummaryItem(
+                  'Last Payment',
+                  lastPayment != null
+                      ? '₹${lastPayment.amount.toStringAsFixed(0)}'
+                      : 'No payments',
+                  context,
+                ),
+              ],
+            )
+                : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pending Amount',
-                      style: AppTheme.splashSubtitleStyle,
-                    ),
-                    Text(
-                      '₹${pendingAmount.toStringAsFixed(0)}',
-                      style: AppTheme.FontStyle.copyWith(fontSize: 24),
-                    ),
-                  ],
+                _buildPaymentSummaryItem(
+                  'Pending Amount',
+                  '₹${pendingAmount.toStringAsFixed(0)}',
+                  context,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Last Payment',
-                      style: AppTheme.splashSubtitleStyle,
-                    ),
-                    Text(
-                      lastPayment != null
-                          ? '₹${lastPayment.amount.toStringAsFixed(0)}'
-                          : 'No payments',
-                      style: AppTheme.FontStyle.copyWith(fontSize: 24),
-                    ),
-                  ],
+                _buildPaymentSummaryItem(
+                  'Last Payment',
+                  lastPayment != null
+                      ? '₹${lastPayment.amount.toStringAsFixed(0)}'
+                      : 'No payments',
+                  context,
+                  isAlignedRight: true,
                 ),
               ],
             ),
 
             if (lastPayment != null) ...[
-              SizedBox(height: AppTheme.smallSpacing),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
               Text(
                 'Paid on: ${_formatDate(lastPayment.paidDate!)}',
-                style: AppTheme.splashSubtitleStyle.copyWith(fontSize: 14),
+                style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12.0),
+                ),
               ),
             ],
           ],
@@ -154,44 +164,81 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
     );
   }
 
+  Widget _buildPaymentSummaryItem(String title, String amount, BuildContext context, {bool isAlignedRight = false}) {
+    return Column(
+      crossAxisAlignment: isAlignedRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppThemeResponsiveness.getSubHeadingStyle(context),
+        ),
+        SizedBox(height: 4.0),
+        Text(
+          amount,
+          style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+            fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 24.0),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildQuickActionsCard() {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeResponsiveness.getCardElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
       child: Padding(
-        padding: EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: AppThemeResponsiveness.getCardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Quick Actions',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.blue800,
-                fontFamily: 'Roboto',
+              style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 18.0),
+                color: AppThemeColor.blue800,
               ),
             ),
-            SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
 
-            Row(
+            // Responsive action buttons layout
+            AppThemeResponsiveness.isSmallPhone(context)
+                ? Column(
+              children: [
+                _buildActionButton(
+                  'Make Payment',
+                  Icons.payment,
+                  AppThemeColor.primaryBlue,
+                      () => _showPaymentDialog(),
+                ),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                _buildActionButton(
+                  'Download Receipt',
+                  Icons.download,
+                  AppThemeColor.primaryIndigo,
+                      () => _downloadReceipt(),
+                ),
+              ],
+            )
+                : Row(
               children: [
                 Expanded(
                   child: _buildActionButton(
                     'Make Payment',
                     Icons.payment,
-                    AppTheme.primaryBlue,
+                    AppThemeColor.primaryBlue,
                         () => _showPaymentDialog(),
                   ),
                 ),
-                SizedBox(width: AppTheme.mediumSpacing),
+                SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
                 Expanded(
                   child: _buildActionButton(
                     'Download Receipt',
                     Icons.download,
-                    AppTheme.primaryPurple,
+                    AppThemeColor.primaryIndigo,
                         () => _downloadReceipt(),
                   ),
                 ),
@@ -208,21 +255,25 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: AppTheme.white,
-        padding: EdgeInsets.symmetric(vertical: 15),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+        foregroundColor: AppThemeColor.white,
+        padding: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.getResponsiveHeight(context, 0.02),
+          horizontal: AppThemeResponsiveness.getSmallSpacing(context),
         ),
-        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
+        elevation: AppThemeResponsiveness.getButtonElevation(context),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 24),
+          Icon(icon, size: AppThemeResponsiveness.getIconSize(context)),
           SizedBox(height: 5),
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12.0),
               fontWeight: FontWeight.w600,
               fontFamily: 'Roboto',
             ),
@@ -235,140 +286,158 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
 
   Widget _buildPaymentCard(PaymentRecord record) {
     return Card(
-      elevation: 4,
-      margin: EdgeInsets.only(bottom: AppTheme.mediumSpacing),
+      elevation: AppThemeResponsiveness.getCardElevation(context),
+      margin: AppThemeResponsiveness.getHistoryCardMargin(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
       child: Padding(
-        padding: EdgeInsets.all(AppTheme.mediumSpacing),
+        padding: AppThemeResponsiveness.getCardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header with month and status
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  record.month,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.blue800,
-                    fontFamily: 'Roboto',
+                Expanded(
+                  child: Text(
+                    record.month,
+                    style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                      fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 16.0),
+                      color: AppThemeColor.blue800,
+                    ),
                   ),
                 ),
                 _buildStatusChip(record.status),
               ],
             ),
-            SizedBox(height: AppTheme.smallSpacing),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
 
-            Row(
+            // Amount and date section
+            AppThemeResponsiveness.isSmallPhone(context)
+                ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildPaymentDetailItem(
+                  'Amount',
+                  '₹${record.amount.toStringAsFixed(0)}',
+                  context,
+                ),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                _buildPaymentDetailItem(
+                  record.status == PaymentStatus.paid ? 'Paid Date' : 'Due Date',
+                  _formatDate(record.status == PaymentStatus.paid
+                      ? record.paidDate!
+                      : record.dueDate),
+                  context,
+                  isOverdue: record.status == PaymentStatus.overdue,
+                ),
+              ],
+            )
+                : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Amount',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontFamily: 'Roboto',
-                      ),
-                    ),
-                    Text(
-                      '₹${record.amount.toStringAsFixed(0)}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.blue800,
-                        fontFamily: 'Roboto',
-                      ),
-                    ),
-                  ],
+                _buildPaymentDetailItem(
+                  'Amount',
+                  '₹${record.amount.toStringAsFixed(0)}',
+                  context,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      record.status == PaymentStatus.paid ? 'Paid Date' : 'Due Date',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                        fontFamily: 'Roboto',
-                      ),
-                    ),
-                    Text(
-                      _formatDate(record.status == PaymentStatus.paid
-                          ? record.paidDate!
-                          : record.dueDate),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: record.status == PaymentStatus.overdue
-                            ? Colors.red
-                            : AppTheme.blue600,
-                        fontFamily: 'Roboto',
-                      ),
-                    ),
-                  ],
+                _buildPaymentDetailItem(
+                  record.status == PaymentStatus.paid ? 'Paid Date' : 'Due Date',
+                  _formatDate(record.status == PaymentStatus.paid
+                      ? record.paidDate!
+                      : record.dueDate),
+                  context,
+                  isAlignedRight: true,
+                  isOverdue: record.status == PaymentStatus.overdue,
                 ),
               ],
             ),
 
+            // Action buttons
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
             if (record.status != PaymentStatus.paid) ...[
-              SizedBox(height: AppTheme.mediumSpacing),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => _payNow(record),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: record.status == PaymentStatus.overdue
-                            ? Colors.red
-                            : AppTheme.primaryBlue,
-                        foregroundColor: AppTheme.white,
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: Text(
-                        'Pay Now',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Roboto',
-                        ),
-                      ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => _payNow(record),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: record.status == PaymentStatus.overdue
+                        ? Colors.red
+                        : AppThemeColor.primaryBlue,
+                    foregroundColor: AppThemeColor.white,
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppThemeResponsiveness.getResponsiveHeight(context, 0.015),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                    ),
+                    elevation: AppThemeResponsiveness.getButtonElevation(context),
+                  ),
+                  child: Text(
+                    'Pay Now',
+                    style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+                      fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 16.0),
                     ),
                   ),
-                ],
+                ),
               ),
             ] else ...[
-              SizedBox(height: AppTheme.mediumSpacing),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _downloadReceiptForRecord(record),
-                      icon: Icon(Icons.download, size: 16),
-                      label: Text('Download Receipt'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppTheme.primaryBlue,
-                        side: BorderSide(color: AppTheme.primaryBlue),
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => _downloadReceiptForRecord(record),
+                  icon: Icon(
+                    Icons.download,
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+                  ),
+                  label: Text(
+                    'Download Receipt',
+                    style: TextStyle(
+                      fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ],
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppThemeColor.primaryBlue,
+                    side: BorderSide(color: AppThemeColor.primaryBlue),
+                    padding: EdgeInsets.symmetric(
+                      vertical: AppThemeResponsiveness.getResponsiveHeight(context, 0.015),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                    ),
+                  ),
+                ),
               ),
             ],
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPaymentDetailItem(String title, String value, BuildContext context, {bool isAlignedRight = false, bool isOverdue = false}) {
+    return Column(
+      crossAxisAlignment: isAlignedRight ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+            fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12.0),
+          ),
+        ),
+        SizedBox(height: 4.0),
+        Text(
+          value,
+          style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+            fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 18.0),
+            fontWeight: FontWeight.bold,
+            color: isOverdue ? Colors.red : AppThemeColor.blue800,
+          ),
+        ),
+      ],
     );
   }
 
@@ -392,16 +461,16 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: AppThemeResponsiveness.getStatusBadgePadding(context),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getResponsiveRadius(context, 20.0)),
         border: Border.all(color: color, width: 1),
       ),
       child: Text(
         text,
         style: TextStyle(
-          fontSize: 12,
+          fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
           fontWeight: FontWeight.w600,
           color: color,
           fontFamily: 'Roboto',
@@ -419,36 +488,24 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Make Payment'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getDialogBorderRadius(context)),
+          ),
+          title: Text(
+            'Make Payment',
+            style: AppThemeResponsiveness.getDialogTitleStyle(context),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Select payment method:'),
-              SizedBox(height: 20),
-              ListTile(
-                leading: Icon(Icons.credit_card),
-                title: Text('Credit/Debit Card'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _processPayment('Card');
-                },
+              Text(
+                'Select payment method:',
+                style: AppThemeResponsiveness.getDialogContentStyle(context),
               ),
-              ListTile(
-                leading: Icon(Icons.account_balance),
-                title: Text('Net Banking'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _processPayment('Net Banking');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.phone_android),
-                title: Text('UPI'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _processPayment('UPI');
-                },
-              ),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+              _buildPaymentMethodTile('Credit/Debit Card', Icons.credit_card, 'Card'),
+              _buildPaymentMethodTile('Net Banking', Icons.account_balance, 'Net Banking'),
+              _buildPaymentMethodTile('UPI', Icons.phone_android, 'UPI'),
             ],
           ),
         );
@@ -456,12 +513,40 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
     );
   }
 
+  Widget _buildPaymentMethodTile(String title, IconData icon, String method) {
+    return ListTile(
+      leading: Icon(
+        icon,
+        size: AppThemeResponsiveness.getIconSize(context),
+        color: AppThemeColor.primaryBlue,
+      ),
+      title: Text(
+        title,
+        style: AppThemeResponsiveness.getBodyTextStyle(context),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        _processPayment(method);
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+      ),
+    );
+  }
+
   void _processPayment(String method) {
     // Implement payment processing logic here
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Processing payment via $method...'),
-        backgroundColor: AppTheme.primaryBlue,
+        content: Text(
+          'Processing payment via $method...',
+          style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
+        ),
+        backgroundColor: AppThemeColor.primaryBlue,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
       ),
     );
   }
@@ -470,8 +555,15 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
     // Implement specific payment for a record
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Processing payment for ${record.month}...'),
-        backgroundColor: AppTheme.primaryBlue,
+        content: Text(
+          'Processing payment for ${record.month}...',
+          style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
+        ),
+        backgroundColor: AppThemeColor.primaryBlue,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
       ),
     );
   }
@@ -480,8 +572,15 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
     // Implement receipt download logic
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Downloading latest receipt...'),
-        backgroundColor: AppTheme.primaryPurple,
+        content: Text(
+          'Downloading latest receipt...',
+          style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
+        ),
+        backgroundColor: AppThemeColor.primaryIndigo,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
       ),
     );
   }
@@ -490,8 +589,15 @@ class _FeePaymentParentPageState extends State<FeePaymentParentPage> {
     // Implement specific receipt download
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Downloading receipt for ${record.month}...'),
-        backgroundColor: AppTheme.primaryPurple,
+        content: Text(
+          'Downloading receipt for ${record.month}...',
+          style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
+        ),
+        backgroundColor: AppThemeColor.primaryIndigo,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
       ),
     );
   }

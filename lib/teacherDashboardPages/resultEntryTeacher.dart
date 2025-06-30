@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/CommonLogic/tabBar.dart';
 import 'package:school/model/resultModelTeacher.dart';
-
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class ResultEntryPage extends StatefulWidget {
   const ResultEntryPage({Key? key}) : super(key: key);
@@ -55,7 +54,7 @@ class _ResultEntryPageState extends State<ResultEntryPage>
       });
     } catch (e) {
       setState(() => _isLoading = false);
-      _showSnackBar('Error loading data', isError: true);
+      _showSnackBar('Error loading data: $e', isError: true); // Added error message
     }
   }
 
@@ -68,8 +67,6 @@ class _ResultEntryPageState extends State<ResultEntryPage>
       ),
     );
   }
-
-  // --- New and Corrected Methods ---
 
   Future<void> _saveResult(ExamResult result) async {
     final success = await _resultService.saveResult(result);
@@ -102,29 +99,40 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     }
   }
 
-  // --- End New and Corrected Methods ---
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
+        decoration: const BoxDecoration(gradient: AppThemeColor.primaryGradient),
         child: SafeArea(
           child: Column(
             children: [
-              _buildHeader(),
-              _buildTabBar(),
+              _buildHeader(context), // Pass context
+              CustomTabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(text: 'Entry'),
+                  Tab(text: 'Result'),
+                  Tab(text: 'Statistics'),
+                ],
+                getSpacing: AppThemeResponsiveness.getDefaultSpacing,
+                getBorderRadius: AppThemeResponsiveness.getInputBorderRadius,
+                getFontSize: AppThemeResponsiveness.getTabFontSize,
+                backgroundColor: AppThemeColor.blue50,
+                selectedColor: AppThemeColor.primaryBlue,
+                unselectedColor: AppThemeColor.blue600,
+              ),
               Expanded(
                 child: _isLoading
                     ? const Center(
-                    child: CircularProgressIndicator(color: AppTheme.white))
+                    child: CircularProgressIndicator(color: AppThemeColor.white))
                     : TabBarView(
                   controller: _tabController,
                   children: [
-                    _buildMarksEntryTab(),
-                    _buildViewResultsTab(),
-                    _buildStatisticsTab(), // Now correctly defined
+                    _buildMarksEntryTab(context), // Pass context
+                    _buildViewResultsTab(context), // Pass context
+                    _buildStatisticsTab(context), // Pass context
                   ],
                 ),
               ),
@@ -135,112 +143,169 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-      child: Row(
-        children: [
-          const SizedBox(width: AppTheme.smallSpacing),
-          const Icon(Icons.assessment, color: AppTheme.white, size: 30),
-          const SizedBox(width: AppTheme.smallSpacing),
-          const Text('Results & Marks', style: AppTheme.FontStyle),
-        ],
+  Widget _buildHeader(BuildContext context) {
+    return Center(
+      child: Container(
+        // Constrain max width for larger screens
+        constraints: BoxConstraints(
+          maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+        ),
+        margin: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.assessment,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context), // Responsive icon size
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)), // Responsive spacing
+            Flexible( // Use Flexible to prevent overflow on small screens
+              child: Text(
+                'Results & Marks',
+                style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                      context,
+                      AppThemeResponsiveness.getSectionTitleStyle(context).fontSize! + 4 // Adjust font size
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+      margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
       decoration: BoxDecoration(
-        color: AppTheme.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+        color: AppThemeColor.blue50,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: TabBar(
         controller: _tabController,
         indicator: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          color: AppThemeColor.primaryBlue,
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          boxShadow: [
+            BoxShadow(
+              color: AppThemeColor.primaryBlue.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        labelColor: AppTheme.primaryBlue,
-        unselectedLabelColor: AppTheme.white,
-        labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelColor: AppThemeColor.white,
+        unselectedLabelColor: AppThemeColor.blue600,
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: AppThemeResponsiveness.getTabFontSize(context),
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: AppThemeResponsiveness.getTabFontSize(context),
+        ),
         tabs: const [
           Tab(text: 'Entry'),
-          Tab(text: 'Results'),
-          Tab(text: 'Statistics'),
+          Tab(text: 'Result'),
+          Tab(text: 'Statistics',)
         ],
       ),
     );
   }
 
-  Widget _buildMarksEntryTab() {
+  Widget _buildMarksEntryTab(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
       child: Column(
         children: [
-          _buildExamSubjectSelector(),
-          const SizedBox(height: AppTheme.defaultSpacing),
+          _buildExamSubjectSelector(context), // Pass context
+          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive spacing
           if (_selectedExam != null && _selectedSubject != null)
-            _buildStudentMarksEntryList(),
+            _buildStudentMarksEntryList(context), // Pass context
         ],
       ),
     );
   }
 
-  Widget _buildExamSubjectSelector() {
+  Widget _buildExamSubjectSelector(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)), // Responsive border radius
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Select Exam & Subject',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+              style: AppThemeResponsiveness.getHeadingStyle(context).copyWith( // Responsive font size
                 color: Colors.grey[800],
               ),
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
             DropdownButtonFormField<Exam>(
               value: _selectedExam,
               decoration: InputDecoration(
                 labelText: 'Select Exam',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)), // Responsive border radius
                 ),
-                prefixIcon: const Icon(Icons.quiz),
+                prefixIcon: Icon(Icons.quiz, size: AppThemeResponsiveness.getIconSize(context) * 0.8), // Responsive icon size
               ),
               items: _exams.map((exam) {
                 return DropdownMenuItem(
                   value: exam,
-                  child: Text('${exam.name} (${exam.type.replaceAll('_', ' ').toUpperCase()})'),
+                  child: Text(
+                    '${exam.name} (${exam.type.replaceAll('_', ' ').toUpperCase()})',
+                    style: AppThemeResponsiveness.getBodyTextStyle(context), // Responsive text style
+                  ),
                 );
               }).toList(),
               onChanged: (exam) {
                 setState(() => _selectedExam = exam);
               },
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
             DropdownButtonFormField<Subject>(
               value: _selectedSubject,
               decoration: InputDecoration(
                 labelText: 'Select Subject',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)), // Responsive border radius
                 ),
-                prefixIcon: const Icon(Icons.book),
+                prefixIcon: Icon(Icons.book, size: AppThemeResponsiveness.getIconSize(context) * 0.8), // Responsive icon size
               ),
               items: _subjects.map((subject) {
                 return DropdownMenuItem(
                   value: subject,
-                  child: Text('${subject.name} (${subject.code})'),
+                  child: Text(
+                    '${subject.name} (${subject.code})',
+                    style: AppThemeResponsiveness.getBodyTextStyle(context), // Responsive text style
+                  ),
                 );
               }).toList(),
               onChanged: (subject) {
@@ -253,14 +318,14 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildStudentMarksEntryList() {
+  Widget _buildStudentMarksEntryList(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)), // Responsive border radius
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -269,31 +334,27 @@ class _ResultEntryPageState extends State<ResultEntryPage>
               children: [
                 Text(
                   'Enter Marks',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                  style: AppThemeResponsiveness.getHeadingStyle(context).copyWith( // Responsive font size
                     color: Colors.grey[800],
                   ),
                 ),
                 Text(
                   'Max: ${_selectedSubject!.maxMarks}',
-                  style: TextStyle(
-                    fontSize: 14,
+                  style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith( // Responsive font size
                     color: Colors.grey[600],
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _students.length,
-              separatorBuilder: (context, index) => const SizedBox(height: AppTheme.smallSpacing),
+              separatorBuilder: (context, index) => SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)), // Responsive spacing
               itemBuilder: (context, index) {
                 final student = _students[index];
-                return _buildStudentMarksCard(student);
+                return _buildStudentMarksCard(context, student); // Pass context
               },
             ),
           ],
@@ -302,7 +363,7 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildStudentMarksCard(Student student) {
+  Widget _buildStudentMarksCard(BuildContext context, Student student) {
     return FutureBuilder<ExamResult?>(
       future: _resultService.getResult(
         student.id,
@@ -322,53 +383,54 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildViewResultsTab() {
+  Widget _buildViewResultsTab(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
       child: Column(
         children: [
-          _buildResultsExamSelector(),
-          const SizedBox(height: AppTheme.defaultSpacing),
+          _buildResultsExamSelector(context), // Pass context
+          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive spacing
           if (_selectedExam != null)
-            _buildStudentResultsList(),
+            _buildStudentResultsDisplay(context), // New responsive method
         ],
       ),
     );
   }
 
-  Widget _buildResultsExamSelector() {
+  Widget _buildResultsExamSelector(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)), // Responsive border radius
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'View Results',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+              style: AppThemeResponsiveness.getHeadingStyle(context).copyWith( // Responsive font size
                 color: Colors.grey[800],
               ),
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
             DropdownButtonFormField<Exam>(
               value: _selectedExam,
               decoration: InputDecoration(
                 labelText: 'Select Exam',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)), // Responsive border radius
                 ),
-                prefixIcon: const Icon(Icons.quiz),
+                prefixIcon: Icon(Icons.quiz, size: AppThemeResponsiveness.getIconSize(context) * 0.8), // Responsive icon size
               ),
               items: _exams.map((exam) {
                 return DropdownMenuItem(
                   value: exam,
-                  child: Text('${exam.name} (${exam.type.replaceAll('_', ' ').toUpperCase()})'),
+                  child: Text(
+                    '${exam.name} (${exam.type.replaceAll('_', ' ').toUpperCase()})',
+                    style: AppThemeResponsiveness.getBodyTextStyle(context), // Responsive text style
+                  ),
                 );
               }).toList(),
               onChanged: (exam) {
@@ -381,7 +443,7 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildStudentResultsList() {
+  Widget _buildStudentResultsDisplay(BuildContext context) {
     return FutureBuilder<List<ExamResult>>(
       future: _resultService.getResultsByExam(_selectedExam!.id),
       builder: (context, snapshot) {
@@ -392,20 +454,21 @@ class _ResultEntryPageState extends State<ResultEntryPage>
         final results = snapshot.data ?? [];
         if (results.isEmpty) {
           return Card(
-            elevation: AppTheme.cardElevation,
+            elevation: AppThemeColor.cardElevation,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
             ),
-            child: const Padding(
-              padding: EdgeInsets.all(AppTheme.largeSpacing),
+            child: Padding(
+              padding: EdgeInsets.all(AppThemeResponsiveness.getLargeSpacing(context)), // Responsive padding
               child: Center(
                 child: Column(
                   children: [
-                    Icon(Icons.assignment, size: 60, color: Colors.grey),
-                    SizedBox(height: AppTheme.mediumSpacing),
+                    Icon(Icons.assignment, size: AppThemeResponsiveness.getHeaderIconSize(context), color: Colors.grey), // Responsive icon size
+                    SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
                     Text(
                       'No results found for this exam',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                      style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(color: Colors.grey), // Responsive text style
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -421,11 +484,19 @@ class _ResultEntryPageState extends State<ResultEntryPage>
           studentResults[result.studentId]!.add(result);
         }
 
-        return ListView.separated(
+        // Conditional rendering for Grid vs List based on screen size
+        return AppThemeResponsiveness.isDesktop(context)
+            ? GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero, // Padding handled by parent
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: AppThemeResponsiveness.getGridCrossAxisCount(context), // Responsive grid count
+            crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context), // Responsive spacing
+            mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context), // Responsive spacing
+            childAspectRatio: AppThemeResponsiveness.getGridChildAspectRatio(context) * 1.2, // Adjust aspect ratio for content
+          ),
           itemCount: studentResults.length,
-          separatorBuilder: (context, index) => const SizedBox(height: AppTheme.smallSpacing),
           itemBuilder: (context, index) {
             final studentId = studentResults.keys.elementAt(index);
             final student = _students.firstWhere((s) => s.id == studentId);
@@ -433,7 +504,24 @@ class _ResultEntryPageState extends State<ResultEntryPage>
               future: _resultService.getStudentSummary(studentId, _selectedExam!.id),
               builder: (context, summarySnapshot) {
                 final summary = summarySnapshot.data;
-                return _buildStudentResultCard(student, summary);
+                return _buildStudentResultGridCard(context, student, summary); // New grid card widget
+              },
+            );
+          },
+        )
+            : ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: studentResults.length,
+          separatorBuilder: (context, index) => SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)), // Responsive spacing
+          itemBuilder: (context, index) {
+            final studentId = studentResults.keys.elementAt(index);
+            final student = _students.firstWhere((s) => s.id == studentId);
+            return FutureBuilder<StudentResultSummary>(
+              future: _resultService.getStudentSummary(studentId, _selectedExam!.id),
+              builder: (context, summarySnapshot) {
+                final summary = summarySnapshot.data;
+                return _buildStudentResultCard(context, student, summary); // Pass context
               },
             );
           },
@@ -442,41 +530,45 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildStudentResultCard(Student student, StudentResultSummary? summary) {
+  Widget _buildStudentResultCard(BuildContext context, Student student, StudentResultSummary? summary) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)), // Responsive border radius
       ),
       child: ExpansionTile(
         leading: CircleAvatar(
-          backgroundColor: AppTheme.primaryBlue,
+          backgroundColor: AppThemeColor.primaryBlue,
+          radius: AppThemeResponsiveness.getDashboardCardIconSize(context) * 0.5, // Responsive size
           child: Text(
             student.name.substring(0, 1).toUpperCase(),
-            style: const TextStyle(
-              color: AppTheme.white,
-              fontWeight: FontWeight.bold,
+            style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+              color: AppThemeColor.white,
+              fontSize: AppThemeResponsiveness.getDashboardCardTitleStyle(context).fontSize! * 0.8, // Adjust font for avatar
             ),
           ),
         ),
         title: Text(
           student.name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context), // Responsive font size
         ),
-        subtitle: Text('Roll No: ${student.rollNumber}'),
+        subtitle: Text(
+          'Roll No: ${student.rollNumber}',
+          style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context), // Responsive font size
+        ),
         trailing: summary != null
             ? Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: AppThemeResponsiveness.getStatusBadgePadding(context), // Responsive padding
           decoration: BoxDecoration(
             color: _getGradeColor(summary.overallGrade),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getStatusBadgeBorderRadius(context)), // Responsive border radius
           ),
           child: Text(
             '${summary.percentage.toStringAsFixed(1)}% (${summary.overallGrade})',
-            style: const TextStyle(
-              color: AppTheme.white,
+            style: TextStyle(
+              color: AppThemeColor.white,
               fontWeight: FontWeight.bold,
-              fontSize: 12,
+              fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context), // Responsive font size
             ),
           ),
         )
@@ -484,22 +576,22 @@ class _ResultEntryPageState extends State<ResultEntryPage>
         children: [
           if (summary != null)
             Padding(
-              padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+              padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildResultStat('Total',
+                      _buildResultStat(context, 'Total', // Pass context
                           '${summary.totalMarksObtained.toInt()}/${summary.totalMaxMarks.toInt()}'),
-                      _buildResultStat('Percentage',
+                      _buildResultStat(context, 'Percentage', // Pass context
                           '${summary.percentage.toStringAsFixed(1)}%'),
-                      _buildResultStat('Grade', summary.overallGrade),
-                      _buildResultStat('Pass/Total',
+                      _buildResultStat(context, 'Grade', summary.overallGrade), // Pass context
+                      _buildResultStat(context, 'Pass/Total', // Pass context
                           '${summary.subjectsPassed}/${summary.totalSubjects}'),
                     ],
                   ),
-                  const SizedBox(height: AppTheme.defaultSpacing),
+                  SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive spacing
                 ],
               ),
             ),
@@ -508,75 +600,134 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildResultStat(String label, String value) {
+  // New Widget for Grid layout for results
+  Widget _buildStudentResultGridCard(BuildContext context, Student student, StudentResultSummary? summary) {
+    return Card(
+      elevation: AppThemeColor.cardElevation,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+      ),
+      child: InkWell(
+        onTap: () {
+          // You can expand this to show a dialog with more details like in SubjectAndMarks
+        },
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        child: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getGridItemPadding(context)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundColor: AppThemeColor.primaryBlue,
+                radius: AppThemeResponsiveness.getGridItemIconSize(context) * 0.4, // Adjust size
+                child: Text(
+                  student.name.substring(0, 1).toUpperCase(),
+                  style: AppThemeResponsiveness.getGridItemTitleStyle(context).copyWith(color: AppThemeColor.white, fontSize: AppThemeResponsiveness.getGridItemTitleStyle(context).fontSize! * 0.8),
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              Text(
+                student.name,
+                style: AppThemeResponsiveness.getGridItemTitleStyle(context),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Roll No: ${student.rollNumber}',
+                style: AppThemeResponsiveness.getGridItemSubtitleStyle(context),
+              ),
+              if (summary != null) ...[
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                Container(
+                  padding: AppThemeResponsiveness.getStatusBadgePadding(context),
+                  decoration: BoxDecoration(
+                    color: _getGradeColor(summary.overallGrade),
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getStatusBadgeBorderRadius(context)),
+                  ),
+                  child: Text(
+                    '${summary.percentage.toStringAsFixed(1)}% (${summary.overallGrade})',
+                    style: TextStyle(
+                      color: AppThemeColor.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResultStat(BuildContext context, String label, String value) {
     return Column(
       children: [
         Text(
           value,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+          style: AppThemeResponsiveness.getStatValueStyle(context), // Responsive font size
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2), // Responsive spacing
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: AppThemeResponsiveness.getStatTitleStyle(context), // Responsive font size
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildStatisticsTab() {
+  Widget _buildStatisticsTab(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
       child: Column(
         children: [
-          _buildStatisticsExamSelector(),
-          const SizedBox(height: AppTheme.defaultSpacing),
+          _buildStatisticsExamSelector(context), // Pass context
+          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive spacing
           if (_selectedExam != null)
-            _buildClassStatisticsCard(),
+            _buildClassStatisticsCard(context), // Pass context
         ],
       ),
     );
   }
 
-  Widget _buildStatisticsExamSelector() {
+  Widget _buildStatisticsExamSelector(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)), // Responsive border radius
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Class Statistics',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+              style: AppThemeResponsiveness.getHeadingStyle(context).copyWith( // Responsive font size
                 color: Colors.grey[800],
               ),
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
             DropdownButtonFormField<Exam>(
               value: _selectedExam,
               decoration: InputDecoration(
                 labelText: 'Select Exam',
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)), // Responsive border radius
                 ),
-                prefixIcon: const Icon(Icons.quiz),
+                prefixIcon: Icon(Icons.quiz, size: AppThemeResponsiveness.getIconSize(context) * 0.8), // Responsive icon size
               ),
               items: _exams.map((exam) {
                 return DropdownMenuItem(
                   value: exam,
-                  child: Text('${exam.name} (${exam.type.replaceAll('_', ' ').toUpperCase()})'),
+                  child: Text(
+                    '${exam.name} (${exam.type.replaceAll('_', ' ').toUpperCase()})',
+                    style: AppThemeResponsiveness.getBodyTextStyle(context), // Responsive text style
+                  ),
                 );
               }).toList(),
               onChanged: (exam) {
@@ -592,29 +743,33 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     );
   }
 
-  Widget _buildClassStatisticsCard() {
+  Widget _buildClassStatisticsCard(BuildContext context) {
     if (_selectedExam == null) {
-      return const SizedBox.shrink(); // Or a message indicating no exam selected
+      return const SizedBox.shrink();
     }
 
+    // Call getClassStatistics within the FutureBuilder or ensure it's reactive
+    // For simplicity, assuming _resultService.getClassStatistics is a synchronous getter for now
+    // If it's asynchronous, you'd need another FutureBuilder here.
     final classStats = _resultService.getClassStatistics(_selectedExam!.id);
 
     if (classStats['totalStudents'] == 0) {
       return Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
-        child: const Padding(
-          padding: EdgeInsets.all(AppTheme.largeSpacing),
+        child: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getLargeSpacing(context)), // Responsive padding
           child: Center(
             child: Column(
               children: [
-                Icon(Icons.bar_chart, size: 60, color: Colors.grey),
-                SizedBox(height: AppTheme.mediumSpacing),
+                Icon(Icons.bar_chart, size: AppThemeResponsiveness.getHeaderIconSize(context), color: Colors.grey), // Responsive icon size
+                SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
                 Text(
                   'No statistics available for this exam yet.',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(color: Colors.grey), // Responsive text style
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -624,49 +779,47 @@ class _ResultEntryPageState extends State<ResultEntryPage>
     }
 
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)), // Responsive border radius
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive padding
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Overall Class Performance for ${_selectedExam!.name}',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+              style: AppThemeResponsiveness.getHeadingStyle(context).copyWith( // Responsive font size
                 color: Colors.grey[800],
               ),
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
-            _buildStatRow('Total Students', classStats['totalStudents'].toString()),
-            _buildStatRow('Average Percentage', '${classStats['averagePercentage'].toStringAsFixed(1)}%'),
-            _buildStatRow('Highest Marks', '${classStats['highestMarks'].toStringAsFixed(1)}%'),
-            _buildStatRow('Lowest Marks', '${classStats['lowestMarks'].toStringAsFixed(1)}%'),
-            _buildStatRow('Students Passed', classStats['passedStudents'].toString()),
-            _buildStatRow('Students Failed', classStats['failedStudents'].toString()),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)), // Responsive spacing
+            _buildStatRow(context, 'Total Students', classStats['totalStudents'].toString()), // Pass context
+            _buildStatRow(context, 'Average Percentage', '${classStats['averagePercentage'].toStringAsFixed(1)}%'), // Pass context
+            _buildStatRow(context, 'Highest Marks', '${classStats['highestMarks'].toStringAsFixed(1)}%'), // Pass context
+            _buildStatRow(context, 'Lowest Marks', '${classStats['lowestMarks'].toStringAsFixed(1)}%'), // Pass context
+            _buildStatRow(context, 'Students Passed', classStats['passedStudents'].toString()), // Pass context
+            _buildStatRow(context, 'Students Failed', classStats['failedStudents'].toString()), // Pass context
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatRow(String label, String value) {
+  Widget _buildStatRow(BuildContext context, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppTheme.smallSpacing / 2),
+      padding: EdgeInsets.symmetric(vertical: AppThemeResponsiveness.getSmallSpacing(context) / 2), // Responsive padding
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
-            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.grey[700]), // Responsive font size
           ),
           Text(
             value,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppThemeResponsiveness.getStatValueStyle(context), // Responsive font size
           ),
         ],
       ),
@@ -734,7 +887,7 @@ class _StudentMarksEntryCardState extends State<_StudentMarksEntryCard> {
   void _updateGradeAndPassStatus(double marks) {
     setState(() {
       _currentGrade = _calculateGrade(marks);
-      _isPassed = marks >= (widget.subject.maxMarks * 0.33);
+      _isPassed = marks >= (widget.subject.maxMarks * 0.33); // Assuming 33% is passing
     });
   }
 
@@ -755,46 +908,50 @@ class _StudentMarksEntryCardState extends State<_StudentMarksEntryCard> {
       margin: EdgeInsets.zero,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)), // Responsive border radius
         side: BorderSide(color: Colors.grey.shade300, width: 0.5),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.smallSpacing),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)), // Responsive padding
         child: Row(
           children: [
             Expanded(
-              flex: 3,
+              flex: AppThemeResponsiveness.isMobile(context) ? 3 : 2, // Adjust flex based on screen size
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     widget.student.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: AppThemeResponsiveness.getDashboardCardTitleStyle(context), // Responsive text style
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     'Roll No: ${widget.student.rollNumber}',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                    style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context), // Responsive text style
                   ),
                 ],
               ),
             ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)), // Responsive spacing
             Expanded(
-              flex: 2,
+              flex: AppThemeResponsiveness.isMobile(context) ? 2 : 1, // Adjust flex based on screen size
               child: TextFormField(
                 controller: _marksController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: 'Marks',
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+                    vertical: AppThemeResponsiveness.getSmallSpacing(context) * 0.8,
+                  ), // Responsive content padding
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)), // Responsive border radius
                   ),
                 ),
                 onFieldSubmitted: (value) => _saveMarks(),
               ),
             ),
-            const SizedBox(width: AppTheme.smallSpacing),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)), // Responsive spacing
             Expanded(
               flex: 1,
               child: Text(
@@ -803,12 +960,13 @@ class _StudentMarksEntryCardState extends State<_StudentMarksEntryCard> {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: _getGradeColor(_currentGrade),
+                  fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize, // Responsive font size
                 ),
               ),
             ),
-            const SizedBox(width: AppTheme.smallSpacing),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)), // Responsive spacing
             IconButton(
-              icon: const Icon(Icons.save, color: AppTheme.primaryBlue),
+              icon: Icon(Icons.save, color: AppThemeColor.primaryBlue, size: AppThemeResponsiveness.getIconSize(context) * 0.8), // Responsive icon size
               onPressed: _saveMarks,
             ),
           ],

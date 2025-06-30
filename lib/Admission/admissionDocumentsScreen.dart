@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
 import 'package:school/Admission/privacyPolicy.dart';
 import 'package:school/Admission/termsAndCondition.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class AdmissionDocumentsScreen extends StatefulWidget {
   @override
@@ -46,42 +44,42 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Center(
             child: ConstrainedBox( // Changed to ConstrainedBox for consistency
               constraints: BoxConstraints(
-                maxWidth: AppTheme.getMaxWidth(context),
+                maxWidth: AppThemeResponsiveness.getMaxWidth(context),
               ),
               child: SingleChildScrollView(
-                padding: AppTheme.getScreenPadding(context),
+                padding: AppThemeResponsiveness.getScreenPadding(context),
                 child: Column(
                   children: [
                     _buildProgressIndicator(4, 4),
-                    SizedBox(height: AppTheme.getDefaultSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                     Text(
                       'Document Upload',
-                      style: AppTheme.getFontStyle(context),
+                      style: AppThemeResponsiveness.getFontStyle(context),
                     ),
-                    SizedBox(height: AppTheme.getSmallSpacing(context)), // Consistent spacing
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)), // Consistent spacing
                     Text(
                       'Please upload all necessary documents for admission', // Added subtitle for consistency
-                      style: AppTheme.getSplashSubtitleStyle(context),
+                      style: AppThemeResponsiveness.getSplashSubtitleStyle(context),
                     ),
-                    SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                     Card(
-                      elevation: AppTheme.getCardElevation(context),
+                      elevation: AppThemeResponsiveness.getCardElevation(context),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+                        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
                       ),
                       child: Padding( // Changed to Padding for consistency
-                        padding: AppTheme.getCardPadding(context),
+                        padding: AppThemeResponsiveness.getCardPadding(context),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             _buildSectionHeader('Required Documents'),
-                            SizedBox(height: AppTheme.getMediumSpacing(context)),
+                            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                             _buildDocumentTile(
                               title: 'Passport Size Photo',
                               subtitle: 'Recent photograph of the student',
@@ -114,9 +112,9 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                               icon: Icons.badge,
                               allowedTypes: ['pdf', 'jpg', 'jpeg', 'png'],
                             ),
-                            SizedBox(height: AppTheme.getExtraLargeSpacing(context)), // Consistent spacing
+                            SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)), // Consistent spacing
                             _buildSectionHeader('Optional Documents'),
-                            SizedBox(height: AppTheme.getMediumSpacing(context)),
+                            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                             _buildDocumentTile(
                               title: 'Transfer Certificate',
                               subtitle: 'From previous school (if applicable)',
@@ -149,13 +147,13 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                               icon: Icons.medical_services,
                               allowedTypes: ['pdf', 'jpg', 'jpeg', 'png'],
                             ),
-                            SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                            SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                             _buildInfoContainer(),
-                            SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                            SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                             _buildTermsAndConditionsSection(),
-                            SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                            SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                             _buildNavigationButtons(),
-                            SizedBox(height: AppTheme.getDefaultSpacing(context)),
+                            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                             _buildSubmitButton(),
                           ],
                         ),
@@ -173,7 +171,7 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
 
   Widget _buildProgressIndicator(int currentStep, int totalSteps) {
     return Container(
-      padding: AppTheme.getVerticalPadding(context),
+      padding: AppThemeResponsiveness.getVerticalPadding(context),
       child: Row(
         children: List.generate(totalSteps, (index) {
           bool isCompleted = index < currentStep;
@@ -182,14 +180,14 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
           return Expanded(
             child: Container(
               margin: EdgeInsets.symmetric(
-                horizontal: AppTheme.getSmallSpacing(context) / 4, // Consistent margin
+                horizontal: AppThemeResponsiveness.getSmallSpacing(context) / 4, // Consistent margin
               ),
-              height: AppTheme.isMobile(context) ? 4 : 6,
+              height: AppThemeResponsiveness.isMobile(context) ? 4 : 6,
               decoration: BoxDecoration(
                 color: isCompleted || isCurrent
-                    ? AppTheme.blue600
+                    ? AppThemeColor.blue600
                     : Colors.grey[300],
-                borderRadius: BorderRadius.circular(AppTheme.isMobile(context) ? 2 : 3),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.isMobile(context) ? 2 : 3),
               ),
             ),
           );
@@ -200,11 +198,11 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
 
   Widget _buildSectionHeader(String title) {
     return Padding( // Added Padding for consistency with contact screen
-      padding: EdgeInsets.only(bottom: AppTheme.getSmallSpacing(context)),
+      padding: EdgeInsets.only(bottom: AppThemeResponsiveness.getSmallSpacing(context)),
       child: Text(
         title,
-        style: AppTheme.getHeadingStyle(context).copyWith(
-          color: AppTheme.blue600,
+        style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+          color: AppThemeColor.blue600,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -223,29 +221,29 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
     PlatformFile? selectedFile = selectedFiles[documentKey];
 
     return Card(
-      margin: EdgeInsets.only(bottom: AppTheme.getMediumSpacing(context)),
-      elevation: AppTheme.isMobile(context) ? 2 : 3,
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
+      elevation: AppThemeResponsiveness.isMobile(context) ? 2 : 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
       ),
       child: Column(
         children: [
           ListTile(
             contentPadding: EdgeInsets.symmetric(
-              horizontal: AppTheme.getDefaultSpacing(context), // Consistent padding
-              vertical: AppTheme.getMediumSpacing(context), // Adjusted for better spacing
+              horizontal: AppThemeResponsiveness.getDefaultSpacing(context), // Consistent padding
+              vertical: AppThemeResponsiveness.getMediumSpacing(context), // Adjusted for better spacing
             ),
             leading: Container(
-              padding: EdgeInsets.all(AppTheme.getSmallSpacing(context)),
+              padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
               decoration: BoxDecoration(
                 color: isUploaded
                     ? Colors.green[100]
                     : (isRequired ? Colors.red[100] : Colors.grey[100]),
-                borderRadius: BorderRadius.circular(AppTheme.getSmallSpacing(context)),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getSmallSpacing(context)),
               ),
               child: Icon(
                 icon,
-                size: AppTheme.getIconSize(context),
+                size: AppThemeResponsiveness.getIconSize(context),
                 color: isUploaded
                     ? Colors.green[600]
                     : (isRequired ? Colors.red[600] : Colors.grey[600]),
@@ -256,7 +254,7 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                 Expanded(
                   child: Text(
                     title,
-                    style: AppTheme.getSubHeadingStyle(context).copyWith(
+                    style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.grey[800],
                     ),
@@ -264,15 +262,15 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                 ),
                 if (isRequired)
                   Container(
-                    padding: AppTheme.getStatusBadgePadding(context),
+                    padding: AppThemeResponsiveness.getStatusBadgePadding(context),
                     decoration: BoxDecoration(
                       color: Colors.red[100],
-                      borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                     ),
                     child: Text(
                       'Required',
                       style: TextStyle(
-                        fontSize: AppTheme.getStatusBadgeFontSize(context),
+                        fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
                         color: Colors.red[700],
                         fontWeight: FontWeight.w600,
                       ),
@@ -284,18 +282,18 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: AppTheme.getSmallSpacing(context) / 2),
+                  padding: EdgeInsets.only(top: AppThemeResponsiveness.getSmallSpacing(context) / 2),
                   child: Text(
                     subtitle,
-                    style: AppTheme.getCaptionTextStyle(context),
+                    style: AppThemeResponsiveness.getCaptionTextStyle(context),
                   ),
                 ),
                 if (selectedFile != null)
                   Padding(
-                    padding: EdgeInsets.only(top: AppTheme.getSmallSpacing(context) / 2),
+                    padding: EdgeInsets.only(top: AppThemeResponsiveness.getSmallSpacing(context) / 2),
                     child: Text(
                       'Selected: ${selectedFile.name}',
-                      style: AppTheme.getCaptionTextStyle(context).copyWith(
+                      style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
                         color: Colors.green[600],
                         fontWeight: FontWeight.w500,
                       ),
@@ -311,14 +309,14 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                     icon: Icon(
                       Icons.remove_circle,
                       color: Colors.red[600],
-                      size: AppTheme.getIconSize(context) * 0.9,
+                      size: AppThemeResponsiveness.getIconSize(context) * 0.9,
                     ),
                     onPressed: () => _removeDocument(documentKey),
                   ),
                 Icon(
                   isUploaded ? Icons.check_circle :
                   (_isUploading && selectedFile != null) ? Icons.hourglass_empty : Icons.upload_file,
-                  size: AppTheme.getIconSize(context),
+                  size: AppThemeResponsiveness.getIconSize(context),
                   color: isUploaded ? Colors.green[600] : Colors.grey[600],
                 ),
               ],
@@ -329,31 +327,31 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.getDefaultSpacing(context),
-                vertical: AppTheme.getSmallSpacing(context),
+                horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+                vertical: AppThemeResponsiveness.getSmallSpacing(context),
               ),
               decoration: BoxDecoration(
                 color: Colors.grey[50],
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(AppTheme.getInputBorderRadius(context)),
-                  bottomRight: Radius.circular(AppTheme.getInputBorderRadius(context)),
+                  bottomLeft: Radius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                  bottomRight: Radius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
                     _getFileIcon(selectedFile.extension ?? ''),
-                    size: AppTheme.getIconSize(context) * 0.8,
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.8,
                     color: Colors.grey[600],
                   ),
-                  SizedBox(width: AppTheme.getSmallSpacing(context)),
+                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           selectedFile.name,
-                          style: AppTheme.getCaptionTextStyle(context).copyWith(
+                          style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
                             fontWeight: FontWeight.w500,
                           ),
                           maxLines: 1,
@@ -361,8 +359,8 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                         ),
                         Text(
                           '${_formatFileSize(selectedFile.size)} • ${selectedFile.extension?.toUpperCase()}',
-                          style: AppTheme.getCaptionTextStyle(context).copyWith(
-                            fontSize: AppTheme.getCaptionTextStyle(context).fontSize! * 0.9,
+                          style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
+                            fontSize: AppThemeResponsiveness.getCaptionTextStyle(context).fontSize! * 0.9,
                             color: Colors.grey[500],
                           ),
                         ),
@@ -379,10 +377,10 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
 
   Widget _buildInfoContainer() {
     return Container(
-      padding: AppTheme.getCardPadding(context),
+      padding: AppThemeResponsiveness.getCardPadding(context),
       decoration: BoxDecoration(
         color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         border: Border.all(color: Colors.blue[200]!),
       ),
       child: Row(
@@ -391,13 +389,13 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
           Icon(
             Icons.info,
             color: Colors.blue[600],
-            size: AppTheme.getIconSize(context),
+            size: AppThemeResponsiveness.getIconSize(context),
           ),
-          SizedBox(width: AppTheme.getMediumSpacing(context)),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
           Expanded(
             child: Text(
               'Please ensure all documents are clear and readable. Supported formats: PDF, JPG, PNG (Max 5MB each)',
-              style: AppTheme.getBodyTextStyle(context).copyWith(
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                 color: Colors.blue[800],
               ),
             ),
@@ -409,10 +407,10 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
 
   Widget _buildTermsAndConditionsSection() {
     return Container(
-      padding: AppTheme.getCardPadding(context),
+      padding: AppThemeResponsiveness.getCardPadding(context),
       decoration: BoxDecoration(
         color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         border: Border.all(color: Colors.grey[300]!),
       ),
       child: Column(
@@ -420,12 +418,12 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
         children: [
           Text(
             'Terms & Conditions',
-            style: AppTheme.getHeadingStyle(context).copyWith(
-              color: AppTheme.blue600,
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: AppThemeColor.blue600,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: AppTheme.getMediumSpacing(context)),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -436,14 +434,14 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                     _acceptedTerms = value ?? false;
                   });
                 },
-                activeColor: AppTheme.blue600,
+                activeColor: AppThemeColor.blue600,
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(top: AppTheme.getSmallSpacing(context)),
+                  padding: EdgeInsets.only(top: AppThemeResponsiveness.getSmallSpacing(context)),
                   child: RichText(
                     text: TextSpan(
-                      style: AppTheme.getBodyTextStyle(context).copyWith(
+                      style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                         color: Colors.grey[700],
                       ),
                       children: [
@@ -453,8 +451,8 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                             onTap: _showTermsAndConditions,
                             child: Text(
                               'Terms and Conditions',
-                              style: AppTheme.getBodyTextStyle(context).copyWith(
-                                color: AppTheme.blue600,
+                              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                                color: AppThemeColor.blue600,
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,
                               ),
@@ -467,8 +465,8 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                             onTap: _showPrivacyPolicy,
                             child: Text(
                               'Privacy Policy',
-                              style: AppTheme.getBodyTextStyle(context).copyWith(
-                                color: AppTheme.blue600,
+                              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                                color: AppThemeColor.blue600,
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,
                               ),
@@ -493,7 +491,7 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
       children: [
         Expanded(
           child: Container(
-            height: AppTheme.getButtonHeight(context),
+            height: AppThemeResponsiveness.getButtonHeight(context),
             child: _buildAnimatedButton(
               text: 'Back',
               onPressed: () => Navigator.pop(context),
@@ -501,10 +499,10 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
             ),
           ),
         ),
-        SizedBox(width: AppTheme.getMediumSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
         Expanded(
           child: Container(
-            height: AppTheme.getButtonHeight(context),
+            height: AppThemeResponsiveness.getButtonHeight(context),
             child: _buildAnimatedButton(
               text: 'Pay Online',
               onPressed: _acceptedTerms && !_isUploading ? _payOnline : null,
@@ -518,7 +516,7 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
   Widget _buildSubmitButton() {
     return Container(
       width: double.infinity,
-      height: AppTheme.getButtonHeight(context),
+      height: AppThemeResponsiveness.getButtonHeight(context),
       child: _buildAnimatedButton(
         text: _isUploading ? 'Processing...' : 'Submit Application',
         onPressed: _acceptedTerms && !_isUploading ? _submitApplication : null,
@@ -536,13 +534,13 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
       style: ElevatedButton.styleFrom(
         backgroundColor: onPressed == null
             ? Colors.grey[400]
-            : (isSecondary ? Colors.grey[300] : AppTheme.blue600),
+            : (isSecondary ? Colors.grey[300] : AppThemeColor.blue600),
         foregroundColor: onPressed == null
             ? Colors.grey[600] // Consistent disabled text color
             : (isSecondary ? Colors.black87 : Colors.white), // Matched secondary button text color
-        elevation: AppTheme.getButtonElevation(context),
+        elevation: AppThemeResponsiveness.getButtonElevation(context),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
       ),
       child: _isUploading && !isSecondary && onPressed != null
@@ -557,10 +555,10 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),
           ),
-          SizedBox(width: AppTheme.getSmallSpacing(context)),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
           Text(
             text,
-            style: AppTheme.getButtonTextStyle(context).copyWith(
+            style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
               color: Colors.white,
             ),
           ),
@@ -568,7 +566,7 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
       )
           : Text(
         text,
-        style: AppTheme.getButtonTextStyle(context).copyWith(
+        style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
           color: onPressed == null
               ? Colors.grey[600]
               : (isSecondary ? Colors.black87 : Colors.white), // Matched secondary button text color
@@ -731,12 +729,12 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
       SnackBar(
         content: Row(
           children: [
-            Icon(icon, color: Colors.white, size: AppTheme.getIconSize(context) * 0.8),
-            SizedBox(width: AppTheme.getSmallSpacing(context)),
+            Icon(icon, color: Colors.white, size: AppThemeResponsiveness.getIconSize(context) * 0.8),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
             Expanded(
               child: Text(
                 message,
-                style: AppTheme.getBodyTextStyle(context).copyWith(color: Colors.white),
+                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
               ),
             ),
           ],
@@ -745,7 +743,7 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
         duration: Duration(seconds: 3),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
       ),
     );
@@ -766,21 +764,21 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
           ),
           title: Row(
             children: [
               Icon(
                 Icons.check_circle,
                 color: Colors.green,
-                size: AppTheme.getHeaderIconSize(context),
+                size: AppThemeResponsiveness.getHeaderIconSize(context),
               ),
-              SizedBox(width: AppTheme.getSmallSpacing(context)),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
               Expanded(
                 child: Text(
                   'Application Submitted!',
-                  style: AppTheme.getHeadingStyle(context).copyWith(
-                    color: AppTheme.blue600,
+                  style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                    color: AppThemeColor.blue600,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -788,23 +786,23 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
             ],
           ),
           content: Container(
-            width: AppTheme.getDialogWidth(context),
+            width: AppThemeResponsiveness.getDialogWidth(context),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Your admission application has been submitted successfully. You will receive a confirmation email shortly.',
-                  style: AppTheme.getBodyTextStyle(context),
+                  style: AppThemeResponsiveness.getBodyTextStyle(context),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: AppTheme.getMediumSpacing(context)),
+                SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                 Container(
-                  padding: AppTheme.getCardPadding(context),
+                  padding: AppThemeResponsiveness.getCardPadding(context),
                   decoration: BoxDecoration(
-                    color: AppTheme.blue600.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                    color: AppThemeColor.blue600.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                     border: Border.all(
-                      color: AppTheme.blue600.withOpacity(0.3),
+                      color: AppThemeColor.blue600.withOpacity(0.3),
                       width: 1,
                     ),
                   ),
@@ -812,26 +810,26 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                     children: [
                       Text(
                         'Your Application ID:',
-                        style: AppTheme.getCaptionTextStyle(context),
+                        style: AppThemeResponsiveness.getCaptionTextStyle(context),
                       ),
-                      SizedBox(height: AppTheme.getSmallSpacing(context)),
+                      SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                       Text(
                         studentId,
-                        style: AppTheme.getStatValueStyle(context).copyWith(
-                          color: AppTheme.blue600,
+                        style: AppThemeResponsiveness.getStatValueStyle(context).copyWith(
+                          color: AppThemeColor.blue600,
                           letterSpacing: 1.2,
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: AppTheme.getSmallSpacing(context)),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                 OutlinedButton(
                   onPressed: () => _copyToClipboard(studentId),
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: AppTheme.blue600),
+                    side: BorderSide(color: AppThemeColor.blue600),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
                     ),
                   ),
                   child: Row(
@@ -839,23 +837,23 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                     children: [
                       Icon(
                         Icons.copy,
-                        size: AppTheme.getIconSize(context) * 0.7,
-                        color: AppTheme.blue600,
+                        size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+                        color: AppThemeColor.blue600,
                       ),
-                      SizedBox(width: AppTheme.getSmallSpacing(context) / 2),
+                      SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
                       Text(
                         'Copy ID',
-                        style: AppTheme.getBodyTextStyle(context).copyWith(
-                          color: AppTheme.blue600,
+                        style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                          color: AppThemeColor.blue600,
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: AppTheme.getSmallSpacing(context)),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                 Text(
                   'Please save this ID for future reference and admission status tracking.',
-                  style: AppTheme.getCaptionTextStyle(context).copyWith(
+                  style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
                     fontStyle: FontStyle.italic,
                   ),
                   textAlign: TextAlign.center,
@@ -866,7 +864,7 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
           actions: [
             Container(
               width: double.infinity,
-              height: AppTheme.getButtonHeight(context),
+              height: AppThemeResponsiveness.getButtonHeight(context),
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -877,14 +875,14 @@ class _AdmissionDocumentsScreenState extends State<AdmissionDocumentsScreen> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.blue600,
+                  backgroundColor: AppThemeColor.blue600,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
                   ),
                 ),
                 child: Text(
                   'Continue to Dashboard',
-                  style: AppTheme.getButtonTextStyle(context),
+                  style: AppThemeResponsiveness.getButtonTextStyle(context),
                 ),
               ),
             ),

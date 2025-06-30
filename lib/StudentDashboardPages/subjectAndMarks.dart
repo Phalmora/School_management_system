@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/CommonLogic/tabBar.dart';
+import 'package:school/customWidgets/pagesMainHeading.dart';
+import 'package:school/model/studentAndMarksModel.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class SubjectsMarksScreen extends StatefulWidget {
   const SubjectsMarksScreen({Key? key}) : super(key: key);
@@ -16,12 +18,12 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
   // Sample data for subjects
   final List<Subject> subjects = [
     Subject('Mathematics', 'A+', 95, Icons.calculate, Colors.green),
-    Subject('English', 'A', 88, Icons.book, AppTheme.primaryBlue),
+    Subject('English', 'A', 88, Icons.book, AppThemeColor.primaryBlue),
     Subject('Science', 'A+', 92, Icons.science, Colors.green),
     Subject('History', 'B+', 82, Icons.history_edu, Colors.orange),
-    Subject('Geography', 'A', 86, Icons.public, AppTheme.primaryBlue),
+    Subject('Geography', 'A', 86, Icons.public, AppThemeColor.primaryBlue),
     Subject('Computer Science', 'A+', 94, Icons.computer, Colors.green),
-    Subject('Physical Education', 'A', 89, Icons.sports, AppTheme.primaryBlue),
+    Subject('Physical Education', 'A', 89, Icons.sports, AppThemeColor.primaryBlue),
     Subject('Art', 'B+', 84, Icons.palette, Colors.orange),
   ];
 
@@ -56,48 +58,59 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
       appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.only(top: 25, bottom: 25, left: 8, right: 8),
+            padding: EdgeInsets.only(
+              top: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              bottom: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              left: AppThemeResponsiveness.getSmallSpacing(context),
+              right: AppThemeResponsiveness.getSmallSpacing(context),
+            ),
             child: Column(
               children: [
+                HeaderSection(
+                  title: 'Subjects list',
+                  icon: Icons.book_outlined,
+                ),
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
-                    decoration: const BoxDecoration(
-                      color: AppTheme.white,
+                    constraints: BoxConstraints(
+                      maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+                    ),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppThemeColor.white,
                       borderRadius: BorderRadius.all(
-                        Radius.circular(AppTheme.cardBorderRadius),
+                        Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
-                        // Enhanced Tab Bar
-                        Container(
-                          margin: const EdgeInsets.all(AppTheme.defaultSpacing),
-                          decoration: BoxDecoration(
-                            color: AppTheme.blue50,
-                            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                          ),
-                          child: TabBar(
-                            controller: _tabController,
-                            indicator: BoxDecoration(
-                              color: AppTheme.primaryBlue,
-                              borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                            ),
-                            labelColor: AppTheme.white,
-                            unselectedLabelColor: AppTheme.blue600,
-                            labelStyle: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                            tabs: const [
-                              Tab(text: 'Subject List'),
-                              Tab(text: 'Grades & Results'),
-                            ],
-                          ),
+                        // Tab Bar
+                        CustomTabBar(
+                          controller: _tabController,
+                          tabs: const [
+                            Tab(text: 'Subject List'),
+                            Tab(text: 'Grades and Results'),
+                          ],
+                          getSpacing: AppThemeResponsiveness.getDefaultSpacing,
+                          getBorderRadius: AppThemeResponsiveness.getInputBorderRadius,
+                          getFontSize: AppThemeResponsiveness.getTabFontSize,
+                          backgroundColor: AppThemeColor.blue50,
+                          selectedColor: AppThemeColor.primaryBlue,
+                          unselectedColor: AppThemeColor.blue600,
                         ),
 
                         // Tab Content
@@ -105,14 +118,14 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
                           child: TabBarView(
                             controller: _tabController,
                             children: [
-                              _buildSubjectListTab(),
-                              _buildGradesResultsTab(),
+                              _buildSubjectListTab(context),
+                              _buildGradesResultsTab(context),
                             ],
                           ),
                         ),
 
-                        // Action Buttons
-                        _buildActionButtons(),
+                        // Responsive Action Buttons
+                        _buildActionButtons(context),
                       ],
                     ),
                   ),
@@ -125,56 +138,180 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
     );
   }
 
-  Widget _buildSubjectListTab() {
+
+
+  Widget _buildSubjectListTab(BuildContext context) {
     return Column(
       children: [
-        // Summary Card
+        // Responsive Summary Card
         Container(
-          margin: const EdgeInsets.all(AppTheme.defaultSpacing),
-          padding: const EdgeInsets.all(AppTheme.mediumSpacing),
+          margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+          padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [AppTheme.primaryBlue.withOpacity(0.1), AppTheme.primaryPurple.withOpacity(0.1)],
+              colors: [
+                AppThemeColor.primaryBlue.withOpacity(0.1),
+                AppThemeColor.primaryIndigo.withOpacity(0.1)
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-            border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+            border: Border.all(color: AppThemeColor.primaryBlue.withOpacity(0.2)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.05),
+                spreadRadius: 1,
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Row(
+          child: AppThemeResponsiveness.isMobile(context)
+              ? Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildSummaryItem(context, 'Total Subjects', '${subjects.length}', Icons.subject),
+                  _buildSummaryItem(context, 'Average', '${_calculateAverage().toStringAsFixed(1)}%', Icons.trending_up),
+                ],
+              ),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              _buildSummaryItem(context, 'Overall Grade', _getOverallGrade(), Icons.star),
+            ],
+          )
+              : Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildSummaryItem('Total Subjects', '${subjects.length}', Icons.subject),
-              _buildSummaryItem('Average', '${_calculateAverage().toStringAsFixed(1)}%', Icons.trending_up),
-              _buildSummaryItem('Overall Grade', _getOverallGrade(), Icons.star),
+              _buildSummaryItem(context, 'Total Subjects', '${subjects.length}', Icons.subject),
+              _buildSummaryItem(context, 'Average', '${_calculateAverage().toStringAsFixed(1)}%', Icons.trending_up),
+              _buildSummaryItem(context, 'Overall Grade', _getOverallGrade(), Icons.star),
             ],
           ),
         ),
 
-        // Subject List
+        // Responsive Subject List
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-            itemCount: subjects.length,
-            itemBuilder: (context, index) {
-              return _buildSubjectCard(subjects[index]);
-            },
-          ),
+          child: AppThemeResponsiveness.isDesktop(context) || AppThemeResponsiveness.isTablet(context)
+              ? _buildSubjectGrid(context)
+              : _buildSubjectList(context),
         ),
       ],
     );
   }
 
-  Widget _buildGradesResultsTab() {
+  Widget _buildSubjectGrid(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getDefaultSpacing(context)),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: AppThemeResponsiveness.getGridCrossAxisCount(context),
+        crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+        mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+        childAspectRatio: AppThemeResponsiveness.getGridChildAspectRatio(context),
+      ),
+      itemCount: subjects.length,
+      itemBuilder: (context, index) {
+        return _buildSubjectGridCard(context, subjects[index]);
+      },
+    );
+  }
+
+  Widget _buildSubjectList(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getDefaultSpacing(context)),
+      itemCount: subjects.length,
+      itemBuilder: (context, index) {
+        return _buildSubjectCard(context, subjects[index]);
+      },
+    );
+  }
+
+  Widget _buildSubjectGridCard(BuildContext context, Subject subject) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () => _showSubjectDetails(context, subject),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        child: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getGridItemPadding(context)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsIconPadding(context)),
+                decoration: BoxDecoration(
+                  color: AppThemeColor.blue50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  subject.icon,
+                  color: AppThemeColor.primaryBlue,
+                  size: AppThemeResponsiveness.getGridItemIconSize(context),
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              Text(
+                subject.name,
+                style: AppThemeResponsiveness.getGridItemTitleStyle(context),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                '${subject.percentage}%',
+                style: AppThemeResponsiveness.getGridItemSubtitleStyle(context),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: subject.gradeColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Text(
+                  subject.grade,
+                  style: TextStyle(
+                    color: AppThemeColor.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
+  Widget _buildGradesResultsTab(BuildContext context) {
     return Column(
       children: [
-        // Overall Performance Card
+        // Responsive Overall Performance Card
         Container(
-          margin: const EdgeInsets.all(AppTheme.defaultSpacing),
-          padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+          margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+          padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
           decoration: BoxDecoration(
-            color: AppTheme.blue50,
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+            color: AppThemeColor.blue50,
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.withOpacity(0.1),
@@ -187,22 +324,27 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Academic Performance Overview',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+                style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(color: Colors.black87),
               ),
-              const SizedBox(height: AppTheme.mediumSpacing),
-              Row(
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              AppThemeResponsiveness.isMobile(context)
+                  ? Row(
+                    children: [
+                      _buildPerformanceMetric(context, 'Current GPA', '3.7/4.0', Icons.school, Colors.green),
+                      SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+                      _buildPerformanceMetric(context, 'Class Rank', '12/45', Icons.emoji_events, Colors.orange),
+                    ],
+                  )
+                  : Row(
                 children: [
                   Expanded(
-                    child: _buildPerformanceMetric('Current GPA', '3.7/4.0', Icons.school, Colors.green),
+                    child: _buildPerformanceMetric(context, 'Current GPA', '3.7/4.0', Icons.school, Colors.green),
                   ),
+                  SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
                   Expanded(
-                    child: _buildPerformanceMetric('Class Rank', '12/45', Icons.emoji_events, Colors.orange),
+                    child: _buildPerformanceMetric(context, 'Class Rank', '12/45', Icons.emoji_events, Colors.orange),
                   ),
                 ],
               ),
@@ -210,124 +352,230 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
           ),
         ),
 
-        // Exam Results List
+        // Responsive Exam Results List
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-            itemCount: examResults.length,
-            itemBuilder: (context, index) {
-              return _buildExamResultCard(examResults[index]);
-            },
-          ),
+          child: AppThemeResponsiveness.isDesktop(context)
+              ? _buildExamResultsGrid(context)
+              : _buildExamResultsList(context),
         ),
 
-        // Progress Chart Section
-        Container(
-          margin: const EdgeInsets.all(AppTheme.defaultSpacing),
-          padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-          decoration: BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                spreadRadius: 1,
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-              ),
-            ],
+        // Responsive Progress Chart Section
+        _buildProgressChart(context),
+      ],
+    );
+  }
+
+  Widget _buildExamResultsGrid(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getDefaultSpacing(context)),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+        mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+        childAspectRatio: 1.8,
+      ),
+      itemCount: examResults.length,
+      itemBuilder: (context, index) {
+        return _buildExamResultGridCard(context, examResults[index]);
+      },
+    );
+  }
+
+  Widget _buildExamResultsList(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: AppThemeResponsiveness.getDefaultSpacing(context)),
+      itemCount: examResults.length,
+      itemBuilder: (context, index) {
+        return _buildExamResultCard(context, examResults[index]);
+      },
+    );
+  }
+
+  Widget _buildExamResultGridCard(BuildContext context, ExamResult result) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Performance Trend',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: AppTheme.mediumSpacing),
-              Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primaryBlue.withOpacity(0.3),
-                      AppTheme.primaryPurple.withOpacity(0.3)
-                    ],
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
+                  decoration: BoxDecoration(
+                    color: _getGradeColor(result.grade).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  borderRadius: BorderRadius.circular(10),
+                  child: Icon(
+                    Icons.assignment,
+                    color: _getGradeColor(result.grade),
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+                  ),
                 ),
-                child: const Center(
+                const Spacer(),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getGradeColor(result.grade),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: Text(
-                    '📈 Showing consistent improvement',
+                    result.grade,
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: AppThemeColor.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+            Text(
+              result.examName,
+              style: AppThemeResponsiveness.getHeadingStyle(context),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+            Text(
+              result.date,
+              style: AppThemeResponsiveness.getSubHeadingStyle(context),
+            ),
+            const Spacer(),
+            Text(
+              'Score: ${result.percentage}%',
+              style: AppThemeResponsiveness.getStatValueStyle(context),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
-  Widget _buildSummaryItem(String title, String value, IconData icon) {
+  Widget _buildProgressChart(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      decoration: BoxDecoration(
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Performance Trend',
+            style: AppThemeResponsiveness.getHeadingStyle(context),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          Container(
+            height: AppThemeResponsiveness.isMobile(context) ? 60 : 80,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppThemeColor.primaryBlue.withOpacity(0.3),
+                  AppThemeColor.primaryIndigo.withOpacity(0.3)
+                ],
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(
+              child: Text(
+                '📈 Showing consistent improvement',
+                style: TextStyle(
+                  fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize! + 2,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryItem(BuildContext context, String title, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: AppTheme.primaryBlue, size: 24),
-        const SizedBox(height: 8),
+        Icon(
+          icon,
+          color: AppThemeColor.primaryBlue,
+          size: AppThemeResponsiveness.getHeaderIconSize(context),
+        ),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getStatValueStyle(context),
         ),
         Text(
           title,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-          ),
+          style: AppThemeResponsiveness.getStatTitleStyle(context),
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildPerformanceMetric(String title, String value, IconData icon, Color color) {
+  Widget _buildPerformanceMetric(BuildContext context, String title, String value, IconData icon, Color color) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
       decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(10),
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 8),
+          Icon(
+            icon,
+            color: color,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
           Text(
             value,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: AppThemeResponsiveness.getStatValueStyle(context).fontSize,
               fontWeight: FontWeight.bold,
               color: color,
             ),
           ),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
+            style: AppThemeResponsiveness.getStatTitleStyle(context),
             textAlign: TextAlign.center,
           ),
         ],
@@ -335,12 +583,12 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
     );
   }
 
-  Widget _buildSubjectCard(Subject subject) {
+  Widget _buildSubjectCard(BuildContext context, Subject subject) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.mediumSpacing),
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
       decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -351,54 +599,55 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
         ],
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(AppTheme.mediumSpacing),
+        contentPadding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
         leading: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
           decoration: BoxDecoration(
-            color: AppTheme.blue50,
+            color: AppThemeColor.blue50,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(subject.icon, color: AppTheme.primaryBlue, size: 24),
+          child: Icon(
+            subject.icon,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+          ),
         ),
         title: Text(
           subject.name,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
             Text(
               'Percentage: ${subject.percentage}%',
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 14,
-              ),
+              style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
             ),
-            const SizedBox(height: 4),
-            LinearProgressIndicator(
-              value: subject.percentage / 100,
-              backgroundColor: Colors.grey.shade200,
-              valueColor: AlwaysStoppedAnimation<Color>(subject.gradeColor),
-              minHeight: 4,
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: LinearProgressIndicator(
+                value: subject.percentage / 100,
+                backgroundColor: Colors.grey.shade200,
+                valueColor: AlwaysStoppedAnimation<Color>(subject.gradeColor),
+                minHeight: AppThemeResponsiveness.isMobile(context) ? 4 : 6,
+              ),
             ),
           ],
         ),
         trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: AppThemeResponsiveness.getStatusBadgePadding(context),
           decoration: BoxDecoration(
             color: subject.gradeColor,
             borderRadius: BorderRadius.circular(15),
           ),
           child: Text(
             subject.grade,
-            style: const TextStyle(
-              color: AppTheme.white,
+            style: TextStyle(
+              color: AppThemeColor.white,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
             ),
           ),
         ),
@@ -409,12 +658,12 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
     );
   }
 
-  Widget _buildExamResultCard(ExamResult result) {
+  Widget _buildExamResultCard(BuildContext context, ExamResult result) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.mediumSpacing),
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
       decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -425,9 +674,9 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
         ],
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.all(AppTheme.mediumSpacing),
+        contentPadding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
         leading: Container(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
           decoration: BoxDecoration(
             color: _getGradeColor(result.grade).withOpacity(0.1),
             borderRadius: BorderRadius.circular(10),
@@ -435,50 +684,44 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
           child: Icon(
             Icons.assignment,
             color: _getGradeColor(result.grade),
-            size: 24,
+            size: AppThemeResponsiveness.getDashboardCardIconSize(context),
           ),
         ),
         title: Text(
           result.examName,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
             Text(
               result.date,
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 12,
-              ),
+              style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
             Text(
               'Score: ${result.percentage}%',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
+                fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize,
                 color: Colors.black87,
               ),
             ),
           ],
         ),
         trailing: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: AppThemeResponsiveness.getStatusBadgePadding(context),
           decoration: BoxDecoration(
             color: _getGradeColor(result.grade),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Text(
             result.grade,
-            style: const TextStyle(
-              color: AppTheme.white,
+            style: TextStyle(
+              color: AppThemeColor.white,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
             ),
           ),
         ),
@@ -486,55 +729,125 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-      child: Row(
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      child: AppThemeResponsiveness.isMobile(context) && AppThemeResponsiveness.isSmallPhone(context)
+          ? Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: AppThemeResponsiveness.getButtonHeight(context),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Downloading mark sheet...')),
+                );
+              },
+              icon: Icon(
+                Icons.download,
+                color: AppThemeColor.white,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+              ),
+              label: Text('Download', style: AppThemeResponsiveness.getButtonTextStyle(context)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppThemeColor.primaryBlue,
+                elevation: AppThemeResponsiveness.getButtonElevation(context),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          SizedBox(
+            width: double.infinity,
+            height: AppThemeResponsiveness.getButtonHeight(context),
+            child: OutlinedButton.icon(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Sharing report...')),
+                );
+              },
+              icon: Icon(
+                Icons.share,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+              ),
+              label: Text(
+                'Share',
+                style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+                  color: AppThemeColor.primaryBlue,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                  color: AppThemeColor.primaryBlue,
+                  width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      )
+          : Row(
         children: [
           Expanded(
             child: SizedBox(
-              height: AppTheme.buttonHeight,
+              height: AppThemeResponsiveness.getButtonHeight(context),
               child: ElevatedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Downloading mark sheet...')),
                   );
                 },
-                icon: const Icon(Icons.download, color: AppTheme.white),
-                label: const Text('Download', style: AppTheme.buttonTextStyle),
+                icon: Icon(
+                  Icons.download,
+                  color: AppThemeColor.white,
+                  size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+                ),
+                label: Text('Download', style: AppThemeResponsiveness.getButtonTextStyle(context)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryBlue,
-                  elevation: AppTheme.buttonElevation,
+                  backgroundColor: AppThemeColor.primaryBlue,
+                  elevation: AppThemeResponsiveness.getButtonElevation(context),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(width: AppTheme.mediumSpacing),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
           Expanded(
             child: SizedBox(
-              height: AppTheme.buttonHeight,
+              height: AppThemeResponsiveness.getButtonHeight(context),
               child: OutlinedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Sharing report...')),
                   );
                 },
-                icon: Icon(Icons.share, color: AppTheme.primaryBlue),
+                icon: Icon(
+                  Icons.share,
+                  color: AppThemeColor.primaryBlue,
+                  size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+                ),
                 label: Text(
                   'Share Report',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryBlue,
+                  style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+                    color: AppThemeColor.primaryBlue,
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: AppTheme.primaryBlue, width: 2),
+                  side: BorderSide(
+                    color: AppThemeColor.primaryBlue,
+                    width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+                  ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
                   ),
                 ),
               ),
@@ -545,60 +858,30 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
     );
   }
 
-  void _showSubjectDetails(BuildContext context, Subject subject) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-          ),
-          title: Row(
-            children: [
-              Icon(subject.icon, color: AppTheme.primaryBlue),
-              const SizedBox(width: 10),
-              Text(subject.name),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Grade: ${subject.grade}'),
-              Text('Percentage: ${subject.percentage}%'),
-              const SizedBox(height: 10),
-              LinearProgressIndicator(
-                value: subject.percentage / 100,
-                backgroundColor: Colors.grey.shade200,
-                valueColor: AlwaysStoppedAnimation<Color>(subject.gradeColor),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
+  // Helper methods (assuming these are part of your AppThemeResponsiveness or separate utils)
+  // These are placeholders based on their usage in the provided snippet.
+  // You would need to define Subject, ExamResult classes, and AppThemeResponsiveness methods.
 
   double _calculateAverage() {
     if (subjects.isEmpty) return 0.0;
-    double total = subjects.fold(0.0, (sum, subject) => sum + subject.percentage);
-    return total / subjects.length;
+    double totalPercentage = subjects.fold(0.0, (sum, item) => sum + item.percentage);
+    return totalPercentage / subjects.length;
   }
 
   String _getOverallGrade() {
     double average = _calculateAverage();
-    if (average >= 95) return 'A+';
-    if (average >= 90) return 'A';
-    if (average >= 85) return 'A-';
-    if (average >= 80) return 'B+';
-    if (average >= 75) return 'B';
-    return 'B-';
+    if (average >= 90) {
+      return 'A+';
+    } else if (average >= 80) {
+      return 'A';
+    } else if (average >= 70) {
+      return 'B+';
+    } else if (average >= 60) {
+      return 'B';
+    } else {
+      return 'C';
+    }
   }
 
   Color _getGradeColor(String grade) {
@@ -606,35 +889,44 @@ class _SubjectsMarksScreenState extends State<SubjectsMarksScreen> with SingleTi
       case 'A+':
         return Colors.green;
       case 'A':
-      case 'A-':
-        return AppTheme.primaryBlue;
+        return AppThemeColor.primaryBlue;
       case 'B+':
         return Colors.orange;
       case 'B':
-      case 'B-':
-        return Colors.amber;
+        return Colors.orange;
+      case 'C':
+        return Colors.red;
       default:
         return Colors.grey;
     }
   }
+
+  void _showSubjectDetails(BuildContext context, Subject subject) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(subject.name),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Grade: ${subject.grade}'),
+              Text('Percentage: ${subject.percentage}%'),
+              // Add more details if available in Subject class
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
-// Data Models
-class Subject {
-  final String name;
-  final String grade;
-  final double percentage;
-  final IconData icon;
-  final Color gradeColor;
-
-  Subject(this.name, this.grade, this.percentage, this.icon, this.gradeColor);
-}
-
-class ExamResult {
-  final String examName;
-  final String date;
-  final double percentage;
-  final String grade;
-
-  ExamResult(this.examName, this.date, this.percentage, this.grade);
-}

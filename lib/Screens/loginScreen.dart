@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/customWidgets/inputField.dart';
+import 'package:school/customWidgets/loginCustomWidgets/userTypeSelection.dart'; // Import the new widget
 
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -17,109 +18,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool _isLoading = false;
   bool _rememberMe = false;
   String? _userType;
-
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
-  late AnimationController _shakeController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _shakeAnimation;
-
-  final List<Map<String, dynamic>> _userTypes = [
-    {
-      'value': 'Student',
-      'icon': Icons.school_rounded,
-      'color': AppTheme.blue400
-    },
-    {
-      'value': 'Teacher',
-      'icon': Icons.person_rounded,
-      'color': AppTheme.blue400
-    },
-    {
-      'value': 'Parent',
-      'icon': Icons.family_restroom_rounded,
-      'color': AppTheme.blue400
-    },
-    {
-      'value': 'Admin',
-      'icon': Icons.admin_panel_settings_rounded,
-      'color': AppTheme.blue400
-    },
-    {
-      'value': 'Academic Officer',
-      'icon': Icons.business_center_rounded,
-      'color': AppTheme.blue400
-    },
-  ];
-
-  // Responsive breakpoints
-  bool get isSmallScreen =>
-      MediaQuery
-          .of(context)
-          .size
-          .width < 600;
-
-  bool get isMediumScreen =>
-      MediaQuery
-          .of(context)
-          .size
-          .width >= 600 && MediaQuery
-          .of(context)
-          .size
-          .width < 1024;
-
-  bool get isLargeScreen =>
-      MediaQuery
-          .of(context)
-          .size
-          .width >= 1024;
+  bool _showUserTypeError = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeAnimations();
-  }
-
-  void _initializeAnimations() {
-    _fadeController = AnimationController(
-      duration: Duration(milliseconds: 1000),
-      vsync: this,
-    );
-
-    _slideController = AnimationController(
-      duration: Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _shakeController = AnimationController(
-      duration: Duration(milliseconds: 500),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-        CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic));
-
-    _shakeAnimation = Tween<double>(begin: 0.0, end: 8.0).animate(
-      CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
-    );
-
-    _fadeController.forward();
-    _slideController.forward();
+    // Set user as guest when login screen loads
+    UserService.instance.setGuestUser();
   }
 
   @override
   void dispose() {
-    _fadeController.dispose();
-    _slideController.dispose();
-    _shakeController.dispose();
     _nameController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -127,30 +36,19 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    final screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
-
     return Scaffold(
       appBar: AppBarCustom(),
-      backgroundColor: Color(0xFFF8FAFC),
+      backgroundColor: AppThemeColor.blue50,
       body: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+        decoration: const BoxDecoration(
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              if (isLargeScreen) {
-                // Desktop layout - side by side
+              if (AppThemeResponsiveness.isDesktop(context)) {
                 return _buildDesktopLayout();
               } else {
-                // Mobile/Tablet layout - stacked
                 return _buildMobileLayout();
               }
             },
@@ -167,18 +65,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         Expanded(
           flex: 1,
           child: Container(
-            padding: EdgeInsets.all(48),
+            padding: EdgeInsets.all(AppThemeResponsiveness.getLargeSpacing(context)),
+            constraints: BoxConstraints(
+              maxWidth: AppThemeResponsiveness.getMaxWidth(context) * 0.5,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(),
-                SizedBox(height: 32),
+                SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                 Text(
                   'Streamline your educational experience with our comprehensive school management system.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white.withOpacity(0.9),
+                  style: AppThemeResponsiveness.getSplashSubtitleStyle(context).copyWith(
+                    fontSize: AppThemeResponsiveness.isDesktop(context) ? 18 : 16,
                     height: 1.6,
                   ),
                 ),
@@ -190,10 +90,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         Expanded(
           flex: 1,
           child: Container(
-            constraints: BoxConstraints(maxWidth: 500),
-            padding: EdgeInsets.all(32),
+            constraints: BoxConstraints(
+              maxWidth: 500,
+              maxHeight: AppThemeResponsiveness.getScreenHeight(context) * 0.9,
+            ),
+            padding: AppThemeResponsiveness.getScreenPadding(context),
             child: Center(
-              child: _buildLoginForm(),
+              child: SingleChildScrollView(
+                child: _buildLoginForm(),
+              ),
             ),
           ),
         ),
@@ -202,446 +107,209 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   Widget _buildMobileLayout() {
-    return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Container(
-        constraints: BoxConstraints(
-          minHeight: MediaQuery
-              .of(context)
-              .size
-              .height -
-              MediaQuery
-                  .of(context)
-                  .padding
-                  .top -
-              kToolbarHeight,
+    return Column(
+      children: [
+        // Header section with reduced height
+        Container(
+          height: AppThemeResponsiveness.getScreenHeight(context) * 0.25,
+          child: _buildHeader(),
         ),
-        child: Column(
-          children: [
-            _buildHeader(),
-            _buildLoginForm(),
-            _buildFooter(),
-          ],
+        // Login form section - takes remaining space
+        Expanded(
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom +
+                  AppThemeResponsiveness.getSmallSpacing(context),
+            ),
+            child: _buildLoginForm(),
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildHeader() {
-    final logoSize = isSmallScreen ? 80.0 : isLargeScreen ? 120.0 : 100.0;
-    final titleSize = isSmallScreen ? 28.0 : isLargeScreen ? 40.0 : 32.0;
-    final subtitleSize = isSmallScreen ? 14.0 : isLargeScreen ? 18.0 : 16.0;
-
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: isSmallScreen ? 20 : 40,
-          horizontal: isSmallScreen ? 16 : 20,
-        ),
-        child: Column(
-          crossAxisAlignment: isLargeScreen
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.center,
-          children: [
-            Hero(
-              tag: 'login_logo',
-              child: Container(
-                width: logoSize,
-                height: logoSize,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 20,
-                      spreadRadius: 5,
-                      offset: Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: Icon(
-                  Icons.school_rounded,
-                  size: logoSize * 0.5,
-                  color: AppTheme.blue600,
-                ),
-              ),
-            ),
-            SizedBox(height: 24),
-            Text(
-              'Welcome Back!',
-              style: TextStyle(
-                fontSize: titleSize,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: -0.5,
-              ),
-              textAlign: isLargeScreen ? TextAlign.left : TextAlign.center,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Sign in to continue your learning journey',
-              style: TextStyle(
-                fontSize: subtitleSize,
-                color: Colors.white.withOpacity(0.8),
-                height: 1.5,
-              ),
-              textAlign: isLargeScreen ? TextAlign.left : TextAlign.center,
-            ),
-          ],
-        ),
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: AppThemeResponsiveness.isDesktop(context)
+            ? AppThemeResponsiveness.getDashboardCardPadding(context)
+            : AppThemeResponsiveness.getSmallSpacing(context),
+        horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
       ),
-    );
-  }
-
-  Widget _buildLoginForm() {
-    final formPadding = isSmallScreen ? 20.0 : isLargeScreen ? 40.0 : 32.0;
-    final formMargin = isSmallScreen ? 16.0 : 20.0;
-
-    return SlideTransition(
-      position: _slideAnimation,
-      child: AnimatedBuilder(
-        animation: _shakeAnimation,
-        builder: (context, child) {
-          return Transform.translate(
-            offset: Offset(_shakeAnimation.value, 0),
+      child: Column(
+        crossAxisAlignment: AppThemeResponsiveness.isDesktop(context)
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Hero(
+            tag: 'login_logo',
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: formMargin),
-              constraints: BoxConstraints(
-                maxWidth: isLargeScreen ? 500 : double.infinity,
-              ),
+              width: AppThemeResponsiveness.isDesktop(context)
+                  ? AppThemeResponsiveness.getLogoSize(context) * 1.5
+                  : AppThemeResponsiveness.getLogoSize(context) * 1.2,
+              height: AppThemeResponsiveness.isDesktop(context)
+                  ? AppThemeResponsiveness.getLogoSize(context) * 1.5
+                  : AppThemeResponsiveness.getLogoSize(context) * 1.2,
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+                color: AppThemeColor.white,
+                shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 20,
                     spreadRadius: 5,
-                    offset: Offset(0, 10),
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
-              child: Padding(
-                padding: EdgeInsets.all(formPadding),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildUserTypeSelection(),
-                      SizedBox(height: 24),
-                      _buildInputField(
-                        controller: _nameController,
-                        label: 'Full Name',
-                        icon: Icons.person_outline_rounded,
-                        validator: (value) =>
-                        value?.isEmpty ?? true
-                            ? 'Please enter your full name'
-                            : null,
-                      ),
-                      SizedBox(height: 20),
-                      _buildPasswordField(),
-                      SizedBox(height: 16),
-                      _buildRememberMeRow(),
-                      SizedBox(height: 32),
-                      _buildLoginButton(),
-                      SizedBox(height: 24),
-                      _buildDivider(),
-                      SizedBox(height: 24),
-                      _buildQuickActions(),
-                    ],
+              child: Icon(
+                Icons.school_rounded,
+                size: AppThemeResponsiveness.isDesktop(context)
+                    ? AppThemeResponsiveness.getLogoSize(context) * 0.75
+                    : AppThemeResponsiveness.getLogoSize(context) * 0.6,
+                color: AppThemeColor.primaryBlue600,
+              ),
+            ),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          Text(
+            'Welcome Back!',
+            style: AppThemeResponsiveness.getFontStyle(context).copyWith(
+              fontSize: AppThemeResponsiveness.isSmallPhone(context)
+                  ? 22
+                  : AppThemeResponsiveness.isMobile(context)
+                  ? 26
+                  : 32,
+              letterSpacing: -0.5,
+            ),
+            textAlign: AppThemeResponsiveness.isDesktop(context)
+                ? TextAlign.left
+                : TextAlign.center,
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+          Text(
+            'Sign in to continue your learning journey',
+            style: AppThemeResponsiveness.getSplashSubtitleStyle(context).copyWith(
+              height: 1.3,
+              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 13 : 14,
+            ),
+            textAlign: AppThemeResponsiveness.isDesktop(context)
+                ? TextAlign.left
+                : TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginForm() {
+    return Container(
+      margin: AppThemeResponsiveness.getHorizontalPadding(context),
+      constraints: BoxConstraints(
+        maxWidth: AppThemeResponsiveness.isDesktop(context) ? 500 : double.infinity,
+      ),
+      decoration: BoxDecoration(
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getCardBorderRadius(context),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            spreadRadius: 5,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: AppThemeResponsiveness.getCardPadding(context),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Login as',
+                style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize! + 2,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF1F2937),
+                ),
+              ),
+              // User Type Selection Widget
+              UserTypeSelection(
+                selectedUserType: _userType,
+                onUserTypeSelected: (userType) {
+                  setState(() {
+                    _userType = userType;
+                    _showUserTypeError = false;
+                  });
+                },
+                showError: _showUserTypeError,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+
+              // Name Field
+              AppTextFieldBuilder.build(
+                context: context,
+                controller: _nameController,
+                label: 'Full Name',
+                icon: Icons.person_outline_rounded,
+                validator: (value) =>
+                value?.isEmpty ?? true
+                    ? 'Please enter your full name'
+                    : null,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+
+              // Password Field
+              AppTextFieldBuilder.build(
+                context: context,
+                controller: _passwordController,
+                label: 'Password',
+                icon: Icons.lock_outline_rounded,
+                obscureText: _obscurePassword,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_off_rounded
+                        : Icons.visibility_rounded,
+                    color: const Color(0xFF6B7280),
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.9,
                   ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
                 ),
+                validator: (value) =>
+                value?.isEmpty ?? true ? 'Please enter your password' : null,
               ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
 
-  Widget _buildUserTypeSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Login As',
-          style: TextStyle(
-            fontSize: isSmallScreen ? 14 : 16,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1F2937),
+              // Remember Me Row
+              _buildRememberMeRow(),
+              SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+
+              // Login Button
+              _buildLoginButton(),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+
+              // Divider
+              _buildDivider(),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+
+              // Quick Actions
+              _buildQuickActions(),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+            ],
           ),
         ),
-        SizedBox(height: 12),
-        SizedBox(
-          height: isSmallScreen ? 70 : 80,
-          child: isSmallScreen
-              ? _buildCompactUserTypeGrid()
-              : _buildUserTypeList(),
-        ),
-        if (_userType == null)
-          Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Text(
-              'Please select a user type',
-              style: TextStyle(
-                color: Colors.red.shade600,
-                fontSize: 12,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildUserTypeList() {
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: _userTypes.length,
-      itemBuilder: (context, index) {
-        return _buildUserTypeItem(index);
-      },
-    );
-  }
-
-  Widget _buildCompactUserTypeGrid() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: _userTypes
-            .asMap()
-            .entries
-            .map((entry) {
-          int index = entry.key;
-          return Padding(
-            padding: EdgeInsets.only(
-                right: index < _userTypes.length - 1 ? 8 : 0),
-            child: _buildUserTypeItem(index, isCompact: true),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildUserTypeItem(int index, {bool isCompact = false}) {
-    final userType = _userTypes[index];
-    final isSelected = _userType == userType['value'];
-    final itemWidth = isCompact ? 70.0 : (isSmallScreen ? 80.0 : 90.0);
-    final iconSize = isCompact ? 16.0 : (isSmallScreen ? 20.0 : 24.0);
-    final fontSize = isCompact ? 9.0 : (isSmallScreen ? 10.0 : 11.0);
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _userType = userType['value'];
-        });
-        HapticFeedback.lightImpact();
-      },
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        margin: EdgeInsets.only(right: isCompact ? 0 : 12),
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-        width: itemWidth,
-        decoration: BoxDecoration(
-          color: isSelected ? userType['color'] : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? userType['color'] : Colors.transparent,
-            width: 2,
-          ),
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: userType['color'].withOpacity(0.3),
-              blurRadius: 8,
-              spreadRadius: 2,
-            ),
-          ] : null,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              userType['icon'],
-              color: isSelected ? Colors.white : Colors.grey.shade600,
-              size: iconSize,
-            ),
-            SizedBox(height: 4),
-            Flexible(
-              child: Text(
-                _getShortUserType(userType['value']),
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected ? Colors.white : Colors.grey.shade600,
-                  height: 1.2,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _getShortUserType(String userType) {
-    switch (userType) {
-      case 'Academic Officer':
-        return isSmallScreen ? 'Academic\nOfficer' : 'Academic\nOfficer';
-      case 'Student':
-        return 'Student';
-      case 'Teacher':
-        return 'Teacher';
-      case 'Parent':
-        return 'Parent';
-      case 'Admin':
-        return 'Admin';
-      default:
-        return userType.split(' ')[0];
-    }
-  }
-
-  Widget _buildInputField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    String? Function(String?)? validator,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: controller,
-        style: TextStyle(fontSize: isSmallScreen ? 14 : 16),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(
-            color: Color(0xFF6B7280),
-            fontSize: isSmallScreen ? 14 : 16,
-          ),
-          prefixIcon: Container(
-            margin: EdgeInsets.all(12),
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Color(0xFF667eea).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: Color(0xFF667eea), size: 20),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Color(0xFF667eea), width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.red.shade400),
-          ),
-          filled: true,
-          fillColor: Color(0xFFF9FAFB),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: isSmallScreen ? 12 : 16,
-          ),
-        ),
-        validator: validator,
-      ),
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextFormField(
-        controller: _passwordController,
-        obscureText: _obscurePassword,
-        style: TextStyle(fontSize: isSmallScreen ? 14 : 16),
-        decoration: InputDecoration(
-          labelText: 'Password',
-          labelStyle: TextStyle(
-            color: Color(0xFF6B7280),
-            fontSize: isSmallScreen ? 14 : 16,
-          ),
-          prefixIcon: Container(
-            margin: EdgeInsets.all(12),
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Color(0xFF667eea).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-                Icons.lock_outline_rounded, color: Color(0xFF667eea), size: 20),
-          ),
-          suffixIcon: IconButton(
-            icon: Icon(
-              _obscurePassword ? Icons.visibility_off_rounded : Icons
-                  .visibility_rounded,
-              color: Color(0xFF6B7280),
-            ),
-            onPressed: () {
-              setState(() {
-                _obscurePassword = !_obscurePassword;
-              });
-            },
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Color(0xFFE5E7EB)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Color(0xFF667eea), width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.red.shade400),
-          ),
-          filled: true,
-          fillColor: Color(0xFFF9FAFB),
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: isSmallScreen ? 12 : 16,
-          ),
-        ),
-        validator: (value) =>
-        value?.isEmpty ?? true
-            ? 'Please enter your password'
-            : null,
       ),
     );
   }
@@ -658,43 +326,38 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           },
           child: Row(
             children: [
-              AnimatedContainer(
-                duration: Duration(milliseconds: 200),
+              Container(
                 width: 20,
                 height: 20,
                 decoration: BoxDecoration(
-                  color: _rememberMe ? Color(0xFF667eea) : Colors.transparent,
+                  color: _rememberMe ? AppThemeColor.primaryBlue : Colors.transparent,
                   border: Border.all(
-                    color: _rememberMe ? Color(0xFF667eea) : Color(0xFFD1D5DB),
+                    color: _rememberMe ? AppThemeColor.primaryBlue : const Color(0xFFD1D5DB),
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: _rememberMe
-                    ? Icon(Icons.check, color: Colors.white, size: 14)
+                    ? const Icon(Icons.check, color: Colors.white, size: 14)
                     : null,
               ),
-              SizedBox(width: 8),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
               Text(
                 'Remember me',
-                style: TextStyle(
-                  color: Color(0xFF6B7280),
-                  fontSize: isSmallScreen ? 12 : 14,
-                ),
+                style: AppThemeResponsiveness.getCaptionTextStyle(context),
               ),
             ],
           ),
         ),
-        Spacer(),
+        const Spacer(),
         TextButton(
           onPressed: () {
             Navigator.pushNamed(context, '/forget-password');
           },
           child: Text(
             'Forgot Password?',
-            style: TextStyle(
-              color: Color(0xFF667eea),
-              fontSize: isSmallScreen ? 12 : 14,
+            style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
+              color: AppThemeColor.primaryBlue,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -706,16 +369,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget _buildLoginButton() {
     return Container(
       width: double.infinity,
-      height: isSmallScreen ? 48 : 56,
+      height: AppThemeResponsiveness.getButtonHeight(context),
       decoration: BoxDecoration(
-        color: Colors.blue.shade500,
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getButtonBorderRadius(context),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF667eea).withOpacity(0.3),
+            color: AppThemeColor.primaryBlue.withOpacity(0.3),
             blurRadius: 15,
             spreadRadius: 2,
-            offset: Offset(0, 8),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -725,25 +390,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(
+              AppThemeResponsiveness.getButtonBorderRadius(context),
+            ),
           ),
         ),
         child: _isLoading
             ? SizedBox(
           height: 24,
           width: 24,
-          child: CircularProgressIndicator(
+          child: const CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             strokeWidth: 2,
           ),
         )
             : Text(
           'Sign In',
-          style: TextStyle(
-            fontSize: isSmallScreen ? 16 : 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppThemeResponsiveness.getButtonTextStyle(context),
         ),
       ),
     );
@@ -752,18 +415,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget _buildDivider() {
     return Row(
       children: [
-        Expanded(child: Divider(color: Color(0xFFE5E7EB))),
+        const Expanded(child: Divider(color: Color(0xFFE5E7EB))),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppThemeResponsiveness.getMediumSpacing(context),
+          ),
           child: Text(
             'or',
-            style: TextStyle(
-              color: Color(0xFF6B7280),
-              fontSize: isSmallScreen ? 12 : 14,
-            ),
+            style: AppThemeResponsiveness.getCaptionTextStyle(context),
           ),
         ),
-        Expanded(child: Divider(color: Color(0xFFE5E7EB))),
+        const Expanded(child: Divider(color: Color(0xFFE5E7EB))),
       ],
     );
   }
@@ -771,7 +433,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget _buildQuickActions() {
     return Column(
       children: [
-        isSmallScreen
+        AppThemeResponsiveness.isMobile(context)
             ? Column(
           children: [
             _buildQuickActionButton(
@@ -779,11 +441,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               Icons.lock_reset_rounded,
                   () => Navigator.pushNamed(context, '/change-password'),
             ),
-            SizedBox(height: 12),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
             _buildQuickActionButton(
-              'New Admission',
-              Icons.person_add_rounded,
-                  () => Navigator.pushNamed(context, '/admission-main'),
+                'New Admission',
+                Icons.person_add_rounded,
+                    () => Navigator.pushNamedAndRemoveUntil(context,
+                    '/admission-main',(route) => false)
             ),
           ],
         )
@@ -796,7 +459,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     () => Navigator.pushNamed(context, '/change-password'),
               ),
             ),
-            SizedBox(width: 12),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
             Expanded(
               child: _buildQuickActionButton(
                 'New Admission',
@@ -810,32 +473,38 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildQuickActionButton(String title, IconData icon,
-      VoidCallback onTap) {
+  Widget _buildQuickActionButton(
+      String title, IconData icon, VoidCallback onTap) {
     return Container(
-      height: isSmallScreen ? 44 : 48,
+      height: AppThemeResponsiveness.getButtonHeight(context) * 0.8,
       decoration: BoxDecoration(
-        color: Color(0xFFF9FAFB),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFFE5E7EB)),
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getInputBorderRadius(context),
+        ),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getInputBorderRadius(context),
+          ),
           onTap: onTap,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: isSmallScreen ? 14 : 16,
-                  color: Color(0xFF6B7280)),
-              SizedBox(width: 8),
+              Icon(
+                icon,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+                color: const Color(0xFF6B7280),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
               Text(
                 title,
-                style: TextStyle(
-                  fontSize: isSmallScreen ? 11 : 12,
+                style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF374151),
+                  color: const Color(0xFF374151),
                 ),
               ),
             ],
@@ -845,49 +514,50 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildFooter() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      child: Text(
-        '© 2024 School Management System',
-        style: TextStyle(
-          color: Colors.white.withOpacity(0.7),
-          fontSize: isSmallScreen ? 10 : 12,
-        ),
-      ),
-    );
-  }
-
   void _login() async {
-    if (!_formKey.currentState!.validate() || _userType == null) {
+    bool isFormValid = _formKey.currentState!.validate();
+
+    if (_userType == null) {
+      setState(() {
+        _showUserTypeError = true;
+      });
+    }
+
+    if (!isFormValid || _userType == null) {
       if (_userType == null) {
         _showError('Please select a user type');
       }
-      _shakeController.forward().then((_) => _shakeController.reverse());
       return;
     }
 
     setState(() => _isLoading = true);
 
-    // Simulate network delay
-    await Future.delayed(Duration(seconds: 2));
+    try {
+      // Simulate network delay
+      await Future.delayed(const Duration(seconds: 2));
 
-    setState(() => _isLoading = false);
+      // Determine user role from selected user type
+      UserRole role = _determineUserRole(_userType!);
 
-    // Navigation based on user type
-    final routes = {
-      'Admin': '/admin-dashboard',
-      'Teacher': '/teacher-dashboard',
-      'Student': '/student-dashboard',
-      'Academic Officer': '/academic-officer-dashboard',
-      'Parent': '/parent-dashboard',
-    };
+      // Set user in service using the LoginExample helper
+      UserService.instance.setUser(
+        role: role,
+        userId: 'user_${DateTime.now().millisecondsSinceEpoch}', // Generate a temporary user ID
+        userDetails: {
+          'name': _nameController.text,
+          'userType': _userType,
+          'loginTime': DateTime.now().toIso8601String(),
+        },
+      );
 
-    final route = routes[_userType];
-    if (route != null) {
-      Navigator.pushReplacementNamed(context, route);
-    } else {
-      _showError('Unknown user type!');
+      setState(() => _isLoading = false);
+
+      // Navigate to appropriate dashboard using the role-based navigation service
+      RoleBasedNavigationService.navigateBasedOnRole(context);
+
+    } catch (e) {
+      setState(() => _isLoading = false);
+      _showError('Login failed: ${e.toString()}');
     }
   }
 
@@ -896,17 +566,38 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.error_outline, color: Colors.white),
-            SizedBox(width: 12),
+            const Icon(Icons.error_outline, color: Colors.white),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
             Expanded(child: Text(message)),
           ],
         ),
         backgroundColor: Colors.red.shade600,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: EdgeInsets.all(16),
-        duration: Duration(seconds: 3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getInputBorderRadius(context),
+          ),
+        ),
+        margin: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+        duration: const Duration(seconds: 3),
       ),
     );
+  }
+
+  UserRole _determineUserRole(String userType) {
+    switch (userType.toLowerCase()) {
+      case 'student':
+        return UserRole.student;
+      case 'teacher':
+        return UserRole.teacher;
+      case 'admin':
+        return UserRole.admin;
+      case 'parent':
+        return UserRole.parent;
+      case 'academic officer':
+        return UserRole.academicOfficer;
+      default:
+        return UserRole.guest;
+    }
   }
 }

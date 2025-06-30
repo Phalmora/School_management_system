@@ -1,465 +1,443 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/AdminDashboardPages/employmentManagement.dart';
+import 'package:school/academicOfficerDashboardPages/attendanceReport.dart';
+import 'package:school/academicOfficerDashboardPages/sendNotificationAcademicOfficer.dart';
+import 'package:school/customWidgets/dashboardCustomWidgets/commonImportsDashboard.dart';
+import 'package:school/customWidgets/dashboardCustomWidgets/dashboardQuickAction.dart';
+import 'package:school/model/quickActionModel.dart';
 
-class academicOfficerDashboard extends StatelessWidget {
+class AcademicOfficerDashboard extends StatefulWidget {
+  @override
+  State<AcademicOfficerDashboard> createState() => _AcademicOfficerDashboardState();
+}
+
+class _AcademicOfficerDashboardState extends State<AcademicOfficerDashboard> with TickerProviderStateMixin {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
-              ),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.school, size: 40, color: Colors.teal),
-                  ),
-                  SizedBox(width: 15),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Academic Officer',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Monitoring & Oversight',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+      drawer: _buildDrawer(),
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: AppThemeColor.primaryGradient,
+            ),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+                  vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Welcome Section
+                    _buildWelcomeSection(),
+
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context) * 1.2),
+
+                    // Overview Statistics
+                    _buildOverviewStatistics(context),
+
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context) * 1.6),
+
+                    // Quick Access Title
+                    SectionTitle(title: 'Quick Access'),
+
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+
+                    // Main Dashboard Grid
+                    _buildDashboardGrid(context),
+
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context) * 1.2),
+
+                    // Recent Activity Section
+                    SectionTitle(title: 'Recent Activity'),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                    _buildRecentActivity(),
+                  ],
+                ),
               ),
             ),
+          ),
+          ExpandableFab(),
+        ],
+      ),
+    );
+  }
 
-            _buildDrawerItem(
-              context,
-              icon: Icons.dashboard,
+  Widget _buildDrawer() {
+    return ModernDrawer(
+      headerIcon: Icons.school_rounded,
+      headerTitle: 'Academic Officer',
+      headerSubtitle: 'Monitoring & Oversight',
+      sections: [
+        ModernDrawerSection(
+          title: 'Main',
+          items: [
+            ModernDrawerItem(
+              icon: Icons.dashboard_rounded,
               title: 'Dashboard',
               route: '/academic-officer-dashboard',
             ),
-            _buildDrawerItem(
-              context,
-              icon: Icons.person_search,
+            ModernDrawerItem(
+              icon: Icons.person_search_rounded,
               title: 'Teacher Performance',
               route: '/academic-officer-teacher-performance',
             ),
-            _buildDrawerItem(
-              context,
-              icon: Icons.class_,
+            ModernDrawerItem(
+              icon: Icons.class_rounded,
               title: 'Classroom Reports',
               route: '/academic-officer-classroom-report',
             ),
-            _buildDrawerItem(
-              context,
-              icon: Icons.quiz,
+            ModernDrawerItem(
+              icon: Icons.quiz_rounded,
               title: 'Exam Management',
               route: '/academic-officer-exam-management-screen',
             ),
-            _buildDrawerItem(
-              context,
-              icon: Icons.notifications_active,
-              title: 'Notifications',
+          ],
+        ),
+        ModernDrawerSection(
+          title: 'Academic',
+          items: [
+            ModernDrawerItem(
+              icon: Icons.fact_check_rounded,
+              title: 'Attendance Reports',
+              route: '/academic-officer-attendance-reports',
+            ),
+            ModernDrawerItem(
+              icon: Icons.grade_rounded,
+              title: 'Result Entry Status',
+              route: '/teacher-result-entry',
+            ),
+            ModernDrawerItem(
+              icon: Icons.add_alarm_outlined,
+              title: 'Time Table Management',
+              route: '/admin-add-timetable',
+            ),
+            ModernDrawerItem(
+              icon: Icons.sports_sharp,
+              title: 'Academic Options',
+              route: '/academic-options',
+            ),
+          ],
+        ),
+        ModernDrawerSection(
+          title: 'Communication',
+          items: [
+            ModernDrawerItem(
+              icon: Icons.notifications_active_rounded,
+              title: 'Send Notifications',
               route: '/academic-officer-notification',
             ),
-            _buildDrawerItem(
-              context,
-              icon: Icons.inbox,
+            ModernDrawerItem(
+              icon: Icons.inbox_rounded,
               title: 'Inbox / Chat',
-              route: '/inbox-chat',
+              route: '/main-chat',
             ),
-            Divider(),
-            _buildDrawerItem(
-              context,
-              icon: Icons.lock_outline,
+            ModernDrawerItem(
+              icon: Icons.announcement_rounded,
+              title: 'Announcements',
+              route: '/announcements',
+              badge: '3',
+            ),
+          ],
+        ),
+        ModernDrawerSection(
+          title: 'Settings',
+          items: [
+            ModernDrawerItem(
+              icon: Icons.person_rounded,
+              title: 'My Profile',
+              route: '/academic-officer-profile',
+            ),
+            ModernDrawerItem(
+              icon: Icons.lock_rounded,
               title: 'Change Password',
               route: '/change-password',
             ),
-            _buildDrawerItem(
-              context,
-              icon: Icons.logout,
+            ModernDrawerItem(
+              icon: Icons.logout_rounded,
               title: 'Logout',
-              onTap: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/login', (route) => false);
-              },
+              onTap: () => LogoutDialog.show(context),
+              isDestructive: true,
             ),
           ],
         ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              // Welcome Card
-              Card(
-                elevation: 5,
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.teal.shade100,
-                        child: Icon(
-                          Icons.school,
-                          size: 40,
-                          color: Colors.teal.shade600,
-                        ),
-                      ),
-                      SizedBox(width: 20),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Welcome Academic Officer!',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text('Monitoring & Oversight Control'),
-                          ],
-                        ),
-                      ),
-                      // Notification Bell
-                      IconButton(
-                        icon: Stack(
-                          children: [
-                            Icon(Icons.notifications, size: 28, color: Colors.teal),
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Container(
-                                padding: EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 16,
-                                  minHeight: 16,
-                                ),
-                                child: Text(
-                                  '5',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        onPressed: () => Navigator.pushNamed(context, '/notifications'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      ],
+    );
+  }
 
-              SizedBox(height: 20),
+  Widget _buildWelcomeSection() {
+    return WelcomeSection(
+      name: 'Academic Officer',
+      classInfo: 'Monitoring & Oversight Control',
+      isActive: true,
+      isVerified: true,
+      isSuperUser: true,
+      icon: Icons.school_rounded,
+    );
+  }
 
-              // Overview Statistics
-              Container(
-                height: 120,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    _buildStatCard('Classes Supervised', '12', Icons.class_, Colors.teal),
-                    _buildStatCard('Pending Mark', '8', Icons.edit_note, Colors.orange),
-                    _buildStatCard('Attendance Smry', '95%', Icons.check_circle, Colors.green),
-                    _buildStatCard('Active Teachers', '24', Icons.person, Colors.blue),
-                    _buildStatCard('Upcoming Exams', '3', Icons.quiz, Colors.purple),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 20),
-              Text('Quick Access', style: TextStyle(fontSize: 25, color: Colors.white,fontWeight: FontWeight.bold)),
-              SizedBox(height: 20),
-              // Main Dashboard Grid
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 1.1,
-                  children: [
-
-                    _buildDashboardCard(
-                      'Teacher Performance',
-                      Icons.person_search,
-                      Colors.blue,
-                          () => Navigator.pushNamed(context, '/academic-officer-teacher-performance'),
-                    ),
-                    _buildDashboardCard(
-                      'Classroom Reports',
-                      Icons.assessment,
-                      Colors.green,
-                          () => Navigator.pushNamed(context, '/academic-officer-classroom-report'),
-                    ),
-                    _buildDashboardCard(
-                      'Exam Management',
-                      Icons.quiz,
-                      Colors.orange,
-                          () => Navigator.pushNamed(context, '/academic-officer-exam-management-screen'),
-                    ),
-                    _buildDashboardCard(
-                      'Send Notifications',
-                      Icons.notifications_active,
-                      Colors.purple,
-                          () => Navigator.pushNamed(context, '/academic-officer-notification'),
-                    ),
-                    _buildDashboardCard(
-                      'Academic Options',
-                      Icons.sports_sharp,
-                      Colors.blueGrey,
-                          () => Navigator.pushNamed(context, '/academic-options'),
-                    ),
-                    _buildDashboardCard(
-                      'Attendance Reports',
-                      Icons.fact_check,
-                      Colors.indigo,
-                          () => Navigator.pushNamed(context, '/attendance-reports'),
-                    ),
-                    _buildDashboardCard(
-                      'Result Entry Status',
-                      Icons.grade,
-                      Colors.teal,
-                          () => Navigator.pushNamed(context, '/result-entry-status'),
-                    ),
-                    _buildDashboardCard(
-                      'Performance Analytics',
-                      Icons.analytics,
-                      Colors.red.shade700,
-                          () => Navigator.pushNamed(context, '/performance-analytics'),
-                    ),
-                    _buildDashboardCard(
-                      'Quick Actions',
-                      Icons.flash_on,
-                      Colors.amber.shade700,
-                          () => _showQuickActionsDialog(context),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+  Widget _buildOverviewStatistics(BuildContext context) {
+    return SizedBox(
+      height: AppThemeResponsiveness.isSmallPhone(context)
+          ? 140
+          : AppThemeResponsiveness.isMediumPhone(context)
+          ? 130
+          : AppThemeResponsiveness.isTablet(context)
+          ? 150
+          : 160,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        children: [
+          QuickStatCard(
+            title: 'Classes Supervised',
+            value: '12',
+            icon: Icons.class_rounded,
+            iconColor: Colors.teal,
+            iconBackgroundColor: Colors.teal.shade50,
+            onTap: () => Navigator.pushNamed(context, '/admin-class-section-management'),
           ),
-        ),
+          QuickStatCard(
+            title: 'Attendance Rate',
+            value: '95%',
+            icon: Icons.check_circle_rounded,
+            iconColor: Colors.green,
+            iconBackgroundColor: Colors.green.shade50,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AttendanceReport()),
+            ),
+          ),
+          QuickStatCard(
+            title: 'Active Teachers',
+            value: '24',
+            icon: Icons.person_rounded,
+            iconColor: Colors.blue,
+            iconBackgroundColor: Colors.blue.shade50,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EmployeeManagementPage()),
+            ),
+          ),
+          QuickStatCard(
+            title: 'Pending Reviews',
+            value: '8',
+            icon: Icons.pending_actions_rounded,
+            iconColor: Colors.orange,
+            iconBackgroundColor: Colors.orange.shade50,
+            onTap: () => Navigator.pushNamed(context, '/pending-reviews'),
+          ),
+          QuickStatCard(
+            title: 'Active Notices',
+            value: '3',
+            icon: Icons.notifications_active,
+            iconColor: Colors.purple,
+            iconBackgroundColor: Colors.purple.shade50,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NotificationsScreen()),
+            ),
+          ),
+          QuickStatCard(
+            title: 'System Health',
+            value: '99%',
+            icon: Icons.health_and_safety_rounded,
+            iconColor: Colors.red,
+            iconBackgroundColor: Colors.red.shade50,
+            onTap: () => Navigator.pushNamed(context, '/system-health'),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      width: 140,
-      margin: EdgeInsets.only(right: 10),
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: color, size: 24),
-              SizedBox(height: 8),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey.shade600,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-              ),
-            ],
-          ),
-        ),
+  Widget _buildDashboardGrid(BuildContext context) {
+    final items = [
+      DashboardItem(
+        'Teacher Performance',
+        Icons.person_search_rounded,
+        Colors.blue,
+            () => Navigator.pushNamed(context, '/academic-officer-teacher-performance'),
+        'Monitor & evaluate teachers',
       ),
-    );
-  }
+      DashboardItem(
+        'Classroom Reports',
+        Icons.assessment_rounded,
+        Colors.green,
+            () => Navigator.pushNamed(context, '/academic-officer-classroom-report'),
+        'Detailed classroom analytics',
+      ),
+      DashboardItem(
+        'Exam Management',
+        Icons.quiz_rounded,
+        Colors.orange,
+            () => Navigator.pushNamed(context, '/academic-officer-exam-management-screen'),
+        'Schedule & manage exams',
+      ),
+      DashboardItem(
+        'Send Notifications',
+        Icons.notifications_active_rounded,
+        Colors.purple,
+            () => Navigator.pushNamed(context, '/academic-officer-notification'),
+        'Broadcast important messages',
+      ),
+      DashboardItem(
+        'Attendance Reports',
+        Icons.fact_check_rounded,
+        Colors.indigo,
+            () => Navigator.pushNamed(context, '/academic-officer-attendance-reports'),
+        'Track student attendance',
+      ),
+      DashboardItem(
+        'Result Entry Status',
+        Icons.grade_rounded,
+        Colors.teal,
+            () => Navigator.pushNamed(context, '/teacher-result-entry'),
+        'Monitor result submissions',
+      ),
+      DashboardItem(
+        'Time Table Management',
+        Icons.add_alarm_outlined,
+        Colors.brown,
+            () => Navigator.pushNamed(context, '/admin-add-timetable'),
+        'Create & modify schedules',
+      ),
+      DashboardItem(
+        'Academic Options',
+        Icons.sports_sharp,
+        Colors.blueGrey,
+            () => Navigator.pushNamed(context, '/academic-options'),
+        'Academic year settings',
+      ),
+      DashboardItem(
+        'Teacher Resources',
+        Icons.library_books_rounded,
+        Colors.deepOrange,
+            () => Navigator.pushNamed(context, '/teacher-resources'),
+        'Educational materials & guides',
+      ),
+      DashboardItem(
+        'Performance Analytics',
+        Icons.analytics_rounded,
+        Colors.cyan,
+            () => Navigator.pushNamed(context, '/performance-analytics'),
+        'Data insights & trends',
+      ),
+      DashboardItem(
+        'My Profile',
+        Icons.person_rounded,
+        Colors.lightGreen,
+            () => Navigator.pushNamed(context, '/academic-officer-profile'),
+        'View & edit profile',
+      ),
+      DashboardItem(
+        'Quick Actions',
+        Icons.flash_on_rounded,
+        Colors.amber.shade700,
+            () => _showQuickActionsDialog(context),
+        'Shortcuts & quick tasks',
+      ),
+    ];
 
-  Widget _buildDashboardCard(
-      String title,
-      IconData icon,
-      Color color,
-      VoidCallback onTap,
-      ) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(15),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: Colors.white,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, size: 40, color: color),
-              ),
-              SizedBox(height: 12),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: color.withOpacity(0.8),
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawerItem(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        String? route,
-        VoidCallback? onTap,
-      }) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.teal.shade700),
-      title: Text(title),
-      onTap: onTap ??
-              () {
-            if (route != null) {
-              Navigator.pushNamed(context, route);
-            }
-          },
-    );
+    return DashboardGrid(items: items);
   }
 
   void _showQuickActionsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.flash_on, color: Colors.amber),
-              SizedBox(width: 8),
-              Text('Quick Actions'),
-            ],
-          ),
-          content: Container(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: Icon(Icons.assignment_late, color: Colors.orange),
-                  title: Text('Check Pending Entries'),
-                  subtitle: Text('Review mark & attendance entries'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/pending-entries');
-                  },
-                ),
-                Divider(),
-                ListTile(
-                  leading: Icon(Icons.lock_clock, color: Colors.red),
-                  title: Text('Lock/Unlock Results'),
-                  subtitle: Text('Manage result submission deadlines'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/lock-unlock-results');
-                  },
-                ),
-                Divider(),
-                ListTile(
-                  leading: Icon(Icons.announcement, color: Colors.blue),
-                  title: Text('Send Announcement'),
-                  subtitle: Text('Notify teachers about deadlines'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/send-announcement');
-                  },
-                ),
-                Divider(),
-                ListTile(
-                  leading: Icon(Icons.event, color: Colors.green),
-                  title: Text('Schedule Exam'),
-                  subtitle: Text('Set test dates and notify'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/schedule-exam');
-                  },
-                ),
-                Divider(),
-                ListTile(
-                  leading: Icon(Icons.insights, color: Colors.purple),
-                  title: Text('Generate Report'),
-                  subtitle: Text('Class performance summary'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/generate-report');
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
+    return QuickActionsDialog.show(
+      context,
+      actions: [
+        QuickActionItem(
+          icon: Icons.assignment_late_rounded,
+          color: Colors.orange,
+          title: 'Check Pending Entries',
+          subtitle: 'Review mark & attendance entries',
+          route: '/pending-entries',
+        ),
+        QuickActionItem(
+          icon: Icons.lock_clock_rounded,
+          color: Colors.red,
+          title: 'Lock/Unlock Results',
+          subtitle: 'Manage result submission deadlines',
+          route: '/lock-unlock-results',
+        ),
+        QuickActionItem(
+          icon: Icons.announcement_rounded,
+          color: Colors.blue,
+          title: 'Send Announcement',
+          subtitle: 'Notify teachers about deadlines',
+          route: '/send-announcement',
+        ),
+        QuickActionItem(
+          icon: Icons.event_rounded,
+          color: Colors.green,
+          title: 'Schedule Exam',
+          subtitle: 'Set test dates and notify',
+          route: '/schedule-exam',
+        ),
+        QuickActionItem(
+          icon: Icons.insights_rounded,
+          color: Colors.purple,
+          title: 'Generate Report',
+          subtitle: 'Class performance summary',
+          route: '/generate-report',
+        ),
+        QuickActionItem(
+          icon: Icons.supervised_user_circle_rounded,
+          color: Colors.teal,
+          title: 'Teacher Evaluation',
+          subtitle: 'Conduct performance reviews',
+          route: '/teacher-evaluation',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentActivity() {
+    return RecentActivityCard(
+      items: const [
+        ActivityItem(
+          icon: Icons.visibility_rounded,
+          title: 'Classroom supervision completed for 6A & 8B',
+          time: '30 minutes ago',
+          color: Colors.blue,
+        ),
+        ActivityItem(
+          icon: Icons.analytics_rounded,
+          title: 'Attendance analysis reviewed for June 26',
+          time: '2 hours ago',
+          color: Colors.teal,
+        ),
+        ActivityItem(
+          icon: Icons.notifications_rounded,
+          title: 'Notification sent to all subject teachers',
+          time: '5 hours ago',
+          color: Colors.deepPurple,
+        ),
+        ActivityItem(
+          icon: Icons.schedule_rounded,
+          title: 'Time table updated for Class 9',
+          time: '1 day ago',
+          color: Colors.indigo,
+        ),
+        ActivityItem(
+          icon: Icons.done_all_rounded,
+          title: 'Exam schedule approved for Term 2',
+          time: '2 days ago',
+          color: Colors.orange,
+        ),
+        ActivityItem(
+          icon: Icons.trending_up_rounded,
+          title: 'Performance metrics updated',
+          time: '3 days ago',
+          color: Colors.green,
+        ),
+      ],
     );
   }
 }

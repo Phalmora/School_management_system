@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeResponsiveness.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeColor.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _controller = AnimationController(
-      duration: AppTheme.splashAnimationDuration,
+      duration: AppThemeColor.splashAnimationDuration,
       vsync: this,
     );
 
@@ -31,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Future.delayed(AppTheme.splashScreenDuration, () {
+    Future.delayed(AppThemeColor.splashScreenDuration, () {
       Navigator.pushReplacementNamed(context, '/admission-main');
     });
   }
@@ -47,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: Center(
           child: Column(
@@ -62,16 +63,19 @@ class _SplashScreenState extends State<SplashScreen>
                       scale: _scaleAnimation,
                       child: Column(
                         children: [
-                          Image.asset('assets/school.png'),
-                          SizedBox(height: AppTheme.defaultSpacing),
+                          Image.asset(
+                            'assets/school.png',
+                            height: AppThemeResponsiveness.getLogoSize(context) * 3.5, // Using responsive logo size
+                          ),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)), // Responsive spacing
                           Text(
                             'Royal Public School',
-                            style: AppTheme.FontStyle,
+                            style: AppThemeResponsiveness.getHeadlineTextStyle(context), // Fixed: Using correct method
                           ),
-                          SizedBox(height: AppTheme.smallSpacing),
+                          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)), // Responsive spacing
                           Text(
                             'Your Future Starts Here',
-                            style: AppTheme.splashSubtitleStyle,
+                            style: AppThemeResponsiveness.getSubTitleTextStyle(context), // Fixed: Using correct method
                           ),
                         ],
                       ),
@@ -79,9 +83,9 @@ class _SplashScreenState extends State<SplashScreen>
                   );
                 },
               ),
-              SizedBox(height: AppTheme.largeSpacing),
+              SizedBox(height: AppThemeResponsiveness.getLargeSpacing(context)), // Responsive spacing
               CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white),
+                valueColor: AlwaysStoppedAnimation<Color>(AppThemeColor.white),
               ),
             ],
           ),

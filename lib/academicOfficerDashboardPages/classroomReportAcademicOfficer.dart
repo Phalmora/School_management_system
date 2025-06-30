@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/model/classroomReport.dart';
 
 class ClassroomReportsScreen extends StatefulWidget {
   @override
@@ -54,35 +54,47 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
       appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
             children: [
-                  SizedBox(height: AppTheme.defaultSpacing,),
-              Row(
-                children: [
-                  SizedBox(width: AppTheme.smallSpacing,),
-                  Icon(
-                    Icons.pending_actions,
-                    size: 32.0,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: AppTheme.smallSpacing,),
-                  Text('Classroom  Report', style: TextStyle(fontSize: 25, color: Colors.white),),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                ],
+              // Responsive Header
+              Padding(
+                padding: AppThemeResponsiveness.getHorizontalPadding(context),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.pending_actions,
+                        size: AppThemeResponsiveness.getResponsiveIconSize(context, 32.0),
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+                      Expanded(
+                        child: Text(
+                          'Classroom Report',
+                          style: AppThemeResponsiveness.getTitleTextStyle(context).copyWith(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+
               // Reports List
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-                  child: ListView.builder(
-                    itemCount: classReports.length,
-                    itemBuilder: (context, index) {
-                      return _buildClassReportCard(classReports[index]);
-                    },
-                  ),
+                  padding: AppThemeResponsiveness.getScreenPadding(context),
+                  child: _buildResponsiveLayout(),
                 ),
               ),
             ],
@@ -92,16 +104,66 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
     );
   }
 
+  Widget _buildResponsiveLayout() {
+    // Use different layouts based on screen size
+    if (AppThemeResponsiveness.isDesktop(context)) {
+      return _buildDesktopLayout();
+    } else if (AppThemeResponsiveness.isTablet(context)) {
+      return _buildTabletLayout();
+    } else {
+      return _buildMobileLayout();
+    }
+  }
+
+  Widget _buildMobileLayout() {
+    return ListView.builder(
+      itemCount: classReports.length,
+      itemBuilder: (context, index) {
+        return _buildClassReportCard(classReports[index]);
+      },
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+        mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+        childAspectRatio: 0.8,
+      ),
+      itemCount: classReports.length,
+      itemBuilder: (context, index) {
+        return _buildClassReportCard(classReports[index]);
+      },
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+        mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+        childAspectRatio: 0.75,
+      ),
+      itemCount: classReports.length,
+      itemBuilder: (context, index) {
+        return _buildClassReportCard(classReports[index]);
+      },
+    );
+  }
+
   Widget _buildClassReportCard(ClassReport report) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.mediumSpacing),
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeResponsiveness.getCardElevation(context),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
         child: Container(
-          padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+          padding: AppThemeResponsiveness.getCardPadding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -109,121 +171,97 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
                     decoration: BoxDecoration(
-                      gradient: AppTheme.primaryGradient,
-                      borderRadius: BorderRadius.circular(12),
+                      gradient: AppThemeColor.primaryGradient,
+                      borderRadius: BorderRadius.circular(
+                        AppThemeResponsiveness.getResponsiveRadius(context, 12.0),
+                      ),
                     ),
                     child: Icon(
                       _getSubjectIcon(report.subject),
-                      color: AppTheme.white,
-                      size: 24,
+                      color: AppThemeColor.white,
+                      size: AppThemeResponsiveness.getDashboardCardIconSize(context),
                     ),
                   ),
-                  const SizedBox(width: AppTheme.mediumSpacing),
+                  SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           report.className,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
+                          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context),
                         ),
+                        SizedBox(height: 4),
                         Text(
                           '${report.totalStudents} Students • ${report.subject}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
+                          style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
                         ),
                       ],
                     ),
                   ),
                   IconButton(
                     onPressed: () => _showDetailedReport(report),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_forward_ios,
                       color: Colors.grey,
-                      size: 16,
+                      size: AppThemeResponsiveness.getResponsiveIconSize(context, 16.0),
                     ),
                   ),
                 ],
               ),
 
-              const SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
               // Performance Metrics
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildMetricCard(
-                      'Performance',
-                      '${report.averagePerformance.toStringAsFixed(1)}%',
-                      Icons.trending_up,
-                      _getPerformanceColor(report.averagePerformance),
-                    ),
-                  ),
-                  const SizedBox(width: AppTheme.smallSpacing),
-                  Expanded(
-                    child: _buildMetricCard(
-                      'Absentee Rate',
-                      '${report.absenteeRate.toStringAsFixed(1)}%',
-                      Icons.person_off,
-                      _getAbsenteeColor(report.absenteeRate),
-                    ),
-                  ),
-                ],
-              ),
+              _buildResponsiveMetricsRow(report),
 
-              const SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
 
               // Additional Info
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: AppThemeResponsiveness.getResponsivePadding(context, 12.0),
                 decoration: BoxDecoration(
-                  color: AppTheme.blue50,
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppThemeColor.blue50,
+                  borderRadius: BorderRadius.circular(
+                    AppThemeResponsiveness.getResponsiveRadius(context, 8.0),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.star,
                           color: Colors.amber,
-                          size: 16,
+                          size: AppThemeResponsiveness.getResponsiveIconSize(context, 16.0),
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Top Performer: ${report.topPerformer}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Top Performer: ${report.topPerformer}',
+                            style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     Row(
                       children: [
                         Icon(
                           Icons.assignment,
-                          color: AppTheme.blue600,
-                          size: 16,
+                          color: AppThemeColor.blue600,
+                          size: AppThemeResponsiveness.getResponsiveIconSize(context, 16.0),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Recent: ${report.recentActivity}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black87,
-                            ),
+                            style: AppThemeResponsiveness.getBodyTextStyle(context),
                           ),
                         ),
                       ],
@@ -238,12 +276,60 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
     );
   }
 
+  Widget _buildResponsiveMetricsRow(ClassReport report) {
+    if (AppThemeResponsiveness.isSmallPhone(context)) {
+      // Stack metrics vertically on small phones
+      return Column(
+        children: [
+          _buildMetricCard(
+            'Performance',
+            '${report.averagePerformance.toStringAsFixed(1)}%',
+            Icons.trending_up,
+            _getPerformanceColor(report.averagePerformance),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          _buildMetricCard(
+            'Absentee Rate',
+            '${report.absenteeRate.toStringAsFixed(1)}%',
+            Icons.person_off,
+            _getAbsenteeColor(report.absenteeRate),
+          ),
+        ],
+      );
+    } else {
+      // Side by side for larger screens
+      return Row(
+        children: [
+          Expanded(
+            child: _buildMetricCard(
+              'Performance',
+              '${report.averagePerformance.toStringAsFixed(1)}%',
+              Icons.trending_up,
+              _getPerformanceColor(report.averagePerformance),
+            ),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+          Expanded(
+            child: _buildMetricCard(
+              'Absentee Rate',
+              '${report.absenteeRate.toStringAsFixed(1)}%',
+              Icons.person_off,
+              _getAbsenteeColor(report.absenteeRate),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
   Widget _buildMetricCard(String title, String value, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: AppThemeResponsiveness.getResponsivePadding(context, 12.0),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getResponsiveRadius(context, 8.0),
+        ),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
@@ -251,23 +337,19 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
           Icon(
             icon,
             color: color,
-            size: 24,
+            size: AppThemeResponsiveness.getDashboardCardIconSize(context),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            style: AppThemeResponsiveness.getStatValueStyle(context).copyWith(
               color: color,
             ),
           ),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
+            style: AppThemeResponsiveness.getStatTitleStyle(context),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -308,9 +390,11 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.8,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(AppThemeResponsiveness.getDialogBorderRadius(context)),
+          ),
         ),
         child: Column(
           children: [
@@ -327,29 +411,30 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
 
             // Header
             Padding(
-              padding: const EdgeInsets.all(20),
+              padding: AppThemeResponsiveness.getScreenPadding(context),
               child: Row(
                 children: [
-                  Text(
-                    '${report.className} Detailed Report',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      '${report.className} Detailed Report',
+                      style: AppThemeResponsiveness.getDialogTitleStyle(context),
                     ),
                   ),
-                  const Spacer(),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
+                    icon: Icon(
+                      Icons.close,
+                      size: AppThemeResponsiveness.getIconSize(context),
+                    ),
                   ),
                 ],
               ),
             ),
 
-            // Detailed content would go here
+            // Detailed content
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
+                padding: AppThemeResponsiveness.getScreenPadding(context),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -360,15 +445,14 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
                     _buildDetailRow('Subject', report.subject),
                     _buildDetailRow('Recent Activity', report.recentActivity),
 
-                    const SizedBox(height: 20),
-                    const Text(
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+
+                    Text(
                       'Performance Breakdown',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: AppThemeResponsiveness.getHeadingStyle(context),
                     ),
-                    const SizedBox(height: 10),
+
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
 
                     // Performance indicators
                     _buildPerformanceIndicator('Excellent (90-100%)', 8, Colors.green),
@@ -387,24 +471,21 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
 
   Widget _buildDetailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: AppThemeResponsiveness.getSmallSpacing(context) / 2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: AppThemeResponsiveness.isSmallPhone(context) ? 100 : 120,
             child: Text(
               '$label:',
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
+              style: AppThemeResponsiveness.getSubHeadingStyle(context),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -416,7 +497,7 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
 
   Widget _buildPerformanceIndicator(String category, int count, Color color) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Container(
@@ -427,13 +508,16 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
-            child: Text(category),
+            child: Text(
+              category,
+              style: AppThemeResponsiveness.getBodyTextStyle(context),
+            ),
           ),
           Text(
             '$count students',
-            style: const TextStyle(
+            style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -441,24 +525,4 @@ class _ClassroomReportsScreenState extends State<ClassroomReportsScreen> {
       ),
     );
   }
-}
-
-class ClassReport {
-  final String className;
-  final int totalStudents;
-  final double averagePerformance;
-  final double absenteeRate;
-  final String topPerformer;
-  final String recentActivity;
-  final String subject;
-
-  ClassReport({
-    required this.className,
-    required this.totalStudents,
-    required this.averagePerformance,
-    required this.absenteeRate,
-    required this.topPerformer,
-    required this.recentActivity,
-    required this.subject,
-  });
 }

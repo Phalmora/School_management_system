@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:school/customWidgets/AddCommonWidgets/addNewHeader.dart';
+import 'package:school/customWidgets/AddCommonWidgets/addSectionHeader.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/customWidgets/commonImagePicker.dart';
+import 'package:school/customWidgets/datePicker.dart';
+import 'package:school/customWidgets/inputField.dart';
+import 'package:school/customWidgets/button.dart';
 import 'dart:io';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
 
 class AddTeacherScreen extends StatefulWidget {
   @override
@@ -11,6 +16,7 @@ class AddTeacherScreen extends StatefulWidget {
 }
 
 class _AddTeacherScreenState extends State<AddTeacherScreen> {
+  // Form Controllers
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _teacherIdController = TextEditingController();
@@ -20,8 +26,19 @@ class _AddTeacherScreenState extends State<AddTeacherScreen> {
   final _mobileController = TextEditingController();
   final _emailController = TextEditingController();
 
+  // Focus nodes for better UX
+  final _nameFocus = FocusNode();
+  final _teacherIdFocus = FocusNode();
+  final _designationFocus = FocusNode();
+  final _tagsFocus = FocusNode();
+  final _mobileFocus = FocusNode();
+  final _emailFocus = FocusNode();
+
+  // Image related
   File? _selectedImage;
-  DateTime? _selectedDate;
+  final ImagePicker _picker = ImagePicker();
+
+  // Loading state
   bool _isLoading = false;
 
   // Predefined designations for dropdown
@@ -51,134 +68,13 @@ class _AddTeacherScreenState extends State<AddTeacherScreen> {
     _tagsController.dispose();
     _mobileController.dispose();
     _emailController.dispose();
+    _nameFocus.dispose();
+    _teacherIdFocus.dispose();
+    _designationFocus.dispose();
+    _tagsFocus.dispose();
+    _mobileFocus.dispose();
+    _emailFocus.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    try {
-      showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return SafeArea(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Select Photo Source',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildImageSourceOption(
-                        icon: Icons.camera_alt,
-                        label: 'Camera',
-                        onTap: () => _getImage(ImageSource.camera),
-                      ),
-                      _buildImageSourceOption(
-                        icon: Icons.photo_library,
-                        label: 'Gallery',
-                        onTap: () => _getImage(ImageSource.gallery),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      _showErrorDialog('Error selecting image source');
-    }
-  }
-
-  Widget _buildImageSourceOption({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppTheme.primaryBlue.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 40, color: AppTheme.primaryBlue),
-            SizedBox(height: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color: AppTheme.primaryBlue,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _getImage(ImageSource source) async {
-    Navigator.pop(context);
-    try {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
-      );
-
-      if (pickedFile != null) {
-        setState(() {
-          _selectedImage = File(pickedFile.path);
-        });
-      }
-    } catch (e) {
-      _showErrorDialog('Error picking image: ${e.toString()}');
-    }
-  }
-
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(Duration(days: 365 * 25)),
-      firstDate: DateTime(1950),
-      lastDate: DateTime.now().subtract(Duration(days: 365 * 18)),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppTheme.primaryBlue,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-        _dobController.text = "${picked.day}/${picked.month}/${picked.year}";
-      });
-    }
   }
 
   String? _validateEmail(String? value) {
@@ -212,6 +108,264 @@ class _AddTeacherScreenState extends State<AddTeacherScreen> {
     return null;
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBarCustom(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: AppThemeColor.primaryGradient,
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Padding(
+              padding: AppThemeResponsiveness.getScreenPadding(context),
+              child: Column(
+                children: [
+                  HeaderWidget(titleLabel: 'Teacher'),
+                  SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+                  _buildMainCard(),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainCard() {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+      ),
+      child: Card(
+        elevation: AppThemeResponsiveness.getCardElevation(context) + 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context) + 4),
+        ),
+        shadowColor: Colors.black.withOpacity(0.2),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context) + 4),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white,
+                Colors.grey[50]!,
+              ],
+            ),
+          ),
+          child: Padding(
+            padding: AppThemeResponsiveness.getCardPadding(context),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Photo Section
+                  SectionHeader(
+                    context: context,
+                    title: 'Photo',
+                    icon: Icons.camera_alt_rounded,
+                    color: Colors.purple,
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  PhotoPickerWidget(
+                    onImageChanged: (File? file) {
+                      setState(() {
+                        _selectedImage = file;
+                      });
+                      if (file != null) {
+                        print('Image selected: ${file.path}');
+                      } else {
+                        print('Image removed');
+                      }
+                    },
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+
+                  // Personal Information Section
+                  SectionHeader(
+                    context: context,
+                    title: 'Personal Information',
+                    icon: Icons.person_rounded,
+                    color: Colors.blue,
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  AppTextFieldBuilder.build(
+                    context: context,
+                    controller: _nameController,
+                    label: 'Full Name *',
+                    icon: Icons.person_rounded,
+                    validator: (value) => _validateRequired(value, 'Name'),
+                    textCapitalization: TextCapitalization.words,
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  AppTextFieldBuilder.build(
+                    context: context,
+                    controller: _teacherIdController,
+                    label: 'Teacher ID *',
+                    icon: Icons.badge_rounded,
+                    validator: (value) => _validateRequired(value, 'Teacher ID'),
+                    textCapitalization: TextCapitalization.characters,
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  AppDatePicker.dateOfBirth(
+                    controller: _dobController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select date of birth';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  _buildDesignationDropdown(),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  AppTextFieldBuilder.build(
+                    context: context,
+                    controller: _tagsController,
+                    label: 'Tags (Optional)',
+                    icon: Icons.local_offer_rounded,
+                    textCapitalization: TextCapitalization.words,
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+
+                  // Contact Information Section
+                  SectionHeader(
+                    context: context,
+                    title: 'Contact Information',
+                    icon: Icons.contact_phone_rounded,
+                    color: Colors.green,
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  AppTextFieldBuilder.build(
+                    context: context,
+                    controller: _mobileController,
+                    label: 'Mobile Number *',
+                    icon: Icons.phone_rounded,
+                    keyboardType: TextInputType.phone,
+                    validator: _validateMobile,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                  AppTextFieldBuilder.build(
+                    context: context,
+                    controller: _emailController,
+                    label: 'Email Address *',
+                    icon: Icons.email_rounded,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: _validateEmail,
+                  ),
+                  SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+                  _buildActionButtons(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesignationDropdown() {
+    return DropdownButtonFormField<String>(
+      value: _selectedDesignation,
+      decoration: InputDecoration(
+        labelText: 'Designation *',
+        labelStyle: AppThemeResponsiveness.getSubHeadingStyle(context),
+        prefixIcon: Icon(
+          Icons.work_rounded,
+          size: AppThemeResponsiveness.getIconSize(context),
+          color: Colors.grey[600],
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getInputBorderRadius(context),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getInputBorderRadius(context),
+          ),
+          borderSide: BorderSide(
+            color: AppThemeColor.blue600,
+            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getInputBorderRadius(context),
+          ),
+          borderSide: const BorderSide(
+            color: Colors.grey,
+            width: 1.0,
+          ),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDefaultSpacing(context) * 1.5,
+          vertical: AppThemeResponsiveness.getSmallSpacing(context) * 2.5,
+        ),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      items: _designations.map((String designation) {
+        return DropdownMenuItem<String>(
+          value: designation,
+          child: Text(
+            designation,
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+          ),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedDesignation = newValue;
+        });
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select a designation';
+        }
+        return null;
+      },
+      dropdownColor: Colors.white,
+      icon: Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: Colors.grey[600],
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
+      style: AppThemeResponsiveness.getBodyTextStyle(context),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        PrimaryButton(
+          title: 'Add Teacher',
+          icon: Icon(Icons.save_rounded, color: Colors.white),
+          isLoading: _isLoading,
+          onPressed: _saveTeacher,
+        ),
+        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+        SecondaryButton(
+          title: 'Cancel',
+          icon: Icon(Icons.cancel_rounded, color: AppThemeColor.blue600),
+          color: AppThemeColor.blue600,
+          onPressed: () => Navigator.pop(context),
+        )
+      ],
+    );
+  }
+
   Future<void> _saveTeacher() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -219,11 +373,6 @@ class _AddTeacherScreenState extends State<AddTeacherScreen> {
 
     if (_selectedImage == null) {
       _showErrorDialog('Please select a photo for the teacher');
-      return;
-    }
-
-    if (_selectedDate == null) {
-      _showErrorDialog('Please select date of birth');
       return;
     }
 
@@ -240,10 +389,53 @@ class _AddTeacherScreenState extends State<AddTeacherScreen> {
       // Simulate API call
       await Future.delayed(Duration(seconds: 2));
 
-      // Here you would typically save to database/API
-      // For now, we'll just show success message
+      setState(() {
+        _isLoading = false;
+      });
 
-      _showSuccessDialog();
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Container(
+            padding: EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Icon(
+                    Icons.check_circle_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+                Flexible(
+                  child: Text(
+                    'Teacher added successfully!',
+                    style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          backgroundColor: Colors.green[600],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getResponsiveRadius(context, 12)),
+          ),
+          margin: AppThemeResponsiveness.getHorizontalPadding(context),
+          elevation: 8,
+        ),
+      );
+      // Navigate back or to next screen
+      Navigator.pop(context);
     } catch (e) {
       _showErrorDialog('Error saving teacher: ${e.toString()}');
     } finally {
@@ -253,366 +445,42 @@ class _AddTeacherScreenState extends State<AddTeacherScreen> {
     }
   }
 
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          title: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.green, size: 30),
-              SizedBox(width: 10),
-              Text('Success'),
-            ],
-          ),
-          content: Text('Teacher has been added successfully!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Go back to previous screen
-              },
-              child: Text(
-                'OK',
-                style: TextStyle(color: AppTheme.primaryBlue),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getResponsiveRadius(context, 15)),
           ),
           title: Row(
             children: [
-              Icon(Icons.error, color: Colors.red, size: 30),
-              SizedBox(width: 10),
-              Text('Error'),
+              Icon(Icons.error_rounded, color: Colors.red, size: AppThemeResponsiveness.getResponsiveIconSize(context, 30)),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Error',
+                style: AppThemeResponsiveness.getTitleTextStyle(context),
+              ),
             ],
           ),
-          content: Text(message),
+          content: Text(
+            message,
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'OK',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
         );
       },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarCustom(),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: EdgeInsets.all(20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.person_add_alt, color: Colors.white,),
-                  SizedBox(width: 10),
-                  Text(
-                    'Add New Teacher',
-                    style: AppTheme.FontStyle,
-                  ),
-                ],
-              ),
-            ),
-
-            // Form Content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(20),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Photo Selection Section
-                          Center(
-                            child: Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: _pickImage,
-                                  child: Container(
-                                    width: 120,
-                                    height: 120,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppTheme.blue50,
-                                      border: Border.all(
-                                        color: AppTheme.primaryBlue,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: _selectedImage != null
-                                        ? ClipOval(
-                                      child: Image.file(
-                                        _selectedImage!,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                        : Icon(
-                                      Icons.add_a_photo,
-                                      size: 40,
-                                      color: AppTheme.primaryBlue,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                Text(
-                                  'Tap to add photo',
-                                  style: TextStyle(
-                                    color: AppTheme.primaryBlue,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(height: 30),
-
-                          // Name Field
-                          _buildInputField(
-                            controller: _nameController,
-                            label: 'Full Name',
-                            icon: Icons.person,
-                            validator: (value) => _validateRequired(value, 'Name'),
-                            textCapitalization: TextCapitalization.words,
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Teacher ID Field
-                          _buildInputField(
-                            controller: _teacherIdController,
-                            label: 'Teacher ID',
-                            icon: Icons.badge,
-                            validator: (value) => _validateRequired(value, 'Teacher ID'),
-                            textCapitalization: TextCapitalization.characters,
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Date of Birth Field
-                          _buildInputField(
-                            controller: _dobController,
-                            label: 'Date of Birth',
-                            icon: Icons.calendar_today,
-                            readOnly: true,
-                            onTap: _selectDate,
-                            validator: (value) => _validateRequired(value, 'Date of Birth'),
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Designation Dropdown
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                              border: Border.all(color: Colors.grey.shade300),
-                            ),
-                            child: DropdownButtonFormField<String>(
-                              value: _selectedDesignation,
-                              decoration: InputDecoration(
-                                labelText: 'Designation',
-                                prefixIcon: Icon(Icons.work, color: AppTheme.primaryBlue),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                              ),
-                              items: _designations.map((String designation) {
-                                return DropdownMenuItem<String>(
-                                  value: designation,
-                                  child: Text(designation),
-                                );
-                              }).toList(),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  _selectedDesignation = newValue;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select a designation';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Tags Field (Optional)
-                          _buildInputField(
-                            controller: _tagsController,
-                            label: 'Tags (Optional)',
-                            icon: Icons.local_offer,
-                            hintText: 'e.g., Mathematics, Science, Sports',
-                            textCapitalization: TextCapitalization.words,
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Mobile Field
-                          _buildInputField(
-                            controller: _mobileController,
-                            label: 'Mobile Number',
-                            icon: Icons.phone,
-                            keyboardType: TextInputType.phone,
-                            validator: _validateMobile,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(10),
-                            ],
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Email Field
-                          _buildInputField(
-                            controller: _emailController,
-                            label: 'Email Address',
-                            icon: Icons.email,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: _validateEmail,
-                          ),
-
-                          SizedBox(height: 40),
-
-                          // Save Button
-                          SizedBox(
-                            width: double.infinity,
-                            height: AppTheme.buttonHeight,
-                            child: ElevatedButton(
-                              onPressed: _isLoading ? null : _saveTeacher,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.primaryBlue,
-                                elevation: AppTheme.buttonElevation,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
-                                ),
-                              ),
-                              child: _isLoading
-                                  ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                  Text('Saving...', style: AppTheme.buttonTextStyle),
-                                ],
-                              )
-                                  : Text('Save Teacher', style: AppTheme.buttonTextStyle),
-                            ),
-                          ),
-
-                          SizedBox(height: 20),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    String? hintText,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-    bool readOnly = false,
-    VoidCallback? onTap,
-    TextCapitalization textCapitalization = TextCapitalization.none,
-    List<TextInputFormatter>? inputFormatters,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        validator: validator,
-        readOnly: readOnly,
-        onTap: onTap,
-        textCapitalization: textCapitalization,
-        inputFormatters: inputFormatters,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hintText,
-          prefixIcon: Icon(icon, color: AppTheme.primaryBlue),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-            borderSide: BorderSide(
-              color: AppTheme.primaryBlue,
-              width: AppTheme.focusedBorderWidth,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-            borderSide: BorderSide(color: Colors.red),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-            borderSide: BorderSide(color: Colors.red, width: 2),
-          ),
-        ),
-      ),
     );
   }
 }

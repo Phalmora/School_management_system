@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
-import 'package:flutter/services.dart';
+import 'package:school/CommonLogic/tabBar.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/model/attendanceModel.dart';
 import 'package:school/model/attendanceService.dart';
 
@@ -69,19 +68,31 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.primaryGradient),
+        decoration: const BoxDecoration(gradient: AppThemeColor.primaryGradient),
         child: SafeArea(
           child: Center(
             child: Container(
-              constraints: BoxConstraints(maxWidth: AppTheme.getMaxWidth(context)),
+              constraints: BoxConstraints(maxWidth: AppThemeResponsiveness.getMaxWidth(context)),
               child: Column(
                 children: [
                   _buildHeader(),
-                  _buildTabBar(),
+                  CustomTabBar(
+                    controller: _tabController,
+                    tabs: const [
+                      Tab(text: 'Mark Attendance'),
+                      Tab(text: 'History'),
+                    ],
+                    getSpacing: AppThemeResponsiveness.getDefaultSpacing,
+                    getBorderRadius: AppThemeResponsiveness.getInputBorderRadius,
+                    getFontSize: AppThemeResponsiveness.getTabFontSize,
+                    backgroundColor: AppThemeColor.blue50,
+                    selectedColor: AppThemeColor.primaryBlue,
+                    unselectedColor: AppThemeColor.blue600,
+                  ),
                   Expanded(
                     child: _isLoading
                         ? const Center(
-                        child: CircularProgressIndicator(color: AppTheme.white))
+                        child: CircularProgressIndicator(color: AppThemeColor.white))
                         : TabBarView(
                       controller: _tabController,
                       children: [
@@ -101,20 +112,29 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
 
   Widget _buildHeader() {
     return Container(
-      padding: AppTheme.getScreenPadding(context),
+      padding: EdgeInsets.symmetric(
+        vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+      ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(width: AppTheme.getSmallSpacing(context)),
           Icon(
             Icons.how_to_reg,
-            color: AppTheme.white,
-            size: AppTheme.getHeaderIconSize(context),
+            color: AppThemeColor.white,
+            size: AppThemeResponsiveness.getHeaderIconSize(context),
           ),
-          SizedBox(width: AppTheme.getSmallSpacing(context)),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
           Flexible(
             child: Text(
               'Attendance',
-              style: AppTheme.getFontStyle(context),
+              style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                    context,
+                    AppThemeResponsiveness.getSectionTitleStyle(context).fontSize! + 4
+                ),
+                fontWeight: FontWeight.bold,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -123,48 +143,49 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
     );
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      margin: AppTheme.getHorizontalPadding(context),
-      height: AppTheme.getTabBarHeight(context),
-      decoration: BoxDecoration(
-        color: AppTheme.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-      ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-        labelColor: AppTheme.primaryBlue,
-        unselectedLabelColor: AppTheme.white,
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: AppTheme.isMobile(context) ? 14 : (AppTheme.isTablet(context) ? 16 : 18),
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: AppTheme.isMobile(context) ? 14 : (AppTheme.isTablet(context) ? 16 : 18),
-        ),
-        tabs: const [
-          Tab(text: 'Mark Attendance'),
-          Tab(text: 'History'),
-        ],
-      ),
-    );
-  }
-
   Widget _buildMarkAttendanceTab() {
     return SingleChildScrollView(
-      padding: AppTheme.getScreenPadding(context),
-      child: Column(
-        children: [
-          _buildTodayStatusCard(),
-          SizedBox(height: AppTheme.getDefaultSpacing(context)),
-          _buildQuickActions(),
-          SizedBox(height: AppTheme.getDefaultSpacing(context)),
-          _buildStatsCard(),
-        ],
+      padding: EdgeInsets.only(
+        top: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        bottom: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        left: AppThemeResponsiveness.getSmallSpacing(context),
+        right: AppThemeResponsiveness.getSmallSpacing(context),
+      ),
+      child: Center(
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+          ),
+          margin: EdgeInsets.symmetric(
+            horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+          ),
+          decoration: BoxDecoration(
+            color: AppThemeColor.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 2,
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+            child: Column(
+              children: [
+                _buildTodayStatusCard(),
+                SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+                _buildQuickActions(),
+                SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+                _buildStatsCard(),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -173,100 +194,114 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
     final today = DateTime.now();
     final isMarked = _todayAttendance != null;
 
-    return Card(
-      elevation: AppTheme.getCardElevation(context),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+    return Container(
+      width: double.infinity,
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppThemeColor.primaryBlue.withOpacity(0.1),
+            AppThemeColor.primaryBlue600.withOpacity(0.1)
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        border: Border.all(color: AppThemeColor.primaryBlue.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Container(
-        width: double.infinity,
-        padding: AppTheme.getCardPadding(context),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Today\'s Status',
-                        style: AppTheme.getHeadingStyle(context),
-                      ),
-                      SizedBox(height: AppTheme.getSmallSpacing(context) / 2),
-                      Text(
-                        _getFormattedDate(today),
-                        style: AppTheme.getSubHeadingStyle(context),
-                      ),
-                    ],
-                  ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Container(
-                    padding: AppTheme.getStatusBadgePadding(context),
-                    decoration: BoxDecoration(
-                      color: _getStatusColor(isMarked ? _todayAttendance!.status : 'not_marked'),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      isMarked ? _todayAttendance!.status.toUpperCase() : 'NOT MARKED',
-                      style: TextStyle(
-                        color: AppTheme.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: AppTheme.isMobile(context) ? 10 : (AppTheme.isTablet(context) ? 12 : 14),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            if (isMarked) ...[
-              SizedBox(height: AppTheme.getMediumSpacing(context)),
-              Wrap(
-                spacing: AppTheme.getSmallSpacing(context),
-                runSpacing: AppTheme.getSmallSpacing(context) / 2,
-                children: [
-                  if (_todayAttendance!.checkInTime != null)
-                    _buildTimeChip(
-                      Icons.login,
-                      'Check-in: ${_getFormattedTime(_todayAttendance!.checkInTime!)}',
-                      Colors.green[600]!,
-                    ),
-                  if (_todayAttendance!.checkOutTime != null)
-                    _buildTimeChip(
-                      Icons.logout,
-                      'Check-out: ${_getFormattedTime(_todayAttendance!.checkOutTime!)}',
-                      Colors.red[600]!,
-                    ),
-                ],
-              ),
-              if (_todayAttendance!.reason != null) ...[
-                SizedBox(height: AppTheme.getSmallSpacing(context)),
-                Row(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                flex: 2,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.note,
-                      color: Colors.orange,
-                      size: AppTheme.getIconSize(context) * 0.7,
+                    Text(
+                      'Today\'s Status',
+                      style: AppThemeResponsiveness.getHeadingStyle(context),
                     ),
-                    SizedBox(width: AppTheme.getSmallSpacing(context) / 2),
-                    Expanded(
-                      child: Text(
-                        'Reason: ${_todayAttendance!.reason}',
-                        style: AppTheme.getBodyTextStyle(context),
-                      ),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                    Text(
+                      _getFormattedDate(today),
+                      style: AppThemeResponsiveness.getSubHeadingStyle(context),
                     ),
                   ],
                 ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Container(
+                  padding: AppThemeResponsiveness.getStatusBadgePadding(context),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(isMarked ? _todayAttendance!.status : 'not_marked'),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Text(
+                    isMarked ? _todayAttendance!.status.toUpperCase() : 'NOT MARKED',
+                    style: TextStyle(
+                      color: AppThemeColor.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (isMarked) ...[
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+            Wrap(
+              spacing: AppThemeResponsiveness.getSmallSpacing(context),
+              runSpacing: AppThemeResponsiveness.getSmallSpacing(context) / 2,
+              children: [
+                if (_todayAttendance!.checkInTime != null)
+                  _buildTimeChip(
+                    Icons.login,
+                    'Check-in: ${_getFormattedTime(_todayAttendance!.checkInTime!)}',
+                    Colors.green[600]!,
+                  ),
+                if (_todayAttendance!.checkOutTime != null)
+                  _buildTimeChip(
+                    Icons.logout,
+                    'Check-out: ${_getFormattedTime(_todayAttendance!.checkOutTime!)}',
+                    Colors.red[600]!,
+                  ),
               ],
+            ),
+            if (_todayAttendance!.reason != null) ...[
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.note,
+                    color: Colors.orange,
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+                  ),
+                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                  Expanded(
+                    child: Text(
+                      'Reason: ${_todayAttendance!.reason}',
+                      style: AppThemeResponsiveness.getBodyTextStyle(context),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ],
-        ),
+        ],
       ),
     );
   }
@@ -274,12 +309,12 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
   Widget _buildTimeChip(IconData icon, String text, Color color) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: AppTheme.getSmallSpacing(context),
-        vertical: AppTheme.getSmallSpacing(context) / 2,
+        horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+        vertical: AppThemeResponsiveness.getSmallSpacing(context) / 2,
       ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
@@ -288,12 +323,12 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
           Icon(
             icon,
             color: color,
-            size: AppTheme.getIconSize(context) * 0.7,
+            size: AppThemeResponsiveness.getIconSize(context) * 0.7,
           ),
-          SizedBox(width: AppTheme.getSmallSpacing(context) / 2),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
           Text(
             text,
-            style: AppTheme.getBodyTextStyle(context).copyWith(color: color),
+            style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: color),
           ),
         ],
       ),
@@ -306,52 +341,60 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
         _todayAttendance!.checkOutTime == null &&
         _todayAttendance!.status != 'absent';
 
-    return Card(
-      elevation: AppTheme.getCardElevation(context),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+    return Container(
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      decoration: BoxDecoration(
+        color: AppThemeColor.blue50,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: AppTheme.getCardPadding(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Quick Actions',
-              style: AppTheme.getHeadingStyle(context),
-            ),
-            SizedBox(height: AppTheme.getMediumSpacing(context)),
-            if (!isMarked) ...[
-              // Use responsive layout for action buttons
-              AppTheme.isMobile(context)
-                  ? _buildMobileActionLayout()
-                  : _buildTabletActionLayout(),
-            ] else ...[
-              if (canCheckOut)
-                _buildActionButton(
-                  'Check Out',
-                  Icons.logout,
-                  Colors.red[700]!,
-                  _markCheckOut,
-                  fullWidth: true,
-                )
-              else
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(AppTheme.getMediumSpacing(context)),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
-                  ),
-                  child: Text(
-                    'Attendance already marked for today',
-                    textAlign: TextAlign.center,
-                    style: AppTheme.getBodyTextStyle(context).copyWith(color: Colors.grey[600]),
-                  ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Quick Actions',
+            style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(color: Colors.black87),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          if (!isMarked) ...[
+            // Use responsive layout for action buttons
+            AppThemeResponsiveness.isMobile(context) && AppThemeResponsiveness.isSmallPhone(context)
+                ? _buildMobileActionLayout()
+                : _buildTabletActionLayout1(),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                 _buildTabletActionLayout2(),
+          ] else ...[
+            if (canCheckOut)
+              _buildActionButton(
+                'Check Out',
+                Icons.logout,
+                Colors.red[700]!,
+                _markCheckOut,
+                fullWidth: true,
+              )
+            else
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
                 ),
-            ],
+                child: Text(
+                  'Attendance already marked for today',
+                  textAlign: TextAlign.center,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.grey[600]),
+                ),
+              ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -359,40 +402,70 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
   Widget _buildMobileActionLayout() {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildActionButton(
-                'Present',
-                Icons.check_circle,
-                Colors.green,
-                    () => _markAttendance('present'),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => _markAttendance('present'),
+            icon: Icon(
+              Icons.check_circle,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+            ),
+            label: Text('Present', style: AppThemeResponsiveness.getButtonTextStyle(context)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              elevation: AppThemeResponsiveness.getButtonElevation(context),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
               ),
             ),
-            SizedBox(width: AppTheme.getSmallSpacing(context)),
-            Expanded(
-              child: _buildActionButton(
-                'Late',
-                Icons.access_time,
-                Colors.orange,
-                    () => _markAttendance('late'),
-              ),
-            ),
-          ],
+          ),
         ),
-        SizedBox(height: AppTheme.getSmallSpacing(context)),
-        _buildActionButton(
-          'Mark Absent',
-          Icons.cancel,
-          Colors.red,
-              () => _markAttendance('absent'),
-          fullWidth: true,
+        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => _markAttendance('late'),
+            icon: Icon(
+              Icons.access_time,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+            ),
+            label: Text('Late', style: AppThemeResponsiveness.getButtonTextStyle(context)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              elevation: AppThemeResponsiveness.getButtonElevation(context),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => _markAttendance('absent'),
+            icon: Icon(
+              Icons.cancel,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+            ),
+            label: Text('Mark Absent', style: AppThemeResponsiveness.getButtonTextStyle(context)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              elevation: AppThemeResponsiveness.getButtonElevation(context),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildTabletActionLayout() {
+  Widget _buildTabletActionLayout1() {
     return Row(
       children: [
         Expanded(
@@ -403,7 +476,7 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
                 () => _markAttendance('present'),
           ),
         ),
-        SizedBox(width: AppTheme.getSmallSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
         Expanded(
           child: _buildActionButton(
             'Late',
@@ -412,7 +485,16 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
                 () => _markAttendance('late'),
           ),
         ),
-        SizedBox(width: AppTheme.getSmallSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+
+      ],
+    );
+  }
+
+  Widget _buildTabletActionLayout2() {
+    return Row(
+      children: [
+
         Expanded(
           child: _buildActionButton(
             'Mark Absent',
@@ -425,6 +507,8 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
     );
   }
 
+
+
   Widget _buildActionButton(
       String label,
       IconData icon,
@@ -434,69 +518,74 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
       }) {
     return SizedBox(
       width: fullWidth ? double.infinity : null,
-      height: AppTheme.getButtonHeight(context),
+      height: AppThemeResponsiveness.getButtonHeight(context),
       child: ElevatedButton.icon(
         onPressed: onPressed,
         icon: Icon(
           icon,
-          color: AppTheme.white,
-          size: AppTheme.getIconSize(context) * 0.8,
+          color: AppThemeColor.white,
+          size: AppThemeResponsiveness.getIconSize(context) * 0.8,
         ),
         label: Text(
           label,
-          style: AppTheme.getButtonTextStyle(context),
+          style: AppThemeResponsiveness.getButtonTextStyle(context),
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
           ),
-          elevation: AppTheme.getButtonElevation(context),
+          elevation: AppThemeResponsiveness.getButtonElevation(context),
         ),
       ),
     );
   }
 
   Widget _buildStatsCard() {
-    return Card(
-      elevation: AppTheme.getCardElevation(context),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+    return Container(
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      decoration: BoxDecoration(
+        color: AppThemeColor.blue50,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: AppTheme.getCardPadding(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Attendance Summary',
-              style: AppTheme.getHeadingStyle(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Attendance Summary',
+            style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(color: Colors.black87),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          // Responsive grid for stats
+          AppThemeResponsiveness.isMobile(context)
+              ? _buildMobileStatsLayout()
+              : _buildTabletStatsLayout(),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+            decoration: BoxDecoration(
+              gradient: AppThemeColor.primaryGradient,
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
             ),
-            SizedBox(height: AppTheme.getMediumSpacing(context)),
-            // Responsive grid for stats
-            AppTheme.isMobile(context)
-                ? _buildMobileStatsLayout()
-                : _buildTabletStatsLayout(),
-            SizedBox(height: AppTheme.getMediumSpacing(context)),
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(AppTheme.getMediumSpacing(context)),
-              decoration: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+            child: Text(
+              'Attendance Rate: ${_stats['percentage'] ?? 0}%',
+              style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+                color: AppThemeColor.white,
+                fontWeight: FontWeight.bold,
               ),
-              child: Text(
-                'Attendance Rate: ${_stats['percentage'] ?? 0}%',
-                style: TextStyle(
-                  color: AppTheme.white,
-                  fontSize: AppTheme.isMobile(context) ? 14 : (AppTheme.isTablet(context) ? 16 : 18),
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              textAlign: TextAlign.center,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -511,7 +600,7 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
             _buildStatItem('Present', _stats['present'] ?? 0, Icons.check_circle, Colors.green),
           ],
         ),
-        SizedBox(height: AppTheme.getMediumSpacing(context)),
+        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -542,16 +631,16 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
           Icon(
             icon,
             color: color ?? Colors.grey[600],
-            size: AppTheme.getStatIconSize(context),
+            size: AppThemeResponsiveness.getHeaderIconSize(context),
           ),
-          SizedBox(height: AppTheme.getSmallSpacing(context) / 2),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
           Text(
             value.toString(),
-            style: AppTheme.getStatValueStyle(context).copyWith(color: color),
+            style: AppThemeResponsiveness.getStatValueStyle(context).copyWith(color: color),
           ),
           Text(
             label,
-            style: AppTheme.getCaptionTextStyle(context),
+            style: AppThemeResponsiveness.getStatTitleStyle(context),
             textAlign: TextAlign.center,
           ),
         ],
@@ -567,15 +656,15 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
           children: [
             Icon(
               Icons.history,
-              size: AppTheme.getIconSize(context) * 3,
-              color: AppTheme.white70,
+              size: AppThemeResponsiveness.getIconSize(context) * 3,
+              color: AppThemeColor.white70,
             ),
-            SizedBox(height: AppTheme.getDefaultSpacing(context)),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             Text(
               'No attendance records found',
-              style: TextStyle(
-                color: AppTheme.white70,
-                fontSize: AppTheme.isMobile(context) ? 16 : (AppTheme.isTablet(context) ? 18 : 20),
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: AppThemeColor.white70,
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, AppThemeResponsiveness.getBodyTextStyle(context).fontSize! + 2),
               ),
             ),
           ],
@@ -586,7 +675,10 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
     return RefreshIndicator(
       onRefresh: _loadData,
       child: ListView.builder(
-        padding: AppTheme.getScreenPadding(context),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+          vertical: AppThemeResponsiveness.getDefaultSpacing(context),
+        ),
         itemCount: _attendanceHistory.length,
         itemBuilder: (context, index) {
           final record = _attendanceHistory[index];
@@ -597,14 +689,22 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
   }
 
   Widget _buildAttendanceHistoryCard(AttendanceRecord record) {
-    return Card(
-      elevation: AppTheme.getCardElevation(context),
-      margin: EdgeInsets.only(bottom: AppTheme.getMediumSpacing(context)),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+    return Container(
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
+      decoration: BoxDecoration(
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Padding(
-        padding: AppTheme.getCardPadding(context),
+        padding: AppThemeResponsiveness.getCardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -615,24 +715,23 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
                   flex: 2,
                   child: Text(
                     _getFormattedDate(record.date),
-                    style: AppTheme.getHeadingStyle(context).copyWith(fontSize:
-                    AppTheme.isMobile(context) ? 15 : (AppTheme.isTablet(context) ? 16 : 17)),
+                    style: AppThemeResponsiveness.getDashboardCardTitleStyle(context),
                   ),
                 ),
                 Flexible(
                   flex: 1,
                   child: Container(
-                    padding: AppTheme.getStatusBadgePadding(context),
+                    padding: AppThemeResponsiveness.getStatusBadgePadding(context),
                     decoration: BoxDecoration(
                       color: _getStatusColor(record.status),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: Text(
                       record.status.toUpperCase(),
                       style: TextStyle(
-                        color: AppTheme.white,
+                        color: AppThemeColor.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: AppTheme.isMobile(context) ? 10 : (AppTheme.isTablet(context) ? 12 : 14),
+                        fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -641,10 +740,10 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
               ],
             ),
             if (record.checkInTime != null || record.checkOutTime != null) ...[
-              SizedBox(height: AppTheme.getSmallSpacing(context)),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
               Wrap(
-                spacing: AppTheme.getSmallSpacing(context),
-                runSpacing: AppTheme.getSmallSpacing(context) / 2,
+                spacing: AppThemeResponsiveness.getSmallSpacing(context),
+                runSpacing: AppThemeResponsiveness.getSmallSpacing(context) / 2,
                 children: [
                   if (record.checkInTime != null)
                     _buildHistoryTimeChip(
@@ -662,20 +761,20 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
               ),
             ],
             if (record.reason != null) ...[
-              SizedBox(height: AppTheme.getSmallSpacing(context)),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.note,
                     color: Colors.orange,
-                    size: AppTheme.getIconSize(context) * 0.6,
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.6,
                   ),
-                  SizedBox(width: AppTheme.getSmallSpacing(context) / 2),
+                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
                   Expanded(
                     child: Text(
                       'Reason: ${record.reason}',
-                      style: AppTheme.getBodyTextStyle(context),
+                      style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
                     ),
                   ),
                 ],
@@ -690,12 +789,12 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
   Widget _buildHistoryTimeChip(IconData icon, String text, Color color) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: AppTheme.getSmallSpacing(context) * 0.8,
-        vertical: AppTheme.getSmallSpacing(context) * 0.4,
+        horizontal: AppThemeResponsiveness.getSmallSpacing(context) * 0.8,
+        vertical: AppThemeResponsiveness.getSmallSpacing(context) * 0.4,
       ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context) * 0.8),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context) * 0.8),
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Row(
@@ -704,14 +803,14 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
           Icon(
             icon,
             color: color,
-            size: AppTheme.getIconSize(context) * 0.6,
+            size: AppThemeResponsiveness.getIconSize(context) * 0.6,
           ),
-          SizedBox(width: AppTheme.getSmallSpacing(context) * 0.3),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) * 0.3),
           Text(
             text,
-            style: AppTheme.getBodyTextStyle(context).copyWith(
+            style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
               color: color,
-              fontSize: AppTheme.isMobile(context) ? 12 : (AppTheme.isTablet(context) ? 13 : 14),
+              fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, AppThemeResponsiveness.getBodyTextStyle(context).fontSize! - 2),
             ),
           ),
         ],
@@ -757,34 +856,34 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
         title: Text(
           'Reason for ${status == 'absent' ? 'Absence' : 'Being Late'}',
-          style: AppTheme.getHeadingStyle(context),
+          style: AppThemeResponsiveness.getHeadingStyle(context),
         ),
         content: Container(
-          width: AppTheme.isMobile(context) ?
-          MediaQuery.of(context).size.width * 0.8 :
-          MediaQuery.of(context).size.width * 0.4,
+          width: AppThemeResponsiveness.isMobile(context)
+              ? MediaQuery.of(context).size.width * 0.8
+              : MediaQuery.of(context).size.width * 0.4,
           child: TextField(
             onChanged: (value) => reason = value,
             decoration: InputDecoration(
               hintText: 'Enter reason...',
-              hintStyle: AppTheme.getBodyTextStyle(context),
+              hintStyle: AppThemeResponsiveness.getBodyTextStyle(context),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                 borderSide: BorderSide(
-                  color: AppTheme.primaryBlue,
-                  width: AppTheme.getFocusedBorderWidth(context),
+                  color: AppThemeColor.primaryBlue,
+                  width: AppThemeResponsiveness.getFocusedBorderWidth(context),
                 ),
               ),
             ),
-            style: AppTheme.getBodyTextStyle(context),
-            maxLines: AppTheme.isMobile(context) ? 2 : 3,
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+            maxLines: AppThemeResponsiveness.isMobile(context) ? 2 : 3,
           ),
         ),
         actions: [
@@ -792,30 +891,28 @@ class _AttendancePageTeacherState extends State<AttendancePageTeacher>
             onPressed: () => Navigator.pop(context),
             child: Text(
               'Cancel',
-              style: AppTheme.getBodyTextStyle(context).copyWith(color: Colors.grey[600]),
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.grey[600]),
             ),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, reason.trim()),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryBlue,
+              backgroundColor: AppThemeColor.primaryBlue,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
               ),
               padding: EdgeInsets.symmetric(
-                horizontal: AppTheme.getDefaultSpacing(context),
-                vertical: AppTheme.getSmallSpacing(context),
+                horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+                vertical: AppThemeResponsiveness.getSmallSpacing(context),
               ),
             ),
             child: Text(
               'Submit',
-              style: AppTheme.getButtonTextStyle(context).copyWith(
-                fontSize: AppTheme.isMobile(context) ? 14 : 16,
-              ),
+              style: AppThemeResponsiveness.getButtonTextStyle(context),
             ),
           ),
         ],
-        actionsPadding: EdgeInsets.all(AppTheme.getMediumSpacing(context)),
+        actionsPadding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
       ),
     );
   }

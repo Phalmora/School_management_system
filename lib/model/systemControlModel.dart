@@ -1,5 +1,5 @@
 // User Role Model
-class UserRole {
+class UserRole1 {
   final String id;
   final String name;
   final String email;
@@ -7,7 +7,7 @@ class UserRole {
   final bool isActive;
   final DateTime lastLogin;
 
-  UserRole({
+  UserRole1({
     required this.id,
     required this.name,
     required this.email,

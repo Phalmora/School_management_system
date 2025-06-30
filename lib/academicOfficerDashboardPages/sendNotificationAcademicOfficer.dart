@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
+import 'package:school/CommonLogic/tabBar.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/model/NotificationModel.dart';
-import 'package:school/customWidgets/theme.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -89,13 +89,25 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
             children: [
               _buildAppBar(),
-              _buildTabBar(),
+              CustomTabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(text: 'Inbox'),
+                  Tab(text: 'Send'),
+                ],
+                getSpacing: AppThemeResponsiveness.getDefaultSpacing,
+                getBorderRadius: AppThemeResponsiveness.getInputBorderRadius,
+                getFontSize: AppThemeResponsiveness.getTabFontSize,
+                backgroundColor: AppThemeColor.blue50,
+                selectedColor: AppThemeColor.primaryBlue,
+                unselectedColor: AppThemeColor.blue600,
+              ),
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
@@ -114,19 +126,19 @@ class _NotificationsScreenState extends State<NotificationsScreen>
 
   Widget _buildAppBar() {
     return Container(
-      padding: EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: Row(
         children: [
-          SizedBox(width: AppTheme.smallSpacing),
+          SizedBox(width: AppThemeColor.smallSpacing),
           Icon(
             Icons.notifications,
-            color: AppTheme.white,
-            size: AppTheme.extraLargeSpacing,
+            color: AppThemeColor.white,
+            size: AppThemeColor.extraLargeSpacing,
           ),
-          SizedBox(width: AppTheme.mediumSpacing),
+          SizedBox(width: AppThemeColor.mediumSpacing),
           Text(
             'Notifications',
-            style: AppTheme.FontStyle,
+            style: AppThemeResponsiveness.FontStyle,
           ),
           Spacer(),
           Container(
@@ -138,7 +150,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
             child: Text(
               '${_notificationService.getUnreadNotifications().length}',
               style: TextStyle(
-                color: AppTheme.white,
+                color: AppThemeColor.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
               ),
@@ -149,38 +161,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-      decoration: BoxDecoration(
-        color: AppTheme.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-      ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-        ),
-        labelColor: AppTheme.primaryBlue,
-        unselectedLabelColor: AppTheme.white,
-        tabs: [
-          Tab(
-            icon: Icon(Icons.inbox),
-            text: 'Inbox',
-          ),
-          Tab(
-            icon: Icon(Icons.send),
-            text: 'Send',
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildNotificationsList() {
     return Container(
-      margin: EdgeInsets.all(AppTheme.defaultSpacing),
+      margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: ListView.builder(
         itemCount: _notificationService.notifications.length,
         itemBuilder: (context, index) {
@@ -193,25 +176,25 @@ class _NotificationsScreenState extends State<NotificationsScreen>
 
   Widget _buildNotificationCard(NotificationModel notification) {
     return Container(
-      margin: EdgeInsets.only(bottom: AppTheme.mediumSpacing),
+      margin: EdgeInsets.only(bottom: AppThemeColor.mediumSpacing),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
           onTap: () {
             _notificationService.markAsRead(notification.id);
             setState(() {});
             _showNotificationDetails(notification);
           },
           child: Container(
-            padding: EdgeInsets.all(AppTheme.mediumSpacing),
+            padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
             child: Row(
               children: [
                 _buildNotificationIcon(notification.type),
-                SizedBox(width: AppTheme.mediumSpacing),
+                SizedBox(width: AppThemeColor.mediumSpacing),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,7 +218,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                               width: 8,
                               height: 8,
                               decoration: BoxDecoration(
-                                color: AppTheme.primaryBlue,
+                                color: AppThemeColor.primaryBlue,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -295,7 +278,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     switch (type) {
       case NotificationType.announcement:
         iconData = Icons.campaign;
-        backgroundColor = AppTheme.primaryPurple;
+        backgroundColor = AppThemeColor.primaryIndigo;
         break;
       case NotificationType.testDate:
         iconData = Icons.quiz;
@@ -307,7 +290,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         break;
       case NotificationType.assignment:
         iconData = Icons.assignment;
-        backgroundColor = AppTheme.blue600;
+        backgroundColor = AppThemeColor.blue600;
         break;
       case NotificationType.urgent:
         iconData = Icons.priority_high;
@@ -315,7 +298,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         break;
       default:
         iconData = Icons.info;
-        backgroundColor = AppTheme.primaryBlue;
+        backgroundColor = AppThemeColor.primaryBlue;
     }
 
     return Container(
@@ -327,7 +310,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       ),
       child: Icon(
         iconData,
-        color: AppTheme.white,
+        color: AppThemeColor.white,
         size: 24,
       ),
     );
@@ -335,7 +318,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
 
   Widget _buildSendNotificationTab() {
     return Container(
-      margin: EdgeInsets.all(AppTheme.defaultSpacing),
+      margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: SendNotificationForm(),
     );
   }
@@ -345,7 +328,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         title: Text(notification.title),
         content: Column(
@@ -353,12 +336,12 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(notification.message),
-            SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeColor.mediumSpacing),
             Text(
               'From: ${notification.sender}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: AppTheme.primaryBlue,
+                color: AppThemeColor.primaryBlue,
               ),
             ),
             Text(
@@ -366,7 +349,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
               style: TextStyle(color: Colors.grey.shade600),
             ),
             if (notification.recipients.isNotEmpty) ...[
-              SizedBox(height: AppTheme.smallSpacing),
+              SizedBox(height: AppThemeColor.smallSpacing),
               Text(
                 'Recipients: ${notification.recipients.join(', ')}',
                 style: TextStyle(color: Colors.grey.shade600),
@@ -431,12 +414,12 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Padding(
-        padding: EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
         child: Form(
           key: _formKey,
           child: Column(
@@ -447,10 +430,10 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryBlue,
+                  color: AppThemeColor.primaryBlue,
                 ),
               ),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeColor.defaultSpacing),
 
               // Title Field
               TextFormField(
@@ -459,7 +442,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   labelText: 'Title',
                   prefixIcon: Icon(Icons.title),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                   ),
                 ),
                 validator: (value) {
@@ -469,7 +452,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   return null;
                 },
               ),
-              SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(height: AppThemeColor.mediumSpacing),
 
               // Message Field
               TextFormField(
@@ -479,7 +462,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   labelText: 'Message',
                   prefixIcon: Icon(Icons.message),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                   ),
                 ),
                 validator: (value) {
@@ -489,7 +472,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   return null;
                 },
               ),
-              SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(height: AppThemeColor.mediumSpacing),
 
               // Notification Type Dropdown
               DropdownButtonFormField<NotificationType>(
@@ -498,7 +481,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   labelText: 'Type',
                   prefixIcon: Icon(Icons.category),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                   ),
                 ),
                 items: NotificationType.values.map((type) {
@@ -513,7 +496,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   });
                 },
               ),
-              SizedBox(height: AppTheme.mediumSpacing),
+              SizedBox(height: AppThemeColor.mediumSpacing),
 
               // Recipients Dropdown
               DropdownButtonFormField<String>(
@@ -522,7 +505,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   labelText: 'Recipients',
                   prefixIcon: Icon(Icons.people),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                   ),
                 ),
                 items: _recipientOptions.map((recipient) {
@@ -537,28 +520,28 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
                   });
                 },
               ),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeColor.defaultSpacing),
 
               // Send Button
               ElevatedButton(
                 onPressed: _sendNotification,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryBlue,
-                  foregroundColor: AppTheme.white,
-                  elevation: AppTheme.buttonElevation,
+                  backgroundColor: AppThemeColor.primaryBlue,
+                  foregroundColor: AppThemeColor.white,
+                  elevation: AppThemeColor.buttonElevation,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+                    borderRadius: BorderRadius.circular(AppThemeColor.buttonBorderRadius),
                   ),
-                  minimumSize: Size(double.infinity, AppTheme.buttonHeight),
+                  minimumSize: Size(double.infinity, AppThemeColor.buttonHeight),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.send),
-                    SizedBox(width: AppTheme.smallSpacing),
+                    SizedBox(width: AppThemeColor.smallSpacing),
                     Text(
                       'Send Notification',
-                      style: AppTheme.buttonTextStyle,
+                      style: AppThemeResponsiveness.getButtonTextStyle(context),
                     ),
                   ],
                 ),
@@ -608,7 +591,7 @@ class _SendNotificationFormState extends State<SendNotificationForm> {
           backgroundColor: Colors.green,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+            borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           ),
         ),
       );
@@ -639,18 +622,18 @@ class MessagesCard extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          color: AppThemeColor.white,
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              blurRadius: AppTheme.cardElevation,
+              blurRadius: AppThemeColor.cardElevation,
               offset: Offset(0, 4),
             ),
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(AppTheme.defaultSpacing),
+          padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
           child: Column(
             children: [
               Stack(
@@ -681,7 +664,7 @@ class MessagesCard extends StatelessWidget {
                         child: Text(
                           unreadCount.toString(),
                           style: TextStyle(
-                            color: AppTheme.white,
+                            color: AppThemeColor.white,
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -690,7 +673,7 @@ class MessagesCard extends StatelessWidget {
                     ),
                 ],
               ),
-              SizedBox(height: AppTheme.smallSpacing),
+              SizedBox(height: AppThemeColor.smallSpacing),
               Text(
                 'Messages',
                 style: TextStyle(

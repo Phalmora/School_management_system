@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
-import 'package:school/model/classScetion.dart';
+import 'package:school/CommonLogic/tabBar.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/model/classSection.dart';
 import 'package:school/model/teacherModel.dart';
 
 // Main Page
@@ -260,14 +259,26 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
+        decoration: BoxDecoration(gradient: AppThemeColor.primaryGradient),
         child: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: Column(
               children: [
                 _buildHeader(),
-                _buildTabBar(),
+                CustomTabBar(
+                  controller: _tabController,
+                  tabs: const [
+                    Tab(text: 'Section'),
+                    Tab(text: 'Teachers'),
+                  ],
+                  getSpacing: AppThemeResponsiveness.getDefaultSpacing,
+                  getBorderRadius: AppThemeResponsiveness.getInputBorderRadius,
+                  getFontSize: AppThemeResponsiveness.getTabFontSize,
+                  backgroundColor: AppThemeColor.blue50,
+                  selectedColor: AppThemeColor.primaryBlue,
+                  unselectedColor: AppThemeColor.blue600,
+                ),
                 Expanded(
                   child: TabBarView(
                     controller: _tabController,
@@ -287,71 +298,70 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
 
   Widget _buildHeader() {
     return Container(
-      padding: EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: Row(
         children: [
-          SizedBox(width: AppTheme.smallSpacing),
+          SizedBox(width: AppThemeColor.smallSpacing),
           Expanded(
             child: Text(
               'Class & Section Management',
-              style: AppTheme.FontStyle.copyWith(fontSize: 22),
+              style: AppThemeResponsiveness.FontStyle.copyWith(fontSize: 22),
             ),
           ),
           FloatingActionButton(
             mini: true,
             onPressed: _showCreateSectionDialog,
-            backgroundColor: AppTheme.white,
-            child: Icon(Icons.add, color: AppTheme.primaryBlue),
+            backgroundColor: AppThemeColor.white,
+            child: Icon(Icons.add, color: AppThemeColor.primaryBlue),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+      margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
       decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        color: AppThemeColor.blue50,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            offset: Offset(0, 5),
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: TabBar(
         controller: _tabController,
         indicator: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-          gradient: AppTheme.primaryGradient,
+          color: AppThemeColor.primaryBlue,
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          boxShadow: [
+            BoxShadow(
+              color: AppThemeColor.primaryBlue.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-        labelColor: AppTheme.white,
-        unselectedLabelColor: AppTheme.primaryBlue,
-        labelStyle: TextStyle(fontWeight: FontWeight.bold),
-        tabs: [
-          Tab(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.class_),
-                SizedBox(width: 8),
-                Text('Sections'),
-              ],
-            ),
-          ),
-          Tab(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.people),
-                SizedBox(width: 8),
-                Text('Teachers'),
-              ],
-            ),
-          ),
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelColor: AppThemeColor.white,
+        unselectedLabelColor: AppThemeColor.blue600,
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: AppThemeResponsiveness.getTabFontSize(context),
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: AppThemeResponsiveness.getTabFontSize(context),
+        ),
+        tabs: const [
+          Tab(text: 'Sections'),
+          Tab(text: 'Teachers'),
         ],
       ),
     );
@@ -360,9 +370,9 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
   Widget _buildSectionsTab() {
     return Column(
       children: [
-        SizedBox(height: AppTheme.defaultSpacing),
+        SizedBox(height: AppThemeColor.defaultSpacing),
         _buildSearchAndFilter(),
-        SizedBox(height: AppTheme.defaultSpacing),
+        SizedBox(height: AppThemeColor.defaultSpacing),
         Expanded(child: _buildSectionsList()),
       ],
     );
@@ -370,11 +380,11 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
 
   Widget _buildSearchAndFilter() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-      padding: EdgeInsets.all(AppTheme.mediumSpacing),
+      margin: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
       decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -389,16 +399,16 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
             controller: searchController,
             decoration: InputDecoration(
               hintText: 'Search sections...',
-              prefixIcon: Icon(Icons.search, color: AppTheme.primaryBlue),
+              prefixIcon: Icon(Icons.search, color: AppThemeColor.primaryBlue),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                 borderSide: BorderSide.none,
               ),
               filled: true,
-              fillColor: AppTheme.blue50,
+              fillColor: AppThemeColor.blue50,
             ),
           ),
-          SizedBox(height: AppTheme.smallSpacing),
+          SizedBox(height: AppThemeColor.smallSpacing),
           Row(
             children: [
               Text('Filter by class: ', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -430,18 +440,18 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
 
   Widget _buildSectionsList() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+      margin: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
       decoration: BoxDecoration(
-        color: AppTheme.white,
+        color: AppThemeColor.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(AppTheme.cardBorderRadius),
-          topRight: Radius.circular(AppTheme.cardBorderRadius),
+          topLeft: Radius.circular(AppThemeColor.cardBorderRadius),
+          topRight: Radius.circular(AppThemeColor.cardBorderRadius),
         ),
       ),
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(AppTheme.mediumSpacing),
+            padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -450,10 +460,10 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryBlue,
+                    color: AppThemeColor.primaryBlue,
                   ),
                 ),
-                Icon(Icons.class_, color: AppTheme.primaryBlue),
+                Icon(Icons.class_, color: AppThemeColor.primaryBlue),
               ],
             ),
           ),
@@ -461,7 +471,7 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
             child: filteredSections.isEmpty
                 ? _buildEmptyState()
                 : ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
+              padding: EdgeInsets.symmetric(horizontal: AppThemeColor.mediumSpacing),
               itemCount: filteredSections.length,
               itemBuilder: (context, index) {
                 return _buildSectionCard(filteredSections[index]);
@@ -479,7 +489,7 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
         : null;
 
     return Card(
-      margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+      margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
       elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
@@ -488,18 +498,18 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           gradient: LinearGradient(
-            colors: [Colors.white, AppTheme.blue50],
+            colors: [Colors.white, AppThemeColor.blue50],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: ExpansionTile(
           leading: CircleAvatar(
-            backgroundColor: AppTheme.primaryBlue,
+            backgroundColor: AppThemeColor.primaryBlue,
             child: Text(
               section.sectionName,
               style: TextStyle(
-                color: AppTheme.white,
+                color: AppThemeColor.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               ),
@@ -540,7 +550,7 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
                 value: 'edit',
                 child: Row(
                   children: [
-                    Icon(Icons.edit, color: AppTheme.primaryBlue),
+                    Icon(Icons.edit, color: AppThemeColor.primaryBlue),
                     SizedBox(width: 8),
                     Text('Edit Section'),
                   ],
@@ -570,7 +580,7 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
           ),
           children: [
             Padding(
-              padding: EdgeInsets.all(AppTheme.mediumSpacing),
+              padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -580,7 +590,7 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
                   _buildInfoRow('Created',
                       '${section.createdAt.day}/${section.createdAt.month}/${section.createdAt.year}'),
                   if (section.subjectTeacherIds.isNotEmpty) ...[
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     Text(
                       'Subject Teachers:',
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -625,15 +635,15 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
 
   Widget _buildTeachersTab() {
     return Container(
-      margin: EdgeInsets.all(AppTheme.defaultSpacing),
+      margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
       decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(AppTheme.mediumSpacing),
+            padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -642,16 +652,16 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.primaryBlue,
+                    color: AppThemeColor.primaryBlue,
                   ),
                 ),
-                Icon(Icons.people, color: AppTheme.primaryBlue),
+                Icon(Icons.people, color: AppThemeColor.primaryBlue),
               ],
             ),
           ),
           Expanded(
             child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
+              padding: EdgeInsets.symmetric(horizontal: AppThemeColor.mediumSpacing),
               itemCount: teachers.length,
               itemBuilder: (context, index) {
                 return _buildTeacherCard(teachers[index]);
@@ -671,19 +681,19 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
         .toList();
 
     return Card(
-      margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+      margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       child: ListTile(
-        contentPadding: EdgeInsets.all(AppTheme.mediumSpacing),
+        contentPadding: EdgeInsets.all(AppThemeColor.mediumSpacing),
         leading: CircleAvatar(
-          backgroundColor: teacher.isAvailable ? AppTheme.primaryBlue : Colors.grey,
+          backgroundColor: teacher.isAvailable ? AppThemeColor.primaryBlue : Colors.grey,
           child: Text(
             teacher.name.substring(0, 1).toUpperCase(),
             style: TextStyle(
-              color: AppTheme.white,
+              color: AppThemeColor.white,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -734,7 +744,7 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
             size: 64,
             color: Colors.grey.shade400,
           ),
-          SizedBox(height: AppTheme.smallSpacing),
+          SizedBox(height: AppThemeColor.smallSpacing),
           Text(
             'No sections found',
             style: TextStyle(
@@ -742,14 +752,14 @@ class _ClassSectionManagementPageState extends State<ClassSectionManagementPage>
               color: Colors.grey.shade600,
             ),
           ),
-          SizedBox(height: AppTheme.smallSpacing),
+          SizedBox(height: AppThemeColor.smallSpacing),
           ElevatedButton.icon(
             onPressed: _showCreateSectionDialog,
             icon: Icon(Icons.add),
             label: Text('Create Section'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primaryBlue,
-              foregroundColor: AppTheme.white,
+              backgroundColor: AppThemeColor.primaryBlue,
+              foregroundColor: AppThemeColor.white,
             ),
           ),
         ],
@@ -787,12 +797,12 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.8,
-        padding: EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
         child: Form(
           key: _formKey,
           child: Column(
@@ -806,7 +816,7 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryBlue,
+                      color: AppThemeColor.primaryBlue,
                     ),
                   ),
                   IconButton(
@@ -815,7 +825,7 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
                   ),
                 ],
               ),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeColor.defaultSpacing),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -826,21 +836,21 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
                         Icons.class_,
                         'Enter class name (e.g., Grade 10)',
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildTextField(
                         'Section Name',
                         _sectionNameController,
                         Icons.label,
                         'Enter section (e.g., A, B, C)',
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildTextField(
                         'Room Number',
                         _roomController,
                         Icons.room,
                         'Enter room number',
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildTextField(
                         'Max Students',
                         _maxStudentsController,
@@ -848,7 +858,7 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
                         'Enter maximum students',
                         keyboardType: TextInputType.number,
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildDropdown(
                         'Class Teacher',
                         selectedClassTeacher,
@@ -869,13 +879,13 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
                         )).toList(),
                             (value) => setState(() => selectedClassTeacher = value),
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildMultiSelect(),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeColor.defaultSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -883,12 +893,12 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
                     onPressed: () => Navigator.pop(context),
                     child: Text('Cancel'),
                   ),
-                  SizedBox(width: AppTheme.smallSpacing),
+                  SizedBox(width: AppThemeColor.smallSpacing),
                   ElevatedButton(
                     onPressed: _createSection,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryBlue,
-                      foregroundColor: AppTheme.white,
+                      backgroundColor: AppThemeColor.primaryBlue,
+                      foregroundColor: AppThemeColor.white,
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                     child: Text('Create Section'),
@@ -915,15 +925,15 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(icon, color: AppTheme.primaryBlue),
+        prefixIcon: Icon(icon, color: AppThemeColor.primaryBlue),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           borderSide: BorderSide(
-            color: AppTheme.primaryBlue,
-            width: AppTheme.focusedBorderWidth,
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeColor.focusedBorderWidth,
           ),
         ),
       ),
@@ -972,17 +982,17 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
           ),
           prefixIcon: Icon(
             Icons.person,
-            color: AppTheme.primaryBlue,
+            color: AppThemeColor.primaryBlue,
             size: isSmallScreen ? 20 : 24,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+            borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+            borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
             borderSide: BorderSide(
-              color: AppTheme.primaryBlue,
-              width: AppTheme.focusedBorderWidth,
+              color: AppThemeColor.primaryBlue,
+              width: AppThemeColor.focusedBorderWidth,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(
@@ -1029,7 +1039,7 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade400),
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+            borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           ),
           child: Column(
             children: widget.teachers.map((teacher) {
@@ -1047,7 +1057,7 @@ class _CreateSectionDialogState extends State<CreateSectionDialog> {
                     }
                   });
                 },
-                activeColor: AppTheme.primaryBlue,
+                activeColor: AppThemeColor.primaryBlue,
               );
             }).toList(),
           ),
@@ -1117,12 +1127,12 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.8,
-        padding: EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
         child: Form(
           key: _formKey,
           child: Column(
@@ -1136,7 +1146,7 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryBlue,
+                      color: AppThemeColor.primaryBlue,
                     ),
                   ),
                   IconButton(
@@ -1145,7 +1155,7 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
                   ),
                 ],
               ),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeColor.defaultSpacing),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -1156,21 +1166,21 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
                         Icons.class_,
                         'Enter class name (e.g., Grade 10)',
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildTextField(
                         'Section Name',
                         _sectionNameController,
                         Icons.label,
                         'Enter section (e.g., A, B, C)',
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildTextField(
                         'Room Number',
                         _roomController,
                         Icons.room,
                         'Enter room number',
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildTextField(
                         'Max Students',
                         _maxStudentsController,
@@ -1178,7 +1188,7 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
                         'Enter maximum students',
                         keyboardType: TextInputType.number,
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildDropdown(
                         'Class Teacher',
                         selectedClassTeacher,
@@ -1194,13 +1204,13 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
                         ],
                             (value) => setState(() => selectedClassTeacher = value),
                       ),
-                      SizedBox(height: AppTheme.mediumSpacing),
+                      SizedBox(height: AppThemeColor.mediumSpacing),
                       _buildMultiSelect(),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: AppTheme.defaultSpacing),
+              SizedBox(height: AppThemeColor.defaultSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -1208,12 +1218,12 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
                     onPressed: () => Navigator.pop(context),
                     child: Text('Cancel'),
                   ),
-                  SizedBox(width: AppTheme.smallSpacing),
+                  SizedBox(width: AppThemeColor.smallSpacing),
                   ElevatedButton(
                     onPressed: _updateSection,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primaryBlue,
-                      foregroundColor: AppTheme.white,
+                      backgroundColor: AppThemeColor.primaryBlue,
+                      foregroundColor: AppThemeColor.white,
                       padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                     child: Text('Update Section'),
@@ -1240,15 +1250,15 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: Icon(icon, color: AppTheme.primaryBlue),
+        prefixIcon: Icon(icon, color: AppThemeColor.primaryBlue),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           borderSide: BorderSide(
-            color: AppTheme.primaryBlue,
-            width: AppTheme.focusedBorderWidth,
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeColor.focusedBorderWidth,
           ),
         ),
       ),
@@ -1276,15 +1286,15 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
       value: value,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(Icons.person, color: AppTheme.primaryBlue),
+        prefixIcon: Icon(Icons.person, color: AppThemeColor.primaryBlue),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           borderSide: BorderSide(
-            color: AppTheme.primaryBlue,
-            width: AppTheme.focusedBorderWidth,
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeColor.focusedBorderWidth,
           ),
         ),
       ),
@@ -1309,7 +1319,7 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
         Container(
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey.shade400),
-            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+            borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           ),
           child: Column(
             children: widget.teachers.map((teacher) {
@@ -1327,7 +1337,7 @@ class _EditSectionDialogState extends State<EditSectionDialog> {
                     }
                   });
                 },
-                activeColor: AppTheme.primaryBlue,
+                activeColor: AppThemeColor.primaryBlue,
               );
             }).toList(),
           ),
@@ -1385,12 +1395,12 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.9,
         height: MediaQuery.of(context).size.height * 0.7,
-        padding: EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1403,7 +1413,7 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryBlue,
+                      color: AppThemeColor.primaryBlue,
                     ),
                   ),
                 ),
@@ -1414,7 +1424,7 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
               ],
             ),
             Divider(),
-            SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeColor.mediumSpacing),
 
             // Class Teacher Selection
             Text(
@@ -1422,14 +1432,14 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.primaryBlue,
+                color: AppThemeColor.primaryBlue,
               ),
             ),
-            SizedBox(height: AppTheme.smallSpacing),
+            SizedBox(height: AppThemeColor.smallSpacing),
             Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
               ),
               child: Column(
                 children: [
@@ -1440,7 +1450,7 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
                     onChanged: (value) {
                       setState(() => selectedClassTeacher = value);
                     },
-                    activeColor: AppTheme.primaryBlue,
+                    activeColor: AppThemeColor.primaryBlue,
                   ),
                   ...widget.teachers.map((teacher) {
                     return RadioListTile<String>(
@@ -1453,14 +1463,14 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
                         setState(() => selectedClassTeacher = value);
                       }
                           : null,
-                      activeColor: AppTheme.primaryBlue,
+                      activeColor: AppThemeColor.primaryBlue,
                     );
                   }).toList(),
                 ],
               ),
             ),
 
-            SizedBox(height: AppTheme.defaultSpacing),
+            SizedBox(height: AppThemeColor.defaultSpacing),
 
             // Subject Teachers Selection
             Text(
@@ -1468,16 +1478,16 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.primaryBlue,
+                color: AppThemeColor.primaryBlue,
               ),
             ),
-            SizedBox(height: AppTheme.smallSpacing),
+            SizedBox(height: AppThemeColor.smallSpacing),
 
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                  borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                 ),
                 child: ListView(
                   children: widget.teachers.map((teacher) {
@@ -1509,10 +1519,10 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
                         });
                       }
                           : null,
-                      activeColor: AppTheme.primaryBlue,
+                      activeColor: AppThemeColor.primaryBlue,
                       secondary: CircleAvatar(
                         backgroundColor: teacher.isAvailable
-                            ? AppTheme.primaryBlue
+                            ? AppThemeColor.primaryBlue
                             : Colors.grey,
                         child: Text(
                           teacher.name.substring(0, 1).toUpperCase(),
@@ -1525,7 +1535,7 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
               ),
             ),
 
-            SizedBox(height: AppTheme.defaultSpacing),
+            SizedBox(height: AppThemeColor.defaultSpacing),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -1533,12 +1543,12 @@ class _TeacherAssignmentDialogState extends State<TeacherAssignmentDialog> {
                   onPressed: () => Navigator.pop(context),
                   child: Text('Cancel'),
                 ),
-                SizedBox(width: AppTheme.smallSpacing),
+                SizedBox(width: AppThemeColor.smallSpacing),
                 ElevatedButton(
                   onPressed: _updateAssignments,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryBlue,
-                    foregroundColor: AppTheme.white,
+                    backgroundColor: AppThemeColor.primaryBlue,
+                    foregroundColor: AppThemeColor.white,
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   ),
                   child: Text('Update Assignments'),

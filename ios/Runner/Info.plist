@@ -85,5 +85,11 @@
                 </array>
             </dict>
         </array>
+
+         <key>LSApplicationQueriesSchemes</key>
+            <array>
+                <string>tel</string>
+                <string>mailto</string>
+            </array>
 </dict>
 </plist>

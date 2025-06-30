@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
-
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class TeacherPerformanceScreen extends StatefulWidget {
   const TeacherPerformanceScreen({Key? key}) : super(key: key);
@@ -77,7 +75,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
       appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -85,17 +83,17 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
               _buildHeader(),
               Expanded(
                 child: Container(
-                  margin: const EdgeInsets.only(top: AppTheme.defaultSpacing, left: AppTheme.defaultSpacing, right: AppTheme.defaultSpacing),
+                  margin: const EdgeInsets.only(top: AppThemeColor.defaultSpacing, left: AppThemeColor.defaultSpacing, right: AppThemeColor.defaultSpacing),
                   decoration: const BoxDecoration(
-                    color: AppTheme.white,
+                    color: AppThemeColor.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                      topRight: Radius.circular(AppTheme.cardBorderRadius),
+                      topLeft: Radius.circular(AppThemeColor.cardBorderRadius),
+                      topRight: Radius.circular(AppThemeColor.cardBorderRadius),
                     ),
                   ),
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
-                      : _buildContent(),
+                      : _buildContent(context),
                 ),
               ),
             ],
@@ -107,45 +105,66 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: const EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: Row(
         children: [
-          const SizedBox(width: AppTheme.smallSpacing),
+          const SizedBox(width: AppThemeColor.smallSpacing),
           const Text(
             'Teacher Performance',
-            style: AppTheme.FontStyle,
+            style: AppThemeResponsiveness.FontStyle,
           ),
           const Spacer(),
           IconButton(
             onPressed: _refreshData,
-            icon: const Icon(Icons.refresh, color: AppTheme.white),
+            icon: const Icon(Icons.refresh, color: AppThemeColor.white),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Column(
         children: [
           Container(
-            margin: const EdgeInsets.all(AppTheme.defaultSpacing),
+            margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
             decoration: BoxDecoration(
-              color: AppTheme.blue50,
-              borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+              color: AppThemeColor.blue50,
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
+              ],
             ),
             child: TabBar(
               indicator: BoxDecoration(
-                gradient: AppTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                color: AppThemeColor.primaryBlue,
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppThemeColor.primaryBlue.withOpacity(0.3),
+                    spreadRadius: 1,
+                    blurRadius: 3,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              labelColor: AppTheme.white,
-              unselectedLabelColor: AppTheme.blue600,
-              labelStyle: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+              indicatorSize: TabBarIndicatorSize.tab,
+              labelColor: AppThemeColor.white,
+              unselectedLabelColor: AppThemeColor.blue600,
+              labelStyle: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: AppThemeResponsiveness.getTabFontSize(context),
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: AppThemeResponsiveness.getTabFontSize(context),
               ),
               tabs: const [
                 Tab(text: 'Attendance Entry'),
@@ -168,7 +187,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
 
   Widget _buildAttendanceTab() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+      padding: const EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -177,18 +196,18 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
             completed: _attendanceEntries.where((e) => e.status == AttendanceStatus.completed).length,
             pending: _attendanceEntries.where((e) => e.status == AttendanceStatus.pending).length,
             icon: Icons.fact_check_outlined,
-            color: AppTheme.primaryBlue,
+            color: AppThemeColor.primaryBlue,
           ),
-          const SizedBox(height: AppTheme.defaultSpacing),
+          const SizedBox(height: AppThemeColor.defaultSpacing),
           Text(
             'Recent Attendance Entries',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppTheme.blue800,
+              color: AppThemeColor.blue800,
             ),
           ),
-          const SizedBox(height: AppTheme.smallSpacing),
+          const SizedBox(height: AppThemeColor.smallSpacing),
           Expanded(
             child: ListView.builder(
               itemCount: _attendanceEntries.length,
@@ -204,7 +223,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
 
   Widget _buildResultTab() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+      padding: const EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -213,9 +232,9 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
             completed: _resultEntries.where((e) => e.status == ResultStatus.completed).length,
             pending: _resultEntries.where((e) => e.status == ResultStatus.pending).length,
             icon: Icons.assignment_turned_in_outlined,
-            color: AppTheme.primaryPurple,
+            color: AppThemeColor.primaryIndigo,
           ),
-          const SizedBox(height: AppTheme.defaultSpacing),
+          const SizedBox(height: AppThemeColor.defaultSpacing),
           const Text(
             'Result Entry Status',
             style: TextStyle(
@@ -224,7 +243,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
               color: Colors.blue,
             ),
           ),
-          const SizedBox(height: AppTheme.smallSpacing),
+          const SizedBox(height: AppThemeColor.smallSpacing),
           Expanded(
             child: ListView.builder(
               itemCount: _resultEntries.length,
@@ -246,19 +265,19 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
     required Color color,
   }) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeColor.cardElevation,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Container(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: const EdgeInsets.all(AppThemeColor.defaultSpacing),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         child: Row(
           children: [
@@ -270,7 +289,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
               ),
               child: Icon(icon, color: color, size: 30),
             ),
-            const SizedBox(width: AppTheme.mediumSpacing),
+            const SizedBox(width: AppThemeColor.mediumSpacing),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,13 +340,13 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
 
   Widget _buildAttendanceCard(AttendanceEntry entry) {
     return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.smallSpacing),
+      margin: const EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.mediumSpacing),
+        padding: const EdgeInsets.all(AppThemeColor.mediumSpacing),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -347,7 +366,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
                 _buildStatusBadge(entry.status),
               ],
             ),
-            const SizedBox(height: AppTheme.smallSpacing),
+            const SizedBox(height: AppThemeColor.smallSpacing),
             Row(
               children: [
                 Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
@@ -359,7 +378,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
               ],
             ),
             if (entry.status == AttendanceStatus.completed) ...[
-              const SizedBox(height: AppTheme.smallSpacing),
+              const SizedBox(height: AppThemeColor.smallSpacing),
               Row(
                 children: [
                   Icon(Icons.people, size: 16, color: Colors.grey[600]),
@@ -381,13 +400,13 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
     double progress = entry.totalStudents > 0 ? entry.resultsEntered / entry.totalStudents : 0;
 
     return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.smallSpacing),
+      margin: const EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.mediumSpacing),
+        padding: const EdgeInsets.all(AppThemeColor.mediumSpacing),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -412,7 +431,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
               '${entry.className} - ${entry.subject}',
               style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
-            const SizedBox(height: AppTheme.smallSpacing),
+            const SizedBox(height: AppThemeColor.smallSpacing),
             Row(
               children: [
                 Icon(Icons.schedule, size: 16, color: Colors.grey[600]),
@@ -423,7 +442,7 @@ class _TeacherPerformanceScreenState extends State<TeacherPerformanceScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.smallSpacing),
+            const SizedBox(height: AppThemeColor.smallSpacing),
             Row(
               children: [
                 Expanded(

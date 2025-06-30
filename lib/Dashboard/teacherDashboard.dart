@@ -1,690 +1,255 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/dashboardCustomWidgets/commonImportsDashboard.dart';
 
-class teacherDashboard extends StatelessWidget {
+class TeacherDashboard extends StatefulWidget {
+  @override
+  State<TeacherDashboard> createState() => _TeacherDashboardState();
+}
+
+class _TeacherDashboardState extends State<TeacherDashboard>
+    with TickerProviderStateMixin {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
-      drawer: _buildModernDrawer(context),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildWelcomeSection(context),
-                SizedBox(height: 24),
-                _buildOverviewSection(context),
-                SizedBox(height: 32),
-                _buildSectionTitle('Class & Result Management', context),
-                SizedBox(height: 16),
-                _buildDashboardGrid(context),
-                SizedBox(height: 24),
-                _buildRecentActivity(context),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModernDrawer(BuildContext context) {
-    return Container(
-      width: 280,
-      child: Drawer(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: AppTheme.primaryGradient,
-          ),
-          child: Column(
-            children: [
-              _buildDrawerHeader(context),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                  child: ListView(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    children: [
-                      _buildDrawerSection(context, 'Main', [
-                        _buildDrawerItem(context, Icons.dashboard_rounded, 'Dashboard', '/teacher-dashboard'),
-                        _buildDrawerItem(context, Icons.person_rounded, 'Profile', '/teacher-profile'),
-                        _buildDrawerItem(context, Icons.groups_rounded, 'Student List', '/teacher-student-list'),
-                        _buildDrawerItem(context, Icons.assignment_rounded, 'Result Entry', '/teacher-result-entry'),
-                        _buildDrawerItem(context, Icons.person_add_alt, 'Add Applicant', '/admin-add-student-applicant'),
-                      ]),
-                      _buildDrawerSection(context, 'Academic', [
-                        _buildDrawerItem(context, Icons.fact_check_rounded, 'Attendance', '/teacher-attendance'),
-                        _buildDrawerItem(context, Icons.schedule_rounded, 'Time Table', '/teacher-timetable'),
-                        _buildDrawerItem(context, Icons.message_rounded, 'Messages', '/teacher-message', badge: '5'),
-                      ]),
-                      _buildDrawerSection(context, 'Support', [
-                        _buildDrawerItem(context, Icons.help_outline_rounded, 'Help & Support', '/teacher-help'),
-                        _buildDrawerItem(context, Icons.settings_rounded, 'Settings', '/teacher-settings'),
-                      ]),
-                      Divider(height: 32, thickness: 1),
-                      _buildDrawerItem(context, Icons.lock_rounded, 'Change Password', '/change-password'),
-                      _buildDrawerItem(
-                        context,
-                        Icons.logout_rounded,
-                        'Logout',
-                        null,
-                        onTap: () => _showLogoutDialog(context),
-                        isDestructive: true,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawerHeader(BuildContext context) {
-    return Container(
-      height: 180,
-      padding: EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      drawer: _buildDrawer(),
+      body: Stack(
         children: [
-          Hero(
-            tag: 'profile_avatar',
-            child: Container(
-              padding: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 3),
-              ),
-              child: CircleAvatar(
-                radius: 35,
-                backgroundColor: Colors.white,
-                child: Icon(
-                    Icons.school_rounded,
-                    size: 40,
-                    color: Colors.indigo.shade600
+          Container(
+            decoration: BoxDecoration(gradient: AppThemeColor.primaryGradient),
+            child: SafeArea(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+                  vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildWelcomeSection(),
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context) * 1.2),
+                    _buildQuickStatsSection(context),
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context) * 1.6),
+                    SectionTitle(title: 'Class & Result Management'),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                    _buildDashboardGrid(context),
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context) * 1.2),
+                    SectionTitle(title: 'Recent Activity'),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                    _buildRecentActivity(),
+                  ],
                 ),
               ),
             ),
           ),
-          Text(
-            'Teacher',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            'Mathematics Faculty',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-            ),
-          ),
+          ExpandableFab(),
         ],
       ),
     );
   }
 
-  Widget _buildDrawerSection(BuildContext context, String title, List<Widget> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade600,
-              letterSpacing: 0.5,
-            ),
+  Widget _buildDrawer(){
+    return ModernDrawer(
+      headerIcon: Icons.school_rounded,
+      headerTitle: 'Teacher',
+      headerSubtitle: 'Mathematics Faculty',
+      sections: [
+        ModernDrawerSection(title: 'Main', items: [
+          ModernDrawerItem(icon: Icons.dashboard_rounded,
+              title: 'Dashboard',
+              route: '/teacher-dashboard'),
+          ModernDrawerItem(icon: Icons.person_rounded,
+              title: 'Profile',
+              route: '/teacher-profile'),
+          ModernDrawerItem(icon: Icons.groups_rounded,
+              title: 'Student List',
+              route: '/admin-student-management'),
+          ModernDrawerItem(icon: Icons.assignment_rounded,
+              title: 'Result Entry',
+              route: '/teacher-result-entry'),
+          ModernDrawerItem(icon: Icons.person_add_alt,
+              title: 'Add Applicant',
+              route: '/admin-add-student-applicant'),
+        ]),
+        ModernDrawerSection(title: 'Academic', items: [
+          ModernDrawerItem(icon:  Icons.fact_check_rounded,
+              title: 'Attendance',
+              route: '/teacher-attendance'),
+          ModernDrawerItem(icon: Icons.schedule_rounded,
+              title: 'Time Table',
+              route: '/teacher-timetable'),
+          ModernDrawerItem(icon:  Icons.message_rounded,
+              title: 'Message',
+              route: '/teacher-message'),
+        ]),
+        ModernDrawerSection(title: 'Settings', items: [
+          ModernDrawerItem(icon: Icons.lock_rounded,
+              title: 'Change Password',
+              route: '/change-password'),
+          ModernDrawerItem(
+            icon: Icons.logout_rounded,
+            title: 'Logout',
+            onTap: () => LogoutDialog.show(context),
+            isDestructive: true,
           ),
-        ),
-        ...items,
-        SizedBox(height: 16),
+        ]),
       ],
     );
   }
 
-  Widget _buildDrawerItem(
-      BuildContext context,
-      IconData icon,
-      String title,
-      String? route, {
-        VoidCallback? onTap,
-        String? badge,
-        bool isDestructive = false,
-      }) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-      child: ListTile(
-        leading: Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: isDestructive
-                ? Colors.red.shade50
-                : Colors.indigo.shade50,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            color: isDestructive
-                ? Colors.red.shade600
-                : Colors.indigo.shade600,
-            size: 22,
-          ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-            color: isDestructive ? Colors.red.shade700 : Colors.grey.shade800,
-          ),
-        ),
-        trailing: badge != null
-            ? Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.red.shade500,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            badge,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        )
-            : Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        onTap: onTap ?? () {
-          if (route != null) {
-            Navigator.pushNamed(context, route);
-          }
-        },
-      ),
+  Widget _buildWelcomeSection(){
+    return WelcomeSection(
+      name: 'Dr. Sarah Johnson',
+      classInfo: 'Mathematics',
+      isActive: true,
+      isVerified: true,
+      isSuperUser: false,
+      icon: Icons.school_rounded,
     );
   }
 
-  Widget _buildWelcomeSection(BuildContext context) {
-    return Container(
-      width: 500,
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, Colors.blue.shade50],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
+  Widget _buildQuickStatsSection(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
         children: [
-          _buildProfileAvatar(context),
-          SizedBox(height: 20),
-          _buildWelcomeText(context),
+          QuickStatCard(
+            title: 'Assigned Classes',
+            value: '3',
+            icon: Icons.class_rounded,
+            iconColor: Colors.blue,
+            iconBackgroundColor: Colors.blue.shade50,
+            onTap: () {
+              Navigator.pushNamed(context, '/admin-student-management');
+            },
+          ),
+          SizedBox(width: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+
+          QuickStatCard(
+            title: 'Total Students',
+            value: '125',
+            icon: Icons.groups_rounded,
+            iconColor: Colors.green,
+            iconBackgroundColor: Colors.green.shade50,
+            onTap: () {
+              Navigator.pushNamed(context, '/admin-student-management');
+            },
+          ),
+          SizedBox(width: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+
+          QuickStatCard(
+            title: 'Subjects',
+            value: '2',
+            icon: Icons.subject_rounded,
+            iconColor: Colors.purple,
+            iconBackgroundColor: Colors.purple.shade50,
+            onTap: () {
+              Navigator.pushNamed(context, '/teacher-subject-management');
+            },
+          ),
+          SizedBox(width: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+
+          QuickStatCard(
+            title: 'Attendance',
+            value: '92.5%',
+            icon: Icons.fact_check_rounded,
+            iconColor: Colors.orange,
+            iconBackgroundColor: Colors.orange.shade50,
+            onTap: () {
+              Navigator.pushNamed(context, '/teacher-attendance');
+            },
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildProfileAvatar(BuildContext context) {
-    return Hero(
-      tag: 'profile_avatar',
-      child: Container(
-        padding: EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [Colors.indigo.shade400, Colors.purple.shade400],
-          ),
-        ),
-        child: CircleAvatar(
-          radius: 35,
-          backgroundColor: Colors.white,
-          child: Icon(
-            Icons.school_rounded,
-            size: 40,
-            color: Colors.indigo.shade600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWelcomeText(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(
-          'Welcome back!',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 4),
-        Text(
-          'Dr. Sarah Johnson',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey.shade800,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 8),
-        Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.indigo.shade100,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                'Mathematics',
-                style: TextStyle(
-                  color: Colors.indigo.shade700,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.green.shade100,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.check_circle, size: 14, color: Colors.green.shade700),
-                  SizedBox(width: 4),
-                  Text(
-                    'Active',
-                    style: TextStyle(
-                      color: Colors.green.shade700,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOverviewSection(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            _buildOverviewStat(context, 'Assigned Classes', '3', Icons.class_rounded,
-                Colors.blue, Colors.blue.shade50),
-            SizedBox(width: 12),
-            _buildOverviewStat(context, 'Total Students', '125', Icons.groups_rounded,
-                Colors.green, Colors.green.shade50),
-          ],
-        ),
-        SizedBox(height: 12),
-        Row(
-          children: [
-            _buildOverviewStat(context, 'Subjects', '2', Icons.subject_rounded,
-                Colors.purple, Colors.purple.shade50),
-            SizedBox(width: 12),
-            _buildOverviewStat(context, 'Attendance', '92.5%', Icons.fact_check_rounded,
-                Colors.orange, Colors.orange.shade50),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOverviewStat(BuildContext context, String title, String value, IconData icon, Color color, Color bgColor) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 15,
-              offset: Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            SizedBox(height: 12),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title, BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 4),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
       ),
     );
   }
 
   Widget _buildDashboardGrid(BuildContext context) {
     final items = [
-      _DashboardItem('Student List', Icons.groups_rounded, Colors.blue,
-              () => Navigator.pushNamed(context, '/teacher-student-list'), 'View students in classes'),
-      _DashboardItem('Attendance', Icons.fact_check_rounded, Colors.green,
-              () => Navigator.pushNamed(context, '/teacher-attendance'), 'Mark daily attendance'),
-      _DashboardItem('Result Entry', Icons.assignment_rounded, Colors.purple,
-              () => Navigator.pushNamed(context, '/teacher-result-entry'), 'Add exam scores & grades'),
-      _DashboardItem('Time Table', Icons.schedule_rounded, Colors.orange,
-              () => Navigator.pushNamed(context, '/teacher-timetable'), 'Teaching schedule'),
-      _DashboardItem('Messages', Icons.message_rounded, Colors.red,
-              () => Navigator.pushNamed(context, '/teacher-message'), 'Admin & academic messages', badge: '5'),
-      _DashboardItem('Add Applicant', Icons.person_add_alt, Colors.brown,
-          ()=> Navigator.pushNamed(context, '/admin-add-student-applicant',), 'Add new student'),
-      _DashboardItem('Academic Options', Icons.sports_sharp, Colors.indigo,
-              ()=> Navigator.pushNamed(context, '/academic-option',), 'Academics improvement'),
-      _DashboardItem('Profile', Icons.person_rounded, Colors.teal,
-              () => Navigator.pushNamed(context, '/teacher-profile'), 'Personal information'),
+      DashboardItem(
+        'Student List',
+        Icons.groups_rounded,
+        Colors.blue,
+            () => Navigator.pushNamed(context, '/admin-student-management'),
+        'View students in classes',
+      ),
+      DashboardItem(
+        'Attendance',
+        Icons.fact_check_rounded,
+        Colors.green,
+            () => Navigator.pushNamed(context, '/teacher-attendance'),
+        'Mark daily attendance',
+      ),
+      DashboardItem(
+        'Result Entry',
+        Icons.assignment_rounded,
+        Colors.purple,
+            () => Navigator.pushNamed(context, '/teacher-result-entry'),
+        'Add exam scores & grades',
+      ),
+      DashboardItem(
+        'Time Table',
+        Icons.schedule_rounded,
+        Colors.orange,
+            () => Navigator.pushNamed(context, '/teacher-timetable'),
+        'Teaching schedule',
+      ),
+      DashboardItem(
+        'Add Applicant',
+        Icons.person_add_alt,
+        Colors.brown,
+            () => Navigator.pushNamed(context, '/admin-add-student-applicant'),
+        'Add new student',
+      ),
+      DashboardItem(
+        'Add Time Table',
+        Icons.add_alarm_outlined,
+        Colors.lime,
+            () => Navigator.pushNamed(context, '/admin-add-timetable'),
+        'Add new timetable',
+      ),
+      DashboardItem(
+        'Academic Options',
+        Icons.sports_sharp,
+        Colors.indigo,
+            () => Navigator.pushNamed(context, '/academic-options'),
+        'Academics improvement',
+      ),
+      DashboardItem(
+        'Profile',
+        Icons.person_rounded,
+        Colors.teal,
+            () => Navigator.pushNamed(context, '/teacher-profile'),
+        'Personal information',
+      ),
     ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.85,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) => _buildDashboardCard(context, items[index]),
-    );
+    return DashboardGrid(items: items);
   }
 
-  Widget _buildDashboardCard(BuildContext context, _DashboardItem item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: item.onTap,
-          borderRadius: BorderRadius.circular(24),
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: item.color.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(item.icon, size: 32, color: item.color),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      item.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade800,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      item.subtitle,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                    ),
-                  ],
-                ),
-                if (item.badge != null)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade500,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        item.badge!,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
+  Widget _buildRecentActivity(){
+    return RecentActivityCard(
+      items: const [
+        ActivityItem(
+          icon: Icons.assignment_rounded,
+          title: 'Math Quiz results entered for Class 10-A',
+          time: '1 hour ago',
+          color: Colors.purple,
         ),
-      ),
-    );
-  }
-
-  Widget _buildRecentActivity(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('Recent Activity', context),
-        SizedBox(height: 16),
-        Container(
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 15,
-                offset: Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _buildActivityItem(context,
-                Icons.assignment_rounded,
-                'Math Quiz results entered for Class 10-A',
-                '1 hour ago',
-                Colors.purple,
-              ),
-              Divider(height: 24),
-              _buildActivityItem(context,
-                Icons.fact_check_rounded,
-                'Attendance marked for today\'s classes',
-                '3 hours ago',
-                Colors.green,
-              ),
-              Divider(height: 24),
-              _buildActivityItem(context,
-                Icons.message_rounded,
-                'New message from Academic Officer',
-                '1 day ago',
-                Colors.orange,
-              ),
-            ],
-          ),
+        ActivityItem(
+          icon: Icons.fact_check_rounded,
+          title: 'Attendance marked for today\'s classes',
+          time: '3 hours ago',
+          color: Colors.green,
+        ),
+        ActivityItem(
+          icon: Icons.message_rounded,
+          title: 'New message from Academic Officer',
+          time: '1 day ago',
+          color: Colors.orange,
         ),
       ],
     );
   }
-
-  Widget _buildActivityItem(BuildContext context, IconData icon, String title, String time, Color color) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(icon, color: color, size: 20),
-        ),
-        SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade800,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                time,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text('Logout'),
-          content: Text('Are you sure you want to logout?'),
-          actions: [
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: Text('Logout', style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _DashboardItem {
-  final String title;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  final String subtitle;
-  final String? badge;
-
-  _DashboardItem(this.title, this.icon, this.color, this.onTap, this.subtitle, {this.badge});
 }

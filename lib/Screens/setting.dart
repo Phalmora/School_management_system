@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeColor.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeResponsiveness.dart';
 
 class AppSettingsPage extends StatefulWidget {
   const AppSettingsPage({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: AppThemeColor.slideAnimationDuration,
       vsync: this,
     );
     _fadeAnimation = Tween<double>(
@@ -56,26 +57,16 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
             end: Alignment.bottomRight,
             colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
           )
-              : AppTheme.primaryGradient,
+              : AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: Column(
               children: [
-                _buildHeader(),
+                _buildHeader(context),
                 Expanded(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: AppTheme.defaultSpacing, left:AppTheme.defaultSpacing, right: AppTheme.defaultSpacing ),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? const Color(0xFF1E1E1E) : AppTheme.white,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                        topRight: Radius.circular(AppTheme.cardBorderRadius),
-                      ),
-                    ),
-                    child: _buildSettingsContent(),
-                  ),
+                  child: _buildResponsiveLayout(context),
                 ),
               ],
             ),
@@ -85,35 +76,125 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildResponsiveLayout(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (AppThemeResponsiveness.isDesktop(context)) {
+          return _buildDesktopLayout(context);
+        } else if (AppThemeResponsiveness.isTablet(context)) {
+          return _buildTabletLayout(context);
+        } else {
+          return _buildMobileLayout(context);
+        }
+      },
+    );
+  }
+
+  Widget _buildMobileLayout(BuildContext context) {
+    return SingleChildScrollView(
+      padding: AppThemeResponsiveness.getScreenPadding(context),
+      child: Column(
+        children: [
+          _buildSettingsCard(context),
+          SizedBox(height: AppThemeResponsiveness.getLargeSpacing(context)),
+          _buildFooter(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout(BuildContext context) {
+    return SingleChildScrollView(
+      padding: AppThemeResponsiveness.getScreenPadding(context),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: AppThemeResponsiveness.getMaxWidth(context) * 0.8,
+          ),
+          child: Column(
+            children: [
+              _buildSettingsCard(context),
+              SizedBox(height: AppThemeResponsiveness.getLargeSpacing(context)),
+              _buildFooter(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context) {
+    return SingleChildScrollView(
+      padding: AppThemeResponsiveness.getScreenPadding(context),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: AppThemeResponsiveness.getMaxWidth(context) * 0.6,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Column(
+                  children: [
+                    _buildThemeSection(context),
+                    SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+                    _buildLanguageSection(context),
+                  ],
+                ),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    _buildAboutSection(context),
+                    SizedBox(height: AppThemeResponsiveness.getLargeSpacing(context)),
+                    _buildFooter(context),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+        vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+      ),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
             icon: Icon(
               Icons.arrow_back,
-              color: AppTheme.white,
-              size: 28,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
             ),
           ),
-          const SizedBox(width: AppTheme.smallSpacing),
-          Text(
-            'Settings',
-            style: AppTheme.FontStyle.copyWith(fontSize: 24),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+          Expanded(
+            child: Text(
+              'Settings',
+              style: AppThemeResponsiveness.getSectionTitleStyle(context),
+            ),
           ),
-          const Spacer(),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsIconPadding(context)),
             decoration: BoxDecoration(
-              color: AppTheme.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10),
+              color: AppThemeColor.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
             ),
             child: Icon(
               Icons.settings,
-              color: AppTheme.white,
-              size: 24,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
             ),
           ),
         ],
@@ -121,121 +202,177 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
     );
   }
 
-  Widget _buildSettingsContent() {
-    return ListView(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-      children: [
-        _buildSectionTitle('Appearance'),
-        const SizedBox(height: AppTheme.mediumSpacing),
-        _buildThemeCard(),
-        const SizedBox(height: AppTheme.extraLargeSpacing),
-        _buildSectionTitle('Language'),
-        const SizedBox(height: AppTheme.mediumSpacing),
-        _buildLanguageCard(),
-        const SizedBox(height: AppTheme.extraLargeSpacing),
-        _buildSectionTitle('About'),
-        const SizedBox(height: AppTheme.mediumSpacing),
-        _buildAboutCard(),
-      ],
+  Widget _buildSettingsCard(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode ? const Color(0xFF1E1E1E) : AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+      ),
+      child: Column(
+        children: [
+          _buildThemeSection(context),
+          if (!AppThemeResponsiveness.isDesktop(context)) ...[
+            SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+            _buildLanguageSection(context),
+            SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+            _buildAboutSection(context),
+          ],
+        ],
+      ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildThemeSection(BuildContext context) {
+    return Container(
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(context, 'Appearance'),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          _buildThemeCard(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageSection(BuildContext context) {
+    return Container(
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(context, 'Language'),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          _buildLanguageCard(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboutSection(BuildContext context) {
+    return Container(
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(context, 'About'),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          _buildAboutCard(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
-      style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: isDarkMode ? AppTheme.white : AppTheme.primaryBlue,
-        fontFamily: 'Roboto',
+      style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+        color: isDarkMode ? AppThemeColor.white : AppThemeColor.primaryBlue,
+        fontSize: AppThemeResponsiveness.isDesktop(context)
+            ? AppThemeResponsiveness.getHeadingStyle(context).fontSize! * 1.2
+            : AppThemeResponsiveness.getHeadingStyle(context).fontSize,
       ),
     );
   }
 
-  Widget _buildThemeCard() {
+  Widget _buildThemeCard(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeResponsiveness.getCardElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
-      color: isDarkMode ? const Color(0xFF2A2A2A) : AppTheme.white,
+      color: isDarkMode ? const Color(0xFF2A2A2A) : AppThemeColor.white,
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: AppThemeResponsiveness.getCardPadding(context),
         child: Column(
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsIconPadding(context)),
                   decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(10),
+                    gradient: AppThemeColor.primaryGradient,
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                   ),
                   child: Icon(
                     isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                    color: AppTheme.white,
-                    size: 24,
+                    color: AppThemeColor.white,
+                    size: AppThemeResponsiveness.getQuickStatsIconSize(context),
                   ),
                 ),
-                const SizedBox(width: AppTheme.mediumSpacing),
+                SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Theme Mode',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isDarkMode ? AppTheme.white : Colors.black87,
-                          fontFamily: 'Roboto',
+                        style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                          color: isDarkMode ? AppThemeColor.white : Colors.black87,
                         ),
                       ),
+                      SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) * 0.5),
                       Text(
                         isDarkMode ? 'Dark Mode' : 'Light Mode',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDarkMode ? AppTheme.white70 : Colors.grey[600],
-                          fontFamily: 'Roboto',
+                        style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+                          color: isDarkMode ? AppThemeColor.white70 : Colors.grey[600],
                         ),
                       ),
                     ],
                   ),
                 ),
                 AnimatedContainer(
-                  duration: AppTheme.buttonAnimationDuration,
-                  child: Switch(
-                    value: isDarkMode,
-                    onChanged: (value) {
-                      setState(() {
-                        isDarkMode = value;
-                      });
-                    },
-                    activeColor: AppTheme.primaryBlue,
-                    activeTrackColor: AppTheme.blue200,
+                  duration: AppThemeColor.buttonAnimationDuration,
+                  child: Transform.scale(
+                    scale: AppThemeResponsiveness.isMobile(context) ? 0.9 : 1.0,
+                    child: Switch(
+                      value: isDarkMode,
+                      onChanged: (value) {
+                        setState(() {
+                          isDarkMode = value;
+                        });
+                      },
+                      activeColor: AppThemeColor.primaryBlue,
+                      activeTrackColor: AppThemeColor.blue200,
+                    ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildThemePreview(false, 'Light'),
-                ),
-                const SizedBox(width: AppTheme.smallSpacing),
-                Expanded(
-                  child: _buildThemePreview(true, 'Dark'),
-                ),
-              ],
-            ),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+            _buildThemePreviewSection(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildThemePreview(bool isDark, String label) {
+  Widget _buildThemePreviewSection(BuildContext context) {
+    if (AppThemeResponsiveness.isSmallPhone(context)) {
+      return Column(
+        children: [
+          _buildThemePreview(context, false, 'Light'),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          _buildThemePreview(context, true, 'Dark'),
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          Expanded(
+            child: _buildThemePreview(context, false, 'Light'),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+          Expanded(
+            child: _buildThemePreview(context, true, 'Dark'),
+          ),
+        ],
+      );
+    }
+  }
+
+  Widget _buildThemePreview(BuildContext context, bool isDark, String label) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -243,35 +380,36 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
         });
       },
       child: AnimatedContainer(
-        duration: AppTheme.buttonAnimationDuration,
-        padding: const EdgeInsets.all(12),
+        duration: AppThemeColor.buttonAnimationDuration,
+        padding: AppThemeResponsiveness.getCardPadding(context).copyWith(
+          top: AppThemeResponsiveness.getSmallSpacing(context),
+          bottom: AppThemeResponsiveness.getSmallSpacing(context),
+        ),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1A1A2E) : AppTheme.blue50,
-          borderRadius: BorderRadius.circular(10),
+          color: isDark ? const Color(0xFF1A1A2E) : AppThemeColor.blue50,
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
           border: Border.all(
-            color: isDarkMode == isDark ? AppTheme.primaryBlue : Colors.transparent,
-            width: 2,
+            color: isDarkMode == isDark ? AppThemeColor.primaryBlue : Colors.transparent,
+            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
           ),
         ),
         child: Column(
           children: [
             Container(
-              height: 30,
+              height: AppThemeResponsiveness.getQuickStatsIconSize(context),
               decoration: BoxDecoration(
                 gradient: isDark
                     ? const LinearGradient(colors: [Color(0xFF1A1A2E), Color(0xFF16213E)])
-                    : AppTheme.primaryGradient,
-                borderRadius: BorderRadius.circular(5),
+                    : AppThemeColor.primaryGradient,
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context) / 2),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
+              style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
                 fontWeight: FontWeight.bold,
-                color: isDarkMode ? AppTheme.white : AppTheme.primaryBlue,
-                fontFamily: 'Roboto',
+                color: isDarkMode ? AppThemeColor.white : AppThemeColor.primaryBlue,
               ),
             ),
           ],
@@ -280,51 +418,47 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
     );
   }
 
-  Widget _buildLanguageCard() {
+  Widget _buildLanguageCard(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeResponsiveness.getCardElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
-      color: isDarkMode ? const Color(0xFF2A2A2A) : AppTheme.white,
+      color: isDarkMode ? const Color(0xFF2A2A2A) : AppThemeColor.white,
       child: Padding(
-        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+        padding: AppThemeResponsiveness.getCardPadding(context),
         child: Column(
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsIconPadding(context)),
                   decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(10),
+                    gradient: AppThemeColor.primaryGradient,
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.language,
-                    color: AppTheme.white,
-                    size: 24,
+                    color: AppThemeColor.white,
+                    size: AppThemeResponsiveness.getQuickStatsIconSize(context),
                   ),
                 ),
-                const SizedBox(width: AppTheme.mediumSpacing),
+                SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Language',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: isDarkMode ? AppTheme.white : Colors.black87,
-                          fontFamily: 'Roboto',
+                        style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                          color: isDarkMode ? AppThemeColor.white : Colors.black87,
                         ),
                       ),
+                      SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) * 0.5),
                       Text(
                         selectedLanguage,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDarkMode ? AppTheme.white70 : Colors.grey[600],
-                          fontFamily: 'Roboto',
+                        style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+                          color: isDarkMode ? AppThemeColor.white70 : Colors.grey[600],
                         ),
                       ),
                     ],
@@ -332,19 +466,45 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
                 ),
                 Icon(
                   Icons.keyboard_arrow_down,
-                  color: isDarkMode ? AppTheme.white70 : Colors.grey[600],
+                  color: isDarkMode ? AppThemeColor.white70 : Colors.grey[600],
+                  size: AppThemeResponsiveness.getIconSize(context),
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.mediumSpacing),
-            ...languages.map((language) => _buildLanguageOption(language['name']!)),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+            _buildLanguageOptions(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildLanguageOption(String language) {
+  Widget _buildLanguageOptions(BuildContext context) {
+    if (AppThemeResponsiveness.isDesktop(context) || AppThemeResponsiveness.isTablet(context)) {
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: AppThemeResponsiveness.isDesktop(context) ? 3 : 2,
+          crossAxisSpacing: AppThemeResponsiveness.getSmallSpacing(context),
+          mainAxisSpacing: AppThemeResponsiveness.getSmallSpacing(context),
+          childAspectRatio: 3.5,
+        ),
+        itemCount: languages.length,
+        itemBuilder: (context, index) {
+          return _buildLanguageOption(context, languages[index]['name']!);
+        },
+      );
+    } else {
+      return Column(
+        children: languages
+            .map((language) => _buildLanguageOption(context, language['name']!))
+            .toList(),
+      );
+    }
+  }
+
+  Widget _buildLanguageOption(BuildContext context, String language) {
     bool isSelected = selectedLanguage == language;
     return GestureDetector(
       onTap: () {
@@ -353,38 +513,45 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
         });
       },
       child: AnimatedContainer(
-        duration: AppTheme.buttonAnimationDuration,
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.all(12),
+        duration: AppThemeColor.buttonAnimationDuration,
+        margin: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.isMobile(context)
+              ? AppThemeResponsiveness.getSmallSpacing(context) * 0.4
+              : 0,
+        ),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsPadding(context) * 0.8),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDarkMode ? AppTheme.primaryBlue.withOpacity(0.3) : AppTheme.blue50)
+              ? (isDarkMode ? AppThemeColor.primaryBlue.withOpacity(0.3) : AppThemeColor.blue50)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
           border: Border.all(
-            color: isSelected ? AppTheme.primaryBlue : Colors.transparent,
+            color: isSelected ? AppThemeColor.primaryBlue : Colors.transparent,
             width: 1,
           ),
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              language,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected
-                    ? AppTheme.primaryBlue
-                    : (isDarkMode ? AppTheme.white : Colors.black87),
-                fontFamily: 'Roboto',
+            Expanded(
+              child: Text(
+                language,
+                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isSelected
+                      ? AppThemeColor.primaryBlue
+                      : (isDarkMode ? AppThemeColor.white : Colors.black87),
+                ),
+                textAlign: AppThemeResponsiveness.isDesktop(context) || AppThemeResponsiveness.isTablet(context)
+                    ? TextAlign.center
+                    : TextAlign.start,
               ),
             ),
-            const Spacer(),
-            if (isSelected)
-              const Icon(
+            if (isSelected && AppThemeResponsiveness.isMobile(context))
+              Icon(
                 Icons.check_circle,
-                color: AppTheme.primaryBlue,
-                size: 20,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.8,
               ),
           ],
         ),
@@ -392,64 +559,104 @@ class _AppSettingsPageState extends State<AppSettingsPage> with TickerProviderSt
     );
   }
 
-  Widget _buildAboutCard() {
+  Widget _buildAboutCard(BuildContext context) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeResponsiveness.getCardElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
-      color: isDarkMode ? const Color(0xFF2A2A2A) : AppTheme.white,
+      color: isDarkMode ? const Color(0xFF2A2A2A) : AppThemeColor.white,
       child: Column(
         children: [
-          _buildAboutItem(Icons.info_outline, 'App Version', '1.0.0'),
-          _buildAboutItem(Icons.privacy_tip_outlined, 'Privacy Policy', ''),
-          _buildAboutItem(Icons.description_outlined, 'Terms of Service', ''),
-          _buildAboutItem(Icons.help_outline, 'Help & Support', ''),
+          _buildAboutItem(context, Icons.info_outline, 'App Version', '1.0.0'),
+          _buildAboutItem(context, Icons.privacy_tip_outlined, 'Privacy Policy', ''),
+          _buildAboutItem(context, Icons.description_outlined, 'Terms of Service', ''),
+          _buildAboutItem(context, Icons.help_outline, 'Help & Support', ''),
         ],
       ),
     );
   }
 
-  Widget _buildAboutItem(IconData icon, String title, String subtitle) {
+  Widget _buildAboutItem(BuildContext context, IconData icon, String title, String subtitle) {
     return ListTile(
+      contentPadding: AppThemeResponsiveness.getCardPadding(context).copyWith(
+        top: AppThemeResponsiveness.getSmallSpacing(context),
+        bottom: AppThemeResponsiveness.getSmallSpacing(context),
+      ),
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsIconPadding(context)),
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-          borderRadius: BorderRadius.circular(8),
+          gradient: AppThemeColor.primaryGradient,
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
         child: Icon(
           icon,
-          color: AppTheme.white,
-          size: 20,
+          color: AppThemeColor.white,
+          size: AppThemeResponsiveness.getQuickStatsIconSize(context),
         ),
       ),
       title: Text(
         title,
-        style: TextStyle(
-          fontSize: 16,
+        style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
           fontWeight: FontWeight.w500,
-          color: isDarkMode ? AppTheme.white : Colors.black87,
-          fontFamily: 'Roboto',
+          color: isDarkMode ? AppThemeColor.white : Colors.black87,
         ),
       ),
       subtitle: subtitle.isNotEmpty
-          ? Text(
-        subtitle,
-        style: TextStyle(
-          fontSize: 14,
-          color: isDarkMode ? AppTheme.white70 : Colors.grey[600],
-          fontFamily: 'Roboto',
+          ? Padding(
+        padding: EdgeInsets.only(top: AppThemeResponsiveness.getSmallSpacing(context) * 0.5),
+        child: Text(
+          subtitle,
+          style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
+            color: isDarkMode ? AppThemeColor.white70 : Colors.grey[600],
+          ),
         ),
       )
           : null,
       trailing: subtitle.isEmpty
           ? Icon(
         Icons.keyboard_arrow_right,
-        color: isDarkMode ? AppTheme.white70 : Colors.grey[600],
+        color: isDarkMode ? AppThemeColor.white70 : Colors.grey[600],
+        size: AppThemeResponsiveness.getIconSize(context) * 0.8,
       )
           : null,
       onTap: subtitle.isEmpty ? () {} : null,
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: AppThemeResponsiveness.getMediumSpacing(context),
+        horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            Icons.school_rounded,
+            color: Colors.white.withOpacity(0.6),
+            size: AppThemeResponsiveness.getIconSize(context) * 1.2,
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          Text(
+            '© 2024 School Management System',
+            style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
+              color: Colors.white.withOpacity(0.7),
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) * 0.5),
+          Text(
+            'Empowering Education Through Technology',
+            style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
+              color: Colors.white.withOpacity(0.5),
+              fontSize: AppThemeResponsiveness.getCaptionTextStyle(context).fontSize! * 0.9,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

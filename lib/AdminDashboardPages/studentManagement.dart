@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/AdminStudentManagement/studentListTile.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/model/classInfo.dart';
 
 class ClassManagementPage extends StatefulWidget {
@@ -139,29 +138,55 @@ class _ClassManagementPageState extends State<ClassManagementPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Delete'),
-          content: Text('Are you sure you want to remove this class? This will also remove all students in this class.'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+          ),
+          title: Text(
+            'Confirm Delete',
+            style: AppThemeResponsiveness.getHeadingStyle(context),
+          ),
+          content: Text(
+            'Are you sure you want to remove this class? This will also remove all students in this class.',
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: AppThemeColor.primaryBlue,
+                  fontSize: AppThemeResponsiveness.getButtonTextStyle(context).fontSize,
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  classes.removeWhere((c) => c.id == classId);
-                  _filterClasses();
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Class removed successfully!'),
-                    backgroundColor: Colors.green,
+            SizedBox(
+              height: AppThemeResponsiveness.getButtonHeight(context) * 0.8,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    classes.removeWhere((c) => c.id == classId);
+                    _filterClasses();
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Class removed successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: Text('Delete', style: TextStyle(color: Colors.white)),
+                ),
+                child: Text(
+                  'Delete',
+                  style: AppThemeResponsiveness.getButtonTextStyle(context),
+                ),
+              ),
             ),
           ],
         );
@@ -179,41 +204,86 @@ class _ClassManagementPageState extends State<ClassManagementPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(isEditing ? 'Edit Class' : 'Add New Class'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+          ),
+          title: Text(
+            isEditing ? 'Edit Class' : 'Add New Class',
+            style: AppThemeResponsiveness.getHeadingStyle(context),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   controller: nameController,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context),
                   decoration: InputDecoration(
                     labelText: 'Class Name',
-                    prefixIcon: Icon(Icons.class_),
+                    labelStyle: AppThemeResponsiveness.getInputLabelStyle(context),
+                    prefixIcon: Icon(
+                      Icons.class_,
+                      size: AppThemeResponsiveness.getIconSize(context),
+                      color: AppThemeColor.primaryBlue,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                      borderSide: BorderSide(
+                        color: AppThemeColor.primaryBlue,
+                        width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: AppTheme.smallSpacing),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                 TextField(
                   controller: teacherController,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context),
                   decoration: InputDecoration(
                     labelText: 'Class Teacher',
-                    prefixIcon: Icon(Icons.person),
+                    labelStyle: AppThemeResponsiveness.getInputLabelStyle(context),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      size: AppThemeResponsiveness.getIconSize(context),
+                      color: AppThemeColor.primaryBlue,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                      borderSide: BorderSide(
+                        color: AppThemeColor.primaryBlue,
+                        width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+                      ),
                     ),
                   ),
                 ),
-                SizedBox(height: AppTheme.smallSpacing),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                 TextField(
                   controller: descriptionController,
                   maxLines: 3,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context),
                   decoration: InputDecoration(
                     labelText: 'Description',
-                    prefixIcon: Icon(Icons.description),
+                    labelStyle: AppThemeResponsiveness.getInputLabelStyle(context),
+                    prefixIcon: Icon(
+                      Icons.description,
+                      size: AppThemeResponsiveness.getIconSize(context),
+                      color: AppThemeColor.primaryBlue,
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                      borderSide: BorderSide(
+                        color: AppThemeColor.primaryBlue,
+                        width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+                      ),
                     ),
                   ),
                 ),
@@ -223,49 +293,63 @@ class _ClassManagementPageState extends State<ClassManagementPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.isNotEmpty && teacherController.text.isNotEmpty) {
-                  final newClass = ClassInfo(
-                    id: isEditing ? classInfo!.id : 'CLS${(classes.length + 1).toString().padLeft(3, '0')}',
-                    name: nameController.text,
-                    teacher: teacherController.text,
-                    totalStudents: isEditing ? classInfo!.totalStudents : 0,
-                    description: descriptionController.text,
-                  );
-
-                  setState(() {
-                    if (isEditing) {
-                      int index = classes.indexWhere((c) => c.id == classInfo!.id);
-                      classes[index] = newClass;
-                    } else {
-                      classes.add(newClass);
-                    }
-                    _filterClasses();
-                  });
-                  Navigator.pop(context);
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(isEditing ? 'Class updated successfully!' : 'Class added successfully!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Please fill all required fields'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
               child: Text(
-                isEditing ? 'Update' : 'Add',
-                style: AppTheme.buttonTextStyle.copyWith(fontSize: 16),
+                'Cancel',
+                style: TextStyle(
+                  color: AppThemeColor.primaryBlue,
+                  fontSize: AppThemeResponsiveness.getButtonTextStyle(context).fontSize,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: AppThemeResponsiveness.getButtonHeight(context) * 0.8,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (nameController.text.isNotEmpty && teacherController.text.isNotEmpty) {
+                    final newClass = ClassInfo(
+                      id: isEditing ? classInfo!.id : 'CLS${(classes.length + 1).toString().padLeft(3, '0')}',
+                      name: nameController.text,
+                      teacher: teacherController.text,
+                      totalStudents: isEditing ? classInfo!.totalStudents : 0,
+                      description: descriptionController.text,
+                    );
+
+                    setState(() {
+                      if (isEditing) {
+                        int index = classes.indexWhere((c) => c.id == classInfo!.id);
+                        classes[index] = newClass;
+                      } else {
+                        classes.add(newClass);
+                      }
+                      _filterClasses();
+                    });
+                    Navigator.pop(context);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(isEditing ? 'Class updated successfully!' : 'Class added successfully!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Please fill all required fields'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppThemeColor.primaryBlue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                  ),
+                ),
+                child: Text(
+                  isEditing ? 'Update' : 'Add',
+                  style: AppThemeResponsiveness.getButtonTextStyle(context),
+                ),
               ),
             ),
           ],
@@ -278,258 +362,496 @@ class _ClassManagementPageState extends State<ClassManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppThemeColor.primaryGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              bottom: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              left: AppThemeResponsiveness.getSmallSpacing(context),
+              right: AppThemeResponsiveness.getSmallSpacing(context),
             ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  SizedBox(height: AppTheme.defaultSpacing,),
-                  // Search Section
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
+            child: Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+                    ),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+                    ),
                     decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+                      color: AppThemeColor.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
                           blurRadius: 10,
-                          offset: Offset(0, 5),
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    child: TextField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search classes by class no., student, or ID',
-                        hintStyle: TextStyle(
-                          fontSize: 13,
+                    child: Column(
+                      children: [
+                        // Search Section
+                        _buildSearchSection(context),
+
+                        // Classes Header
+                        _buildClassesHeader(context),
+
+                        // Classes List/Grid
+                        Expanded(
+                          child: _buildClassesList(context),
                         ),
-                        prefixIcon: Icon(Icons.search, color: AppTheme.primaryBlue),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: AppTheme.blue50,
-                      ),
+                      ],
                     ),
                   ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: _buildFloatingActionButton(context),
+    );
+  }
 
-                  SizedBox(height: AppTheme.defaultSpacing),
-
-                  // Classes List
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-                      decoration: BoxDecoration(
-                        color: AppTheme.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                          topRight: Radius.circular(AppTheme.cardBorderRadius),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Classes (${filteredClasses.length})',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.primaryBlue,
-                                  ),
-                                ),
-                                Icon(Icons.school, color: AppTheme.primaryBlue),
-                              ],
-                            ),
-                          ),
-
-                          Expanded(
-                            child: filteredClasses.isEmpty
-                                ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.search_off,
-                                    size: 64,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                  SizedBox(height: AppTheme.smallSpacing),
-                                  Text(
-                                    'No classes found',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                                : GridView.builder(
-                              padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: AppTheme.smallSpacing,
-                                mainAxisSpacing: AppTheme.smallSpacing,
-                                childAspectRatio: 0.85,
-                              ),
-                              itemCount: filteredClasses.length,
-                              itemBuilder: (context, index) {
-                                final classInfo = filteredClasses[index];
-                                return GestureDetector(
-                                  onTap: () => _navigateToStudentList(classInfo),
-                                  child: Card(
-                                    elevation: 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            AppTheme.primaryBlue.withOpacity(0.8),
-                                            AppTheme.primaryBlue.withOpacity(0.6),
-                                          ],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  classInfo.name,
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                              PopupMenuButton<String>(
-                                                icon: Icon(Icons.more_vert, color: Colors.white),
-                                                onSelected: (value) {
-                                                  if (value == 'edit') {
-                                                    _editClass(classInfo);
-                                                  } else if (value == 'delete') {
-                                                    _removeClass(classInfo.id);
-                                                  }
-                                                },
-                                                itemBuilder: (BuildContext context) => [
-                                                  PopupMenuItem(
-                                                    value: 'edit',
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons.edit, color: AppTheme.primaryBlue),
-                                                        SizedBox(width: 8),
-                                                        Text('Edit'),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  PopupMenuItem(
-                                                    value: 'delete',
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(Icons.delete, color: Colors.red),
-                                                        SizedBox(width: 8),
-                                                        Text('Delete'),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(
-                                            'Teacher: ${classInfo.teacher}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.white.withOpacity(0.9),
-                                            ),
-                                          ),
-                                          SizedBox(height: 4),
-                                          Text(
-                                            'Students: ${classInfo.totalStudents}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.white.withOpacity(0.9),
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Expanded(
-                                            child: Text(
-                                              classInfo.description,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.white.withOpacity(0.8),
-                                              ),
-                                              maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Center(
-                                            child: Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: Colors.white,
-                                              size: 16,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+  Widget _buildHeader(BuildContext context) {
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+        ),
+        margin: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.school,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Flexible(
+              child: Text(
+                'Class Management',
+                style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                    context,
+                    AppThemeResponsiveness.getSectionTitleStyle(context).fontSize! + 4,
                   ),
-                ],
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchSection(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+      decoration: BoxDecoration(
+        color: AppThemeColor.blue50,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: searchController,
+        style: AppThemeResponsiveness.getBodyTextStyle(context),
+        decoration: InputDecoration(
+          hintText: 'Search by class no, teacher, or ID',
+          hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+          prefixIcon: Icon(
+            Icons.search,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: AppThemeColor.white,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+            vertical: AppThemeResponsiveness.getMediumSpacing(context),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClassesHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+        vertical: AppThemeResponsiveness.getMediumSpacing(context),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Classes (${filteredClasses.length})',
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: AppThemeColor.primaryBlue,
+              fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                context,
+                AppThemeResponsiveness.getHeadingStyle(context).fontSize! + 4,
               ),
             ),
           ),
+          Icon(
+            Icons.class_,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
+        ],
+      ),
+    );
+  }
 
-          // Floating Action Button
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton.extended(
-              onPressed: _addNewClass,
-              backgroundColor: AppTheme.primaryBlue,
-              foregroundColor: Colors.white,
-              elevation: 8,
-              icon: Icon(Icons.add),
-              label: Text(
-                'Add Class',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
+  Widget _buildClassesList(BuildContext context) {
+    if (filteredClasses.isEmpty) {
+      return _buildEmptyState(context);
+    }
+
+    return AppThemeResponsiveness.isDesktop(context) || AppThemeResponsiveness.isTablet(context)
+        ? _buildClassesGrid(context)
+        : _buildClassesListView(context);
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: AppThemeResponsiveness.getEmptyStateIconSize(context),
+            color: Colors.grey.shade400,
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          Text(
+            'No classes found',
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: Colors.grey.shade600,
+            ),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          Text(
+            'Try adjusting your search terms',
+            style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+              color: Colors.grey.shade500,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildClassesGrid(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: AppThemeResponsiveness.getGridCrossAxisCount(context),
+        crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+        mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+        childAspectRatio: AppThemeResponsiveness.getGridChildAspectRatio(context) * 0.85,
+      ),
+      itemCount: filteredClasses.length,
+      itemBuilder: (context, index) {
+        return _buildClassGridCard(context, filteredClasses[index]);
+      },
+    );
+  }
+
+  Widget _buildClassesListView(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      itemCount: filteredClasses.length,
+      itemBuilder: (context, index) {
+        return _buildClassCard(context, filteredClasses[index]);
+      },
+    );
+  }
+
+  Widget _buildClassGridCard(BuildContext context, ClassInfo classInfo) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        gradient: LinearGradient(
+          colors: [
+            AppThemeColor.primaryBlue.withOpacity(0.8),
+            AppThemeColor.primaryBlue.withOpacity(0.6),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () => _navigateToStudentList(classInfo),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        child: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getGridItemPadding(context)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      classInfo.name,
+                      style: AppThemeResponsiveness.getGridItemTitleStyle(context).copyWith(
+                        color: AppThemeColor.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  _buildClassPopupMenu(context, classInfo),
+                ],
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Teacher: ${classInfo.teacher}',
+                style: AppThemeResponsiveness.getGridItemSubtitleStyle(context).copyWith(
+                  color: AppThemeColor.white.withOpacity(0.9),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                'Students: ${classInfo.totalStudents}',
+                style: AppThemeResponsiveness.getGridItemSubtitleStyle(context).copyWith(
+                  color: AppThemeColor.white.withOpacity(0.9),
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Expanded(
+                child: Text(
+                  classInfo.description,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                    color: AppThemeColor.white.withOpacity(0.8),
+                    fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Center(
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppThemeColor.white,
+                  size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClassCard(BuildContext context, ClassInfo classInfo) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        gradient: LinearGradient(
+          colors: [
+            AppThemeColor.primaryBlue.withOpacity(0.8),
+            AppThemeColor.primaryBlue.withOpacity(0.6),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+        leading: Container(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
+          decoration: BoxDecoration(
+            color: AppThemeColor.white.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          ),
+          child: Icon(
+            Icons.class_,
+            color: AppThemeColor.white,
+            size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+          ),
+        ),
+        title: Text(
+          classInfo.name,
+          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+            color: AppThemeColor.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+            Text(
+              'Teacher: ${classInfo.teacher}',
+              style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(
+                color: AppThemeColor.white.withOpacity(0.9),
+              ),
+            ),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+            Text(
+              'Students: ${classInfo.totalStudents}',
+              style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(
+                color: AppThemeColor.white.withOpacity(0.9),
+              ),
+            ),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+            Text(
+              classInfo.description,
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: AppThemeColor.white.withOpacity(0.8),
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildClassPopupMenu(context, classInfo),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+            ),
+          ],
+        ),
+        onTap: () => _navigateToStudentList(classInfo),
+      ),
+    );
+  }
+
+  Widget _buildClassPopupMenu(BuildContext context, ClassInfo classInfo) {
+    return PopupMenuButton<String>(
+      icon: Icon(
+        Icons.more_vert,
+        color: AppThemeColor.white,
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+      ),
+      onSelected: (value) {
+        if (value == 'edit') {
+          _editClass(classInfo);
+        } else if (value == 'delete') {
+          _removeClass(classInfo.id);
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Edit',
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(
+                Icons.delete,
+                color: Colors.red,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Delete',
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: _addNewClass,
+      backgroundColor: AppThemeColor.primaryBlue,
+      foregroundColor: AppThemeColor.white,
+      elevation: AppThemeResponsiveness.getButtonElevation(context),
+      icon: Icon(
+        Icons.add,
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
+      label: Text(
+        'Add Class',
+        style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
       ),
     );
   }

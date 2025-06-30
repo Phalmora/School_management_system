@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/theme.dart';
-import 'package:school/customWidgets/appBar.dart';
-
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class TeacherTimetablePage extends StatefulWidget {
   const TeacherTimetablePage({Key? key}) : super(key: key);
@@ -68,7 +66,7 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
       appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -78,15 +76,15 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.only(
-                    top: AppTheme.defaultSpacing,
-                    left: AppTheme.mediumSpacing,
-                    right: AppTheme.mediumSpacing,
+                    top: AppThemeColor.defaultSpacing,
+                    left: AppThemeColor.mediumSpacing,
+                    right: AppThemeColor.mediumSpacing,
                   ),
                   decoration: const BoxDecoration(
-                    color: AppTheme.white,
+                    color: AppThemeColor.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                      topRight: Radius.circular(AppTheme.cardBorderRadius),
+                      topLeft: Radius.circular(AppThemeColor.cardBorderRadius),
+                      topRight: Radius.circular(AppThemeColor.cardBorderRadius),
                     ),
                   ),
                   child: _buildTimetableContent(),
@@ -101,34 +99,34 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
 
   Widget _buildHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: const EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: Row(
         children: [
-          const SizedBox(width: AppTheme.mediumSpacing),
+          const SizedBox(width: AppThemeColor.mediumSpacing),
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'My Timetable',
-                  style: AppTheme.FontStyle,
+                  style: AppThemeResponsiveness.FontStyle,
                 ),
                 Text(
                   'View your weekly teaching schedule',
-                  style: AppTheme.splashSubtitleStyle,
+                  style: AppThemeResponsiveness.splashSubtitleStyle,
                 ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(AppTheme.smallSpacing),
+            padding: const EdgeInsets.all(AppThemeColor.smallSpacing),
             decoration: BoxDecoration(
-              color: AppTheme.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+              color: AppThemeColor.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
             ),
             child: const Icon(
               Icons.calendar_today,
-              color: AppTheme.white,
+              color: AppThemeColor.white,
               size: 24,
             ),
           ),
@@ -139,20 +137,20 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
 
   Widget _buildTabBar() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
+      margin: const EdgeInsets.symmetric(horizontal: AppThemeColor.mediumSpacing),
       decoration: BoxDecoration(
-        color: AppTheme.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+        color: AppThemeColor.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(AppThemeColor.buttonBorderRadius),
       ),
       child: TabBar(
         controller: _tabController,
         isScrollable: true,
         indicator: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+          color: AppThemeColor.white,
+          borderRadius: BorderRadius.circular(AppThemeColor.buttonBorderRadius),
         ),
-        labelColor: AppTheme.primaryBlue,
-        unselectedLabelColor: AppTheme.white,
+        labelColor: AppThemeColor.primaryBlue,
+        unselectedLabelColor: AppThemeColor.white,
         labelStyle: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 14,
@@ -191,7 +189,7 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
               size: 64,
               color: Colors.grey,
             ),
-            SizedBox(height: AppTheme.mediumSpacing),
+            SizedBox(height: AppThemeColor.mediumSpacing),
             Text(
               'No classes scheduled',
               style: TextStyle(
@@ -206,7 +204,7 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: const EdgeInsets.all(AppThemeColor.defaultSpacing),
       itemCount: daySchedule.length,
       itemBuilder: (context, index) {
         return _buildTimeSlotCard(daySchedule[index], index);
@@ -216,38 +214,38 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
 
   Widget _buildTimeSlotCard(TimeSlot timeSlot, int index) {
     return AnimatedContainer(
-      duration: AppTheme.buttonAnimationDuration,
-      margin: const EdgeInsets.only(bottom: AppTheme.mediumSpacing),
+      duration: AppThemeColor.buttonAnimationDuration,
+      margin: const EdgeInsets.only(bottom: AppThemeColor.mediumSpacing),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+            borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppTheme.blue50,
-                AppTheme.blue100,
+                AppThemeColor.blue50,
+                AppThemeColor.blue100,
               ],
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(AppTheme.mediumSpacing),
+            padding: const EdgeInsets.all(AppThemeColor.mediumSpacing),
             child: Row(
               children: [
                 Container(
                   width: 4,
                   height: 60,
                   decoration: BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
+                    gradient: AppThemeColor.primaryGradient,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(width: AppTheme.mediumSpacing),
+                const SizedBox(width: AppThemeColor.mediumSpacing),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,7 +258,7 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.blue800,
+                              color: AppThemeColor.blue800,
                             ),
                           ),
                           Container(
@@ -269,13 +267,13 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              gradient: AppTheme.primaryGradient,
+                              gradient: AppThemeColor.primaryGradient,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               '${timeSlot.startTime} - ${timeSlot.endTime}',
                               style: const TextStyle(
-                                color: AppTheme.white,
+                                color: AppThemeColor.white,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -289,29 +287,29 @@ class _TeacherTimetablePageState extends State<TeacherTimetablePage>
                           Icon(
                             Icons.group,
                             size: 16,
-                            color: AppTheme.blue600,
+                            color: AppThemeColor.blue600,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             timeSlot.className,
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppTheme.blue600,
+                              color: AppThemeColor.blue600,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(width: AppTheme.mediumSpacing),
+                          const SizedBox(width: AppThemeColor.mediumSpacing),
                           Icon(
                             Icons.location_on,
                             size: 16,
-                            color: AppTheme.blue600,
+                            color: AppThemeColor.blue600,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             timeSlot.room,
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppTheme.blue600,
+                              color: AppThemeColor.blue600,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

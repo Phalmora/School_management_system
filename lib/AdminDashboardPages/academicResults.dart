@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class AcademicResultsScreen extends StatelessWidget {
   @override
@@ -9,184 +8,204 @@ class AcademicResultsScreen extends StatelessWidget {
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.all(AppTheme.defaultSpacing),
+              padding: AppThemeResponsiveness.getScreenPadding(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header Section
-                  Container(
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                    margin: EdgeInsets.only(bottom: AppTheme.defaultSpacing),
-                    decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 15,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppTheme.primaryBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            Icons.school,
-                            color: AppTheme.primaryBlue,
-                            size: 32,
-                          ),
-                        ),
-                        SizedBox(width: AppTheme.mediumSpacing),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Academic Results',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.primaryBlue,
-                                ),
-                              ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Manage student academic performance and results',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Header Section - Responsive
+                  _buildHeaderSection(context),
 
-                  // Features Grid
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: AppTheme.mediumSpacing,
-                    mainAxisSpacing: AppTheme.mediumSpacing,
-                    childAspectRatio: 0.85,
-                    children: [
-                      _buildFeatureCard(
-                        context,
-                        icon: Icons.upload_file,
-                        label: 'Upload Marks',
-                        subtitle: 'Add & manage student marks',
-                        color: Colors.blue,
-                        onTap: () {
-                          _showUploadMarksDialog(context);
-                        },
-                      ),
-                      _buildFeatureCard(
-                        context,
-                        icon: Icons.visibility,
-                        label: 'View Marks',
-                        subtitle: 'Check existing marks',
-                        color: Colors.green,
-                        onTap: () {
-                          _showViewMarksDialog(context);
-                        },
-                      ),
-                      _buildFeatureCard(
-                        context,
-                        icon: Icons.bar_chart,
-                        label: 'Performance',
-                        subtitle: 'Student performance analytics',
-                        color: Colors.orange,
-                        onTap: () {
-                          _showPerformanceDialog(context);
-                        },
-                      ),
-                      _buildFeatureCard(
-                        context,
-                        icon: Icons.assessment,
-                        label: 'Reports',
-                        subtitle: 'Generate detailed reports',
-                        color: Colors.purple,
-                        onTap: () {
-                          _showReportsDialog(context);
-                        },
-                      ),
-                    ],
-                  ),
+                  SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                  SizedBox(height: AppTheme.defaultSpacing),
+                  // Features Grid - Responsive
+                  _buildFeaturesGrid(context),
 
-                  // Recent Activity Section
-                  Container(
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                    decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 15,
-                          offset: Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.history, color: AppTheme.primaryBlue),
-                            SizedBox(width: 8),
-                            Text(
-                              'Recent Activity',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.primaryBlue,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: AppTheme.smallSpacing),
-                        _buildActivityItem(
-                          'Mathematics marks uploaded for Class 10-A',
-                          '2 hours ago',
-                          Icons.upload_file,
-                          Colors.blue,
-                        ),
-                        _buildActivityItem(
-                          'Science test results published',
-                          '1 day ago',
-                          Icons.published_with_changes,
-                          Colors.green,
-                        ),
-                        _buildActivityItem(
-                          'Monthly performance report generated',
-                          '3 days ago',
-                          Icons.assessment,
-                          Colors.orange,
-                        ),
-                      ],
-                    ),
-                  ),
+                  SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+
+                  // Recent Activity Section - Responsive
+                  _buildRecentActivitySection(context),
                 ],
               ),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderSection(BuildContext context) {
+    return Container(
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getDefaultSpacing(context)),
+      decoration: BoxDecoration(
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getCardBorderRadius(context),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: AppThemeResponsiveness.getCardElevation(context),
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(
+              AppThemeResponsiveness.getResponsiveSize(context, 12.0, 14.0, 16.0),
+            ),
+            decoration: BoxDecoration(
+              color: AppThemeColor.primaryBlue.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(
+                AppThemeResponsiveness.getResponsiveRadius(context, 12.0),
+              ),
+            ),
+            child: Icon(
+              Icons.school,
+              color: AppThemeColor.primaryBlue,
+              size: AppThemeResponsiveness.getResponsiveIconSize(context, 32.0),
+            ),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Academic Results',
+                  style: AppThemeResponsiveness.getTitleTextStyle(context),
+                ),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                Text(
+                  'Manage student academic performance and results',
+                  style: AppThemeResponsiveness.getSubHeadingStyle(context),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturesGrid(BuildContext context) {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      crossAxisCount: AppThemeResponsiveness.getDashboardGridCrossAxisCount(context),
+      crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+      mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+      childAspectRatio: AppThemeResponsiveness.getDashboardGridChildAspectRatio(context),
+      children: [
+        _buildFeatureCard(
+          context,
+          icon: Icons.upload_file,
+          label: 'Upload Marks',
+          subtitle: 'Add & manage student marks',
+          color: Colors.blue,
+          onTap: () {
+            _showUploadMarksDialog(context);
+          },
+        ),
+        _buildFeatureCard(
+          context,
+          icon: Icons.visibility,
+          label: 'View Marks',
+          subtitle: 'Check existing marks',
+          color: Colors.green,
+          onTap: () {
+            _showViewMarksDialog(context);
+          },
+        ),
+        _buildFeatureCard(
+          context,
+          icon: Icons.bar_chart,
+          label: 'Performance',
+          subtitle: 'Student performance analytics',
+          color: Colors.orange,
+          onTap: () {
+            _showPerformanceDialog(context);
+          },
+        ),
+        _buildFeatureCard(
+          context,
+          icon: Icons.assessment,
+          label: 'Reports',
+          subtitle: 'Generate detailed reports',
+          color: Colors.purple,
+          onTap: () {
+            _showReportsDialog(context);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentActivitySection(BuildContext context) {
+    return Container(
+      padding: AppThemeResponsiveness.getCardPadding(context),
+      decoration: BoxDecoration(
+        color: AppThemeColor.white,
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getCardBorderRadius(context),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: AppThemeResponsiveness.getCardElevation(context),
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.history,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Recent Activity',
+                style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                  color: AppThemeColor.primaryBlue,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          _buildActivityItem(
+            context,
+            'Mathematics marks uploaded for Class 10-A',
+            '2 hours ago',
+            Icons.upload_file,
+            Colors.blue,
+          ),
+          _buildActivityItem(
+            context,
+            'Science test results published',
+            '1 day ago',
+            Icons.published_with_changes,
+            Colors.green,
+          ),
+          _buildActivityItem(
+            context,
+            'Monthly performance report generated',
+            '3 days ago',
+            Icons.assessment,
+            Colors.orange,
+          ),
+        ],
       ),
     );
   }
@@ -201,102 +220,108 @@ class AcademicResultsScreen extends StatelessWidget {
       }) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+      child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getCardBorderRadius(context),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
+              blurRadius: AppThemeResponsiveness.getCardElevation(context),
               offset: Offset(0, 6),
             ),
           ],
         ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-            onTap: onTap,
-            child: Padding(
-              padding: EdgeInsets.all(AppTheme.mediumSpacing),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Icon(
-                      icon,
-                      size: 36,
-                      color: color,
-                    ),
+        child: Padding(
+          padding: AppThemeResponsiveness.getDashboardCardPadding(context) > 20
+              ? EdgeInsets.all(AppThemeResponsiveness.getDashboardCardPadding(context))
+              : AppThemeResponsiveness.getCardPadding(context),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(
+                  AppThemeResponsiveness.getDashboardCardIconPadding(context),
+                ),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(
+                    AppThemeResponsiveness.getResponsiveRadius(context, 16.0),
                   ),
-                  SizedBox(height: AppTheme.smallSpacing),
-                  Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                ),
+                child: Icon(
+                  icon,
+                  size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+                  color: color,
+                ),
               ),
-            ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: AppThemeResponsiveness.getDashboardCardTitleStyle(context),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
+                maxLines: AppThemeResponsiveness.isSmallPhone(context) ? 1 : 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildActivityItem(String title, String time, IconData icon, Color color) {
+  Widget _buildActivityItem(
+      BuildContext context,
+      String title,
+      String time,
+      IconData icon,
+      Color color,
+      ) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(
+        vertical: AppThemeResponsiveness.getSmallSpacing(context),
+      ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8),
+            padding: EdgeInsets.all(
+              AppThemeResponsiveness.getActivityIconPadding(context),
+            ),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(
+                AppThemeResponsiveness.getResponsiveRadius(context, 8.0),
+              ),
             ),
-            child: Icon(icon, size: 16, color: color),
+            child: Icon(
+              icon,
+              size: AppThemeResponsiveness.getActivityIconSize(context),
+              color: color,
+            ),
           ),
-          SizedBox(width: 12),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+                  style: AppThemeResponsiveness.getRecentTitleStyle(context),
+                  maxLines: AppThemeResponsiveness.isSmallPhone(context) ? 1 : 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
+                SizedBox(height: 2),
                 Text(
                   time,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: AppThemeResponsiveness.getRecentSubtitleStyle(context),
                 ),
               ],
             ),
@@ -310,18 +335,43 @@ class AcademicResultsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getDialogBorderRadius(context),
+          ),
+        ),
         title: Row(
           children: [
-            Icon(Icons.upload_file, color: Colors.blue),
-            SizedBox(width: 8),
-            Text('Upload Marks'),
+            Icon(
+              Icons.upload_file,
+              color: Colors.blue,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Upload Marks',
+                style: AppThemeResponsiveness.getDialogTitleStyle(context),
+              ),
+            ),
           ],
         ),
-        content: Text('Upload marks functionality would be implemented here.'),
+        content: Container(
+          width: AppThemeResponsiveness.getDialogWidth(context),
+          child: Text(
+            'Upload marks functionality would be implemented here.',
+            style: AppThemeResponsiveness.getDialogContentStyle(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+              ),
+            ),
           ),
         ],
       ),
@@ -332,18 +382,43 @@ class AcademicResultsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getDialogBorderRadius(context),
+          ),
+        ),
         title: Row(
           children: [
-            Icon(Icons.visibility, color: Colors.green),
-            SizedBox(width: 8),
-            Text('View Marks'),
+            Icon(
+              Icons.visibility,
+              color: Colors.green,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'View Marks',
+                style: AppThemeResponsiveness.getDialogTitleStyle(context),
+              ),
+            ),
           ],
         ),
-        content: Text('View marks functionality would be implemented here.'),
+        content: Container(
+          width: AppThemeResponsiveness.getDialogWidth(context),
+          child: Text(
+            'View marks functionality would be implemented here.',
+            style: AppThemeResponsiveness.getDialogContentStyle(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+              ),
+            ),
           ),
         ],
       ),
@@ -354,18 +429,43 @@ class AcademicResultsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getDialogBorderRadius(context),
+          ),
+        ),
         title: Row(
           children: [
-            Icon(Icons.bar_chart, color: Colors.orange),
-            SizedBox(width: 8),
-            Text('Performance Analytics'),
+            Icon(
+              Icons.bar_chart,
+              color: Colors.orange,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Performance Analytics',
+                style: AppThemeResponsiveness.getDialogTitleStyle(context),
+              ),
+            ),
           ],
         ),
-        content: Text('Performance analytics functionality would be implemented here.'),
+        content: Container(
+          width: AppThemeResponsiveness.getDialogWidth(context),
+          child: Text(
+            'Performance analytics functionality would be implemented here.',
+            style: AppThemeResponsiveness.getDialogContentStyle(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+              ),
+            ),
           ),
         ],
       ),
@@ -376,18 +476,43 @@ class AcademicResultsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getDialogBorderRadius(context),
+          ),
+        ),
         title: Row(
           children: [
-            Icon(Icons.assessment, color: Colors.purple),
-            SizedBox(width: 8),
-            Text('Reports'),
+            Icon(
+              Icons.assessment,
+              color: Colors.purple,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Reports',
+                style: AppThemeResponsiveness.getDialogTitleStyle(context),
+              ),
+            ),
           ],
         ),
-        content: Text('Reports functionality would be implemented here.'),
+        content: Container(
+          width: AppThemeResponsiveness.getDialogWidth(context),
+          child: Text(
+            'Reports functionality would be implemented here.',
+            style: AppThemeResponsiveness.getDialogContentStyle(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+              ),
+            ),
           ),
         ],
       ),
@@ -398,18 +523,43 @@ class AcademicResultsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getDialogBorderRadius(context),
+          ),
+        ),
         title: Row(
           children: [
-            Icon(Icons.trending_up, color: Colors.teal),
-            SizedBox(width: 8),
-            Text('Analytics'),
+            Icon(
+              Icons.trending_up,
+              color: Colors.teal,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Analytics',
+                style: AppThemeResponsiveness.getDialogTitleStyle(context),
+              ),
+            ),
           ],
         ),
-        content: Text('Analytics functionality would be implemented here.'),
+        content: Container(
+          width: AppThemeResponsiveness.getDialogWidth(context),
+          child: Text(
+            'Analytics functionality would be implemented here.',
+            style: AppThemeResponsiveness.getDialogContentStyle(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+              ),
+            ),
           ),
         ],
       ),
@@ -420,18 +570,43 @@ class AcademicResultsScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            AppThemeResponsiveness.getDialogBorderRadius(context),
+          ),
+        ),
         title: Row(
           children: [
-            Icon(Icons.grade, color: Colors.indigo),
-            SizedBox(width: 8),
-            Text('Grade Book'),
+            Icon(
+              Icons.grade,
+              color: Colors.indigo,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Grade Book',
+                style: AppThemeResponsiveness.getDialogTitleStyle(context),
+              ),
+            ),
           ],
         ),
-        content: Text('Grade book functionality would be implemented here.'),
+        content: Container(
+          width: AppThemeResponsiveness.getDialogWidth(context),
+          child: Text(
+            'Grade book functionality would be implemented here.',
+            style: AppThemeResponsiveness.getDialogContentStyle(context),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+              ),
+            ),
           ),
         ],
       ),

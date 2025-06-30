@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeColor.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeResponsiveness.dart';
 
 class AddSportGroupScreen extends StatefulWidget {
   @override
@@ -18,11 +20,7 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF42A5F5), Color(0xFF8E24AA)],
-          ),
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -30,13 +28,17 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
               _buildHeader('Create Sport Group'),
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+                    color: AppThemeColor.white,
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
                   ),
                   child: _buildSportGroupForm(),
                 ),
@@ -50,23 +52,29 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
 
   Widget _buildHeader(String title) {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 28),
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
+            ),
             onPressed: () => Navigator.pop(context),
           ),
-          SizedBox(width: 10),
-          Icon(Icons.sports_soccer, color: Colors.white, size: 32),
-          SizedBox(width: 15),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+          Icon(
+            Icons.sports_soccer,
+            color: AppThemeColor.white,
+            size: AppThemeResponsiveness.getHeaderIconSize(context),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
+            child: Text(
+              title,
+              style: AppThemeResponsiveness.getFontStyle(context),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -76,13 +84,13 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
 
   Widget _buildSportGroupForm() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(20),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _groupNameController,
               label: 'Group Name',
@@ -90,9 +98,9 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
               icon: Icons.group,
               validator: (value) => value!.isEmpty ? 'Please enter group name' : null,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildSportTypeDropdown(),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _coachController,
               label: 'Coach Name',
@@ -100,7 +108,7 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
               icon: Icons.person,
               validator: (value) => value!.isEmpty ? 'Please enter coach name' : null,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _maxMembersController,
               label: 'Maximum Members',
@@ -109,8 +117,9 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => value!.isEmpty ? 'Please enter max members' : null,
             ),
-            SizedBox(height: 40),
+            SizedBox(height: AppThemeResponsiveness.getLargeSpacing(context)),
             _buildSubmitButton('Create Sport Group'),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
           ],
         ),
       ),
@@ -123,32 +132,58 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
       children: [
         Text(
           'Sport Type',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getSubtitleTextStyle(context),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         DropdownButtonFormField<String>(
           value: _selectedSportType,
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.sports, color: Color(0xFF42A5F5)),
+            prefixIcon: Icon(
+              Icons.sports,
+              color: AppThemeColor.primaryBlue,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyd),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFF42A5F5), width: 2),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: AppThemeColor.primaryBlue,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyl),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: Colors.red.shade400),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: Colors.red.shade600,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: AppThemeColor.blue50,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+              vertical: AppThemeResponsiveness.getMediumSpacing(context),
+            ),
           ),
+          style: AppThemeResponsiveness.getBodyTextStyle(context),
           items: _sportTypes.map((String sport) {
             return DropdownMenuItem<String>(
               value: sport,
-              child: Text(sport),
+              child: Text(
+                sport,
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
             );
           }).toList(),
           onChanged: (String? newValue) {
@@ -174,31 +209,56 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getSubtitleTextStyle(context),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
           validator: validator,
+          maxLines: AppThemeResponsiveness.getTextFieldMaxLines(context),
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: Color(0xFF42A5F5)),
+            hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+            prefixIcon: Icon(
+              icon,
+              color: AppThemeColor.primaryBlue,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyd),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFF42A5F5), width: 2),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: AppThemeColor.primaryBlue,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyl),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: Colors.red.shade400),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: Colors.red.shade600,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: AppThemeColor.blue50,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+              vertical: AppThemeResponsiveness.getMediumSpacing(context),
+            ),
           ),
+          style: AppThemeResponsiveness.getBodyTextStyle(context),
         ),
       ],
     );
@@ -206,23 +266,21 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
 
   Widget _buildSubmitButton(String text) {
     return Container(
-      height: 50,
+      height: AppThemeResponsiveness.getButtonHeight(context),
       child: ElevatedButton(
         onPressed: () => _submitForm(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF42A5F5),
+          backgroundColor: AppThemeColor.primaryBlue,
+          foregroundColor: AppThemeColor.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
           ),
-          elevation: 5,
+          elevation: AppThemeResponsiveness.getButtonElevation(context),
+          shadowColor: AppThemeColor.primaryBlue.withOpacity(0.3),
         ),
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: AppThemeResponsiveness.getButtonTextStyle(context),
         ),
       ),
     );
@@ -230,13 +288,50 @@ class _AddSportGroupScreenState extends State<AddSportGroupScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Sport group created successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      // Here you would typically save to database
+      _showSuccessMessage();
       Navigator.pop(context);
     }
+  }
+
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Sport group created successfully!',
+                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                  color: AppThemeColor.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
+        margin: AppThemeResponsiveness.getScreenPadding(context),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _groupNameController.dispose();
+    _coachController.dispose();
+    _maxMembersController.dispose();
+    super.dispose();
   }
 }

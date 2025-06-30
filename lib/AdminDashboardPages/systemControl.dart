@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/model/systemControlModel.dart';
 
 
@@ -14,8 +13,8 @@ class _SystemControlsPageState extends State<SystemControlsPage>
   late TabController _tabController;
 
   // Sample Data
-  List<UserRole> userRoles = [
-    UserRole(
+  List<UserRole1> UserRole1s = [
+    UserRole1(
       id: 'USR001',
       name: 'Admin User',
       email: 'admin@school.com',
@@ -23,7 +22,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
       isActive: true,
       lastLogin: DateTime.now().subtract(Duration(hours: 2)),
     ),
-    UserRole(
+    UserRole1(
       id: 'USR002',
       name: 'John Teacher',
       email: 'john.teacher@school.com',
@@ -31,7 +30,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
       isActive: true,
       lastLogin: DateTime.now().subtract(Duration(days: 1)),
     ),
-    UserRole(
+    UserRole1(
       id: 'USR003',
       name: 'Jane Staff',
       email: 'jane.staff@school.com',
@@ -106,15 +105,15 @@ class _SystemControlsPageState extends State<SystemControlsPage>
   }
 
   // User Role Management Methods
-  void _addUserRole() {
-    _showUserRoleDialog();
+  void _addUserRole1() {
+    _showUserRole1Dialog();
   }
 
-  void _editUserRole(UserRole user) {
-    _showUserRoleDialog(user: user);
+  void _editUserRole1(UserRole1 user) {
+    _showUserRole1Dialog(user: user);
   }
 
-  void _deleteUserRole(String userId) {
+  void _deleteUserRole1(String userId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -129,7 +128,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
             ElevatedButton(
               onPressed: () {
                 setState(() {
-                  userRoles.removeWhere((u) => u.id == userId);
+                  UserRole1s.removeWhere((u) => u.id == userId);
                 });
                 Navigator.pop(context);
               },
@@ -142,7 +141,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
     );
   }
 
-  void _showUserRoleDialog({UserRole? user}) {
+  void _showUserRole1Dialog({UserRole1? user}) {
     final isEditing = user != null;
     final nameController = TextEditingController(text: user?.name ?? '');
     final emailController = TextEditingController(text: user?.email ?? '');
@@ -161,16 +160,16 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildTextField('Name', nameController, Icons.person),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     _buildTextField('Email', emailController, Icons.email),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     DropdownButtonFormField<String>(
                       value: selectedRole,
                       decoration: InputDecoration(
                         labelText: 'Role',
                         prefixIcon: Icon(Icons.admin_panel_settings),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                         ),
                       ),
                       items: ['Administrator', 'Teacher', 'Staff', 'Student'].map((role) {
@@ -182,7 +181,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                         });
                       },
                     ),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     SwitchListTile(
                       title: Text('Active Status'),
                       value: isActive,
@@ -203,8 +202,8 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                 ElevatedButton(
                   onPressed: () {
                     if (nameController.text.isNotEmpty && emailController.text.isNotEmpty) {
-                      final newUser = UserRole(
-                        id: isEditing ? user.id : 'USR${(userRoles.length + 1).toString().padLeft(3, '0')}',
+                      final newUser = UserRole1(
+                        id: isEditing ? user.id : 'USR${(UserRole1s.length + 1).toString().padLeft(3, '0')}',
                         name: nameController.text,
                         email: emailController.text,
                         role: selectedRole,
@@ -214,19 +213,19 @@ class _SystemControlsPageState extends State<SystemControlsPage>
 
                       setState(() {
                         if (isEditing) {
-                          int index = userRoles.indexWhere((u) => u.id == user.id);
-                          userRoles[index] = newUser;
+                          int index = UserRole1s.indexWhere((u) => u.id == user.id);
+                          UserRole1s[index] = newUser;
                         } else {
-                          userRoles.add(newUser);
+                          UserRole1s.add(newUser);
                         }
                       });
                       Navigator.pop(context);
                     }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppThemeColor.primaryBlue),
                   child: Text(
                     isEditing ? 'Update' : 'Add',
-                    style: AppTheme.buttonTextStyle.copyWith(fontSize: 16),
+                    style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(fontSize: 16),
                   ),
                 ),
               ],
@@ -293,7 +292,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildTextField('Title', titleController, Icons.title),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     TextField(
                       controller: contentController,
                       maxLines: 4,
@@ -301,25 +300,25 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                         labelText: 'Content',
                         prefixIcon: Icon(Icons.message),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                           borderSide: BorderSide(
-                            color: AppTheme.primaryBlue,
-                            width: AppTheme.focusedBorderWidth,
+                            color: AppThemeColor.primaryBlue,
+                            width: AppThemeColor.focusedBorderWidth,
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     DropdownButtonFormField<String>(
                       value: selectedPriority,
                       decoration: InputDecoration(
                         labelText: 'Priority',
                         prefixIcon: Icon(Icons.priority_high),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                         ),
                       ),
                       items: ['Low', 'Medium', 'High'].map((priority) {
@@ -331,7 +330,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                         });
                       },
                     ),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     SwitchListTile(
                       title: Text('Active Status'),
                       value: isActive,
@@ -373,10 +372,10 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                       Navigator.pop(context);
                     }
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppThemeColor.primaryBlue),
                   child: Text(
                     isEditing ? 'Update' : 'Create',
-                    style: AppTheme.buttonTextStyle.copyWith(fontSize: 16),
+                    style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(fontSize: 16),
                   ),
                 ),
               ],
@@ -408,7 +407,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                     setting.description,
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
-                  SizedBox(height: AppTheme.mediumSpacing),
+                  SizedBox(height: AppThemeColor.mediumSpacing),
                   if (setting.type == 'boolean')
                     SwitchListTile(
                       title: Text(setting.title),
@@ -426,13 +425,13 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                       decoration: InputDecoration(
                         labelText: 'Value',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                           borderSide: BorderSide(
-                            color: AppTheme.primaryBlue,
-                            width: AppTheme.focusedBorderWidth,
+                            color: AppThemeColor.primaryBlue,
+                            width: AppThemeColor.focusedBorderWidth,
                           ),
                         ),
                       ),
@@ -458,10 +457,10 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                     });
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppThemeColor.primaryBlue),
                   child: Text(
                     'Update',
-                    style: AppTheme.buttonTextStyle.copyWith(fontSize: 16),
+                    style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(fontSize: 16),
                   ),
                 ),
               ],
@@ -479,13 +478,13 @@ class _SystemControlsPageState extends State<SystemControlsPage>
         labelText: label,
         prefixIcon: Icon(icon),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           borderSide: BorderSide(
-            color: AppTheme.primaryBlue,
-            width: AppTheme.focusedBorderWidth,
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeColor.focusedBorderWidth,
           ),
         ),
       ),
@@ -493,28 +492,28 @@ class _SystemControlsPageState extends State<SystemControlsPage>
   }
 
   // Tab Views
-  Widget _buildUserRolesTab() {
+  Widget _buildUserRole1sTab() {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.all(AppTheme.defaultSpacing),
+          margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'User Roles (${userRoles.length})',
+                'User Roles (${UserRole1s.length})',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryBlue,
+                  color: AppThemeColor.primaryBlue,
                 ),
               ),
               ElevatedButton.icon(
-                onPressed: _addUserRole,
+                onPressed: _addUserRole1,
                 icon: Icon(Icons.add),
                 label: Text('Add User'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryBlue,
+                  backgroundColor: AppThemeColor.primaryBlue,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -523,20 +522,20 @@ class _SystemControlsPageState extends State<SystemControlsPage>
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-            itemCount: userRoles.length,
+            padding: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
+            itemCount: UserRole1s.length,
             itemBuilder: (context, index) {
-              final user = userRoles[index];
+              final user = UserRole1s[index];
               return Card(
-                margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+                margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(AppTheme.mediumSpacing),
+                  contentPadding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                   leading: CircleAvatar(
-                    backgroundColor: user.isActive ? AppTheme.primaryBlue : Colors.grey,
+                    backgroundColor: user.isActive ? AppThemeColor.primaryBlue : Colors.grey,
                     child: Icon(
                       Icons.person,
                       color: Colors.white,
@@ -577,9 +576,9 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                   trailing: PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'edit') {
-                        _editUserRole(user);
+                        _editUserRole1(user);
                       } else if (value == 'delete') {
-                        _deleteUserRole(user.id);
+                        _deleteUserRole1(user.id);
                       }
                     },
                     itemBuilder: (BuildContext context) => [
@@ -587,7 +586,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                         value: 'edit',
                         child: Row(
                           children: [
-                            Icon(Icons.edit, color: AppTheme.primaryBlue),
+                            Icon(Icons.edit, color: AppThemeColor.primaryBlue),
                             SizedBox(width: 8),
                             Text('Edit'),
                           ],
@@ -618,7 +617,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.all(AppTheme.defaultSpacing),
+          margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -627,7 +626,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryBlue,
+                  color: AppThemeColor.primaryBlue,
                 ),
               ),
               ElevatedButton.icon(
@@ -635,7 +634,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                 icon: Icon(Icons.add),
                 label: Text('New Post'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryBlue,
+                  backgroundColor: AppThemeColor.primaryBlue,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -644,12 +643,12 @@ class _SystemControlsPageState extends State<SystemControlsPage>
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+            padding: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
             itemCount: announcements.length,
             itemBuilder: (context, index) {
               final announcement = announcements[index];
               return Card(
-                margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+                margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -718,7 +717,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                         value: 'edit',
                         child: Row(
                           children: [
-                            Icon(Icons.edit, color: AppTheme.primaryBlue),
+                            Icon(Icons.edit, color: AppThemeColor.primaryBlue),
                             SizedBox(width: 8),
                             Text('Edit'),
                           ],
@@ -738,7 +737,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                   ),
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                      padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                       child: Text(
                         announcement.content,
                         style: TextStyle(fontSize: 14),
@@ -758,7 +757,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.all(AppTheme.defaultSpacing),
+          margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -767,29 +766,29 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryBlue,
+                  color: AppThemeColor.primaryBlue,
                 ),
               ),
-              Icon(Icons.settings, color: AppTheme.primaryBlue),
+              Icon(Icons.settings, color: AppThemeColor.primaryBlue),
             ],
           ),
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+            padding: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
             itemCount: systemSettings.length,
             itemBuilder: (context, index) {
               final setting = systemSettings[index];
               return Card(
-                margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+                margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(AppTheme.mediumSpacing),
+                  contentPadding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                   leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryBlue,
+                    backgroundColor: AppThemeColor.primaryBlue,
                     child: Icon(
                       setting.type == 'boolean'
                           ? Icons.toggle_on
@@ -815,7 +814,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                   ),
                   trailing: IconButton(
                     onPressed: () => _editSystemSetting(setting),
-                    icon: Icon(Icons.edit, color: AppTheme.primaryBlue),
+                    icon: Icon(Icons.edit, color: AppThemeColor.primaryBlue),
                   ),
                 ),
               );
@@ -832,18 +831,18 @@ class _SystemControlsPageState extends State<SystemControlsPage>
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
             children: [
               // Header
               Container(
-                margin: EdgeInsets.all(AppTheme.defaultSpacing),
-                padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
+                padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                 decoration: BoxDecoration(
-                  color: AppTheme.white,
-                  borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+                  color: AppThemeColor.white,
+                  borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -854,14 +853,14 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.admin_panel_settings, size: 32, color: AppTheme.primaryBlue),
-                    SizedBox(width: AppTheme.smallSpacing),
+                    Icon(Icons.admin_panel_settings, size: 32, color: AppThemeColor.primaryBlue),
+                    SizedBox(width: AppThemeColor.smallSpacing),
                     Text(
                       'System Controls',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryBlue,
+                        color: AppThemeColor.primaryBlue,
                       ),
                     ),
                   ],
@@ -870,12 +869,12 @@ class _SystemControlsPageState extends State<SystemControlsPage>
 
               // Tab Bar
               Container(
-                margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+                margin: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
                 child: TabBar(
                   controller: _tabController,
-                  labelColor: Colors.black87,
+                  labelColor: AppThemeColor.blue800,
                   unselectedLabelColor: Colors.white,
-                  indicatorColor: Colors.black87,
+                  indicatorColor: AppThemeColor.blue700,
                   tabs: [
                     Tab(text: 'User Roles', icon: Icon(Icons.people)),
                     Tab(text: 'Announcements', icon: Icon(Icons.announcement)),
@@ -888,14 +887,14 @@ class _SystemControlsPageState extends State<SystemControlsPage>
               Expanded(
                 child: Container(
                   margin: EdgeInsets.fromLTRB(
-                    AppTheme.defaultSpacing,
-                    AppTheme.smallSpacing,
-                    AppTheme.defaultSpacing,
-                    AppTheme.defaultSpacing,
+                    AppThemeColor.defaultSpacing,
+                    AppThemeColor.smallSpacing,
+                    AppThemeColor.defaultSpacing,
+                    AppThemeColor.defaultSpacing,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.white,
-                    borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+                    color: AppThemeColor.white,
+                    borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
@@ -907,7 +906,7 @@ class _SystemControlsPageState extends State<SystemControlsPage>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      _buildUserRolesTab(),
+                      _buildUserRole1sTab(),
                       _buildAnnouncementsTab(),
                       _buildSystemSettingsTab(),
                     ],

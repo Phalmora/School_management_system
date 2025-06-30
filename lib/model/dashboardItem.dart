@@ -8,5 +8,13 @@ class DashboardItem {
   final String subtitle;
   final String? badge;
 
-  DashboardItem(this.title, this.icon, this.color, this.onTap, this.subtitle, {this.badge});
+  DashboardItem(
+      this.title,
+      this.icon,
+      this.color,
+      this.onTap,
+      this.subtitle,
+      {
+        this.badge,
+      });
 }

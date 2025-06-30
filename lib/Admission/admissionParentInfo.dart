@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/customWidgets/inputField.dart';
+import 'package:school/customWidgets/sectionTitle.dart';
 
 class AdmissionParentInfoScreen extends StatefulWidget {
   @override
@@ -35,90 +36,95 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: AppTheme.getMaxWidth(context),
+                maxWidth: AppThemeResponsiveness.getMaxWidth(context),
               ),
               child: SingleChildScrollView(
-                padding: AppTheme.getScreenPadding(context),
+                padding: AppThemeResponsiveness.getScreenPadding(context),
                 child: Column(
                   children: [
                     _buildProgressIndicator(2, 4),
-                    SizedBox(height: AppTheme.getDefaultSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                     Text(
                       'Parent/Guardian Information',
-                      style: AppTheme.getFontStyle(context),
+                      style: AppThemeResponsiveness.getFontStyle(context),
                     ),
-                    SizedBox(height: AppTheme.getSmallSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                     Text(
                       'Please provide details about parent/guardian',
-                      style: AppTheme.getSplashSubtitleStyle(context),
+                      style: AppThemeResponsiveness.getSplashSubtitleStyle(context),
                     ),
-                    SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                     Card(
-                      elevation: AppTheme.getCardElevation(context),
+                      elevation: AppThemeResponsiveness.getCardElevation(context),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+                        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
                       ),
                       child: Padding(
-                        padding: AppTheme.getCardPadding(context),
+                        padding: AppThemeResponsiveness.getCardPadding(context),
                         child: Form(
                           key: _formKey,
                           child: Column(
                             children: [
-                              _buildSectionHeader('Father\'s Information'),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SectionTitleBlueAdmission(title: 'Father\'s Information'),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _fatherNameController,
                                 label: 'Father\'s Name *',
                                 icon: Icons.person,
                                 validator: (value) =>
                                 value!.isEmpty ? 'Please enter father\'s name' : null,
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
-                                controller: _fatherOccupationController,
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
+                                controller:_fatherOccupationController,
                                 label: 'Father\'s Occupation',
                                 icon: Icons.work,
                               ),
-                              SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
-
-                              _buildSectionHeader('Mother\'s Information'),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+                              SectionTitleBlueAdmission(title: 'Mother\'s Information'),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _motherNameController,
                                 label: 'Mother\'s Name *',
                                 icon: Icons.person,
                                 validator: (value) =>
                                 value!.isEmpty ? 'Please enter mother\'s name' : null,
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _motherOccupationController,
                                 label: 'Mother\'s Occupation',
                                 icon: Icons.work,
                               ),
-                              SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
-
-                              _buildSectionHeader('Guardian Information (if different)'),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
+                              SectionTitleBlueAdmission(title: 'Guardian Information (if different)'),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _guardianNameController,
                                 label: 'Guardian Name',
                                 icon: Icons.person_outline,
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _guardianRelationshipController,
                                 label: 'Relationship with Student',
                                 icon: Icons.family_restroom,
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _guardianContactController,
                                 label: 'Guardian Contact Number',
                                 icon: Icons.phone,
@@ -130,7 +136,7 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
                                   return null;
                                 },
                               ),
-                              SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                               buildActionButtons(),
                             ],
                           ),
@@ -149,7 +155,7 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
 
   Widget _buildProgressIndicator(int currentStep, int totalSteps) {
     return Container(
-      padding: AppTheme.getVerticalPadding(context),
+      padding: AppThemeResponsiveness.getVerticalPadding(context),
       child: Row(
         children: List.generate(totalSteps, (index) {
           bool isCompleted = index < currentStep;
@@ -158,82 +164,18 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
           return Expanded(
             child: Container(
               margin: EdgeInsets.symmetric(
-                horizontal: AppTheme.getSmallSpacing(context) / 4,
+                horizontal: AppThemeResponsiveness.getSmallSpacing(context) / 4,
               ),
-              height: AppTheme.isMobile(context) ? 4 : 6,
+              height: AppThemeResponsiveness.isMobile(context) ? 4 : 6,
               decoration: BoxDecoration(
                 color: isCompleted || isCurrent
-                    ? AppTheme.blue600
+                    ? AppThemeColor.blue600
                     : Colors.grey[300],
-                borderRadius: BorderRadius.circular(AppTheme.isMobile(context) ? 2 : 3),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.isMobile(context) ? 2 : 3),
               ),
             ),
           );
         }),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: AppTheme.getSmallSpacing(context)),
-      child: Text(
-        title,
-        style: AppTheme.getHeadingStyle(context).copyWith(
-          color: AppTheme.blue600,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    TextInputType? keyboardType,
-    int? maxLines,
-    String? Function(String?)? validator,
-  }) {
-    int effectiveMaxLines = maxLines ?? AppTheme.getTextFieldMaxLines(context);
-
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      maxLines: effectiveMaxLines,
-      validator: validator,
-      style: AppTheme.getBodyTextStyle(context),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: AppTheme.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          icon,
-          size: AppTheme.getIconSize(context),
-          color: Colors.grey[600],
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: AppTheme.blue600,
-            width: AppTheme.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
-        ),
-        filled: true,
-        fillColor: Colors.white,
       ),
     );
   }
@@ -243,7 +185,7 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
       children: [
         Expanded(
           child: Container(
-            height: AppTheme.getButtonHeight(context),
+            height: AppThemeResponsiveness.getButtonHeight(context),
             child: _buildAnimatedButton(
               text: 'Back',
               onPressed: () => Navigator.pop(context),
@@ -251,10 +193,10 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
             ),
           ),
         ),
-        SizedBox(width: AppTheme.getMediumSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
         Expanded(
           child: Container(
-            height: AppTheme.getButtonHeight(context),
+            height: AppThemeResponsiveness.getButtonHeight(context),
             child: _buildAnimatedButton(
               text: 'Next',
               onPressed: _nextPage,
@@ -273,16 +215,16 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSecondary ? Colors.grey[300] : AppTheme.blue600,
+        backgroundColor: isSecondary ? Colors.grey[300] : AppThemeColor.blue600,
         foregroundColor: isSecondary ? Colors.black87 : Colors.white,
-        elevation: AppTheme.getButtonElevation(context),
+        elevation: AppThemeResponsiveness.getButtonElevation(context),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
       ),
       child: Text(
         text,
-        style: AppTheme.getButtonTextStyle(context).copyWith(
+        style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
           color: isSecondary ? Colors.black87 : Colors.white,
         ),
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   @override
@@ -32,8 +31,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
   @override
   void initState() {
     super.initState();
+    _initAnimations();
+  }
 
-    // Shake animation for validation errors
+  void _initAnimations() {
     _shakeController = AnimationController(
       duration: Duration(milliseconds: 500),
       vsync: this,
@@ -42,7 +43,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
       CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
     );
 
-    // Fade animation for form appearance
     _fadeController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
@@ -51,7 +51,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
 
-    // Scale animation for button press
     _scaleController = AnimationController(
       duration: Duration(milliseconds: 150),
       vsync: this,
@@ -60,7 +59,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
       CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
     );
 
-    // Slide animation for card entrance
     _slideController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
@@ -73,7 +71,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
       curve: Curves.easeOutBack,
     ));
 
-    // Start animations
     _fadeController.forward();
     _slideController.forward();
   }
@@ -96,54 +93,20 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
-        ),
+        decoration: BoxDecoration(gradient: AppThemeColor.primaryGradient),
         child: SafeArea(
           child: Center(
             child: Container(
-              constraints: BoxConstraints(
-                maxWidth: AppTheme.getMaxWidth(context),
-              ),
+              constraints: BoxConstraints(maxWidth: AppThemeResponsiveness.getMaxWidth(context)),
               child: Column(
                 children: [
-                  // Header Section
-                  FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: Padding(
-                      padding: AppTheme.getScreenPadding(context),
-                      child: Text(
-                        'Change Password',
-                        style: AppTheme.getFontStyle(context).copyWith(
-                          fontSize: AppTheme.isMobile(context) ? 24 : (AppTheme.isTablet(context) ? 28 : 32),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-
-                  // Form Content
+                  _buildHeader(),
                   Expanded(
                     child: SlideTransition(
                       position: _slideAnimation,
                       child: FadeTransition(
                         opacity: _fadeAnimation,
-                        child: SingleChildScrollView(
-                          controller: _scrollController,
-                          physics: BouncingScrollPhysics(),
-                          child: Padding(
-                            padding: AppTheme.getScreenPadding(context),
-                            child: AnimatedBuilder(
-                              animation: _shakeAnimation,
-                              builder: (context, child) {
-                                return Transform.translate(
-                                  offset: Offset(_shakeAnimation.value, 0),
-                                  child: _buildFormCard(),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+                        child: _buildScrollableContent(),
                       ),
                     ),
                   ),
@@ -151,6 +114,44 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+          vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        ),
+        child: Text(
+          'Change Password',
+          style: AppThemeResponsiveness.getSectionTitleStyle(context),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScrollableContent() {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      physics: BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+        ),
+        child: AnimatedBuilder(
+          animation: _shakeAnimation,
+          builder: (context, child) {
+            return Transform.translate(
+              offset: Offset(_shakeAnimation.value, 0),
+              child: _buildFormCard(),
+            );
+          },
         ),
       ),
     );
@@ -158,201 +159,125 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
 
   Widget _buildFormCard() {
     return Card(
-      elevation: AppTheme.getCardElevation(context),
+      elevation: AppThemeResponsiveness.getCardElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
       child: Container(
         width: double.infinity,
-        padding: AppTheme.getCardPadding(context),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardPadding(context)),
         child: Form(
           key: _formKey,
-          child: Scrollbar(
-            controller: _scrollController,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  // Security Icon with responsive sizing
-                  TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: 600),
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    builder: (context, value, child) {
-                      return Transform.scale(
-                        scale: value,
-                        child: Container(
-                          padding: EdgeInsets.all(AppTheme.getDefaultSpacing(context)),
-                          decoration: BoxDecoration(
-                            gradient: AppTheme.primaryGradient,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.primaryBlue.withOpacity(0.3),
-                                blurRadius: AppTheme.isMobile(context) ? 15 : 20,
-                                spreadRadius: AppTheme.isMobile(context) ? 3 : 5,
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.security_rounded,
-                            size: AppTheme.getIconSize(context) * 1.5,
-                            color: AppTheme.white,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  SizedBox(height: AppTheme.getMediumSpacing(context)),
-
-                  // Title Section
-                  Text(
-                    'Secure Your Account',
-                    style: AppTheme.getHeadingStyle(context).copyWith(
-                      fontSize: AppTheme.isMobile(context) ? 24 : (AppTheme.isTablet(context) ? 28 : 32),
-                      color: AppTheme.blue800,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  SizedBox(height: AppTheme.getSmallSpacing(context)),
-
-                  Text(
-                    'Update your password to keep your account safe',
-                    style: AppTheme.getSubHeadingStyle(context).copyWith(
-                      fontSize: AppTheme.isMobile(context) ? 14 : (AppTheme.isTablet(context) ? 16 : 18),
-                      height: 1.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                  SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
-
-                  // Password Fields with staggered animations
-                  _buildAnimatedPasswordField(
-                    controller: _currentPasswordController,
-                    label: 'Current Password',
-                    icon: Icons.lock_outline_rounded,
-                    isVisible: _isCurrentPasswordVisible,
-                    onToggleVisibility: () => setState(() => _isCurrentPasswordVisible = !_isCurrentPasswordVisible),
-                    validator: (value) => value!.isEmpty ? 'Please enter current password' : null,
-                    delay: 200,
-                  ),
-
-                  SizedBox(height: AppTheme.getMediumSpacing(context)),
-
-                  _buildAnimatedPasswordField(
-                    controller: _newPasswordController,
-                    label: 'New Password',
-                    icon: Icons.lock_rounded,
-                    isVisible: _isNewPasswordVisible,
-                    onToggleVisibility: () => setState(() => _isNewPasswordVisible = !_isNewPasswordVisible),
-                    validator: (value) {
-                      if (value!.isEmpty) return 'Please enter new password';
-                      if (value.length < 8) return 'Password must be at least 8 characters';
-                      if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
-                        return 'Password must contain uppercase, lowercase, and number';
-                      }
-                      return null;
-                    },
-                    delay: 400,
-                  ),
-
-                  SizedBox(height: AppTheme.getMediumSpacing(context)),
-
-                  _buildAnimatedPasswordField(
-                    controller: _confirmPasswordController,
-                    label: 'Confirm New Password',
-                    icon: Icons.lock_clock_rounded,
-                    isVisible: _isConfirmPasswordVisible,
-                    onToggleVisibility: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
-                    validator: (value) {
-                      if (value!.isEmpty) return 'Please confirm new password';
-                      if (value != _newPasswordController.text) return 'Passwords do not match';
-                      return null;
-                    },
-                    delay: 600,
-                  ),
-
-                  SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
-
-                  // Change Password Button with responsive design
-                  TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: 800),
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    builder: (context, value, child) {
-                      return Transform.scale(
-                        scale: value,
-                        child: ScaleTransition(
-                          scale: _scaleAnimation,
-                          child: Container(
-                            width: double.infinity,
-                            height: AppTheme.getButtonHeight(context),
-                            decoration: BoxDecoration(
-                              gradient: AppTheme.primaryGradient,
-                              borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.primaryBlue.withOpacity(0.3),
-                                  blurRadius: AppTheme.isMobile(context) ? 10 : 15,
-                                  spreadRadius: AppTheme.isMobile(context) ? 1 : 2,
-                                  offset: Offset(0, AppTheme.isMobile(context) ? 4 : 8),
-                                ),
-                              ],
-                            ),
-                            child: ElevatedButton(
-                              onPressed: _isLoading ? null : _changePassword,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
-                                ),
-                              ),
-                              child: _isLoading
-                                  ? SizedBox(
-                                height: AppTheme.getIconSize(context),
-                                width: AppTheme.getIconSize(context),
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(AppTheme.white),
-                                  strokeWidth: AppTheme.isMobile(context) ? 2.0 : 3.0,
-                                ),
-                              )
-                                  : Text(
-                                'Change Password',
-                                style: AppTheme.getButtonTextStyle(context),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  SizedBox(height: AppTheme.getMediumSpacing(context)),
-
-                  // Security Tips with responsive design
-                  TweenAnimationBuilder<double>(
-                    duration: Duration(milliseconds: 1000),
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: _buildSecurityTips(),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+          child: Column(
+            children: [
+              _buildSecurityIcon(),
+              SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+              _buildTitleSection(),
+              SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context) * 2),
+              _buildPasswordFields(),
+              SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context) * 2),
+              _buildChangePasswordButton(),
+              SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+              _buildSecurityTips(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAnimatedPasswordField({
+  Widget _buildSecurityIcon() {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 600),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: Container(
+            padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
+            decoration: BoxDecoration(
+              color: AppThemeColor.blue600,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppThemeColor.primaryBlue.withOpacity(0.3),
+                  blurRadius: AppThemeResponsiveness.isSmallPhone(context) ? 15 : 20,
+                  spreadRadius: AppThemeResponsiveness.isSmallPhone(context) ? 3 : 5,
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.security_rounded,
+              size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+              color: AppThemeColor.white,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTitleSection() {
+    return Column(
+      children: [
+        Text(
+          'Secure Your Account',
+          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+            fontSize: AppThemeResponsiveness.getWelcomeNameTextStyle(context).fontSize,
+            color: AppThemeColor.blue800,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+        Text(
+          'Update your password to keep your account safe',
+          style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordFields() {
+    return Column(
+      children: [
+        _buildPasswordField(
+          controller: _currentPasswordController,
+          label: 'Current Password',
+          icon: Icons.lock_outline_rounded,
+          isVisible: _isCurrentPasswordVisible,
+          onToggleVisibility: () => setState(() => _isCurrentPasswordVisible = !_isCurrentPasswordVisible),
+          validator: (value) => value!.isEmpty ? 'Please enter current password' : null,
+          delay: 200,
+        ),
+        SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+        _buildPasswordField(
+          controller: _newPasswordController,
+          label: 'New Password',
+          icon: Icons.lock_rounded,
+          isVisible: _isNewPasswordVisible,
+          onToggleVisibility: () => setState(() => _isNewPasswordVisible = !_isNewPasswordVisible),
+          validator: _validateNewPassword,
+          delay: 400,
+        ),
+        SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+        _buildPasswordField(
+          controller: _confirmPasswordController,
+          label: 'Confirm New Password',
+          icon: Icons.lock_clock_rounded,
+          isVisible: _isConfirmPasswordVisible,
+          onToggleVisibility: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+          validator: _validateConfirmPassword,
+          delay: 600,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPasswordField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -371,73 +296,34 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
             opacity: value,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
-                    blurRadius: AppTheme.isMobile(context) ? 8 : 10,
+                    blurRadius: AppThemeResponsiveness.isSmallPhone(context) ? 8 : 10,
                     spreadRadius: 1,
-                    offset: Offset(0, AppTheme.isMobile(context) ? 2 : 4),
+                    offset: Offset(0, AppThemeResponsiveness.isSmallPhone(context) ? 2 : 4),
                   ),
                 ],
               ),
               child: TextFormField(
                 controller: controller,
                 obscureText: !isVisible,
-                style: AppTheme.getBodyTextStyle(context),
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: AppTheme.getSubHeadingStyle(context),
-                  prefixIcon: Container(
-                    margin: EdgeInsets.all(AppTheme.getSmallSpacing(context)),
-                    padding: EdgeInsets.all(AppTheme.getSmallSpacing(context) * 0.7),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppTheme.primaryBlue.withOpacity(0.1),
-                          AppTheme.primaryPurple.withOpacity(0.1)
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(AppTheme.getSmallSpacing(context) * 0.8),
-                    ),
-                    child: Icon(
-                      icon,
-                      color: AppTheme.primaryBlue,
-                      size: AppTheme.getIconSize(context) * 0.8,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                      color: AppTheme.blue600,
-                      size: AppTheme.getIconSize(context),
-                    ),
-                    onPressed: onToggleVisibility,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-                    borderSide: BorderSide(color: AppTheme.greylight),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-                    borderSide: BorderSide(color: AppTheme.greylight),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-                    borderSide: BorderSide(
-                      color: AppTheme.primaryBlue,
-                      width: AppTheme.getFocusedBorderWidth(context),
-                    ),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-                    borderSide: BorderSide(color: Colors.red.shade400),
-                  ),
+                  labelStyle: AppThemeResponsiveness.getSubHeadingStyle(context),
+                  prefixIcon: _buildPrefixIcon(icon),
+                  suffixIcon: _buildSuffixIcon(isVisible, onToggleVisibility),
+                  border: _buildInputBorder(AppThemeColor.greyl),
+                  enabledBorder: _buildInputBorder(AppThemeColor.greyl),
+                  focusedBorder: _buildInputBorder(AppThemeColor.primaryBlue),
+                  errorBorder: _buildInputBorder(Colors.red.shade400),
                   filled: true,
                   fillColor: Colors.grey.shade50,
                   contentPadding: EdgeInsets.symmetric(
-                    horizontal: AppTheme.getDefaultSpacing(context),
-                    vertical: AppTheme.getMediumSpacing(context),
+                    horizontal: AppThemeResponsiveness.getQuickStatsPadding(context),
+                    vertical: AppThemeResponsiveness.getQuickStatsSpacing(context),
                   ),
                 ),
                 validator: validator,
@@ -449,66 +335,169 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
     );
   }
 
-  Widget _buildSecurityTips() {
+  Widget _buildPrefixIcon(IconData icon) {
     return Container(
-      padding: AppTheme.getCardPadding(context),
+      margin: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsIconPadding(context)),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsIconPadding(context) * 0.7),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.primaryBlue.withOpacity(0.05),
-            AppTheme.primaryPurple.withOpacity(0.05),
+            AppThemeColor.primaryBlue.withOpacity(0.1),
+            AppThemeColor.primaryIndigo.withOpacity(0.1)
           ],
         ),
-        borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getQuickStatsIconPadding(context) * 0.8),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.tips_and_updates_rounded,
-                color: AppTheme.primaryBlue,
-                size: AppTheme.getIconSize(context) * 0.8,
+      child: Icon(
+        icon,
+        color: AppThemeColor.primaryBlue,
+        size: AppThemeResponsiveness.getQuickStatsIconSize(context),
+      ),
+    );
+  }
+
+  Widget _buildSuffixIcon(bool isVisible, VoidCallback onToggle) {
+    return IconButton(
+      icon: Icon(
+        isVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+        color: AppThemeColor.blue600,
+        size: AppThemeResponsiveness.getQuickStatsIconSize(context),
+      ),
+      onPressed: onToggle,
+    );
+  }
+
+  OutlineInputBorder _buildInputBorder(Color color) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+      borderSide: BorderSide(
+        color: color,
+        width: color == AppThemeColor.primaryBlue ? AppThemeResponsiveness.getFocusedBorderWidth(context) : 1.0,
+      ),
+    );
+  }
+
+  Widget _buildChangePasswordButton() {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 800),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: ScaleTransition(
+            scale: _scaleAnimation,
+            child: Container(
+              width: double.infinity,
+              height: AppThemeResponsiveness.getButtonHeight(context),
+              decoration: BoxDecoration(
+                color: AppThemeColor.blue600,
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppThemeColor.primaryBlue.withOpacity(0.3),
+                    blurRadius: AppThemeResponsiveness.isSmallPhone(context) ? 10 : 15,
+                    spreadRadius: AppThemeResponsiveness.isSmallPhone(context) ? 1 : 2,
+                    offset: Offset(0, AppThemeResponsiveness.isSmallPhone(context) ? 4 : 8),
+                  ),
+                ],
               ),
-              SizedBox(width: AppTheme.getSmallSpacing(context)),
-              Text(
-                'Security Tips',
-                style: AppTheme.getSubHeadingStyle(context).copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.blue800,
-                  fontSize: AppTheme.isMobile(context) ? 14 : (AppTheme.isTablet(context) ? 16 : 18),
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _changePassword,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                  ),
+                ),
+                child: _isLoading
+                    ? SizedBox(
+                  height: AppThemeResponsiveness.getQuickStatsIconSize(context),
+                  width: AppThemeResponsiveness.getQuickStatsIconSize(context),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppThemeColor.white),
+                    strokeWidth: AppThemeResponsiveness.isSmallPhone(context) ? 2.0 : 3.0,
+                  ),
+                )
+                    : Text(
+                  'Change Password',
+                  style: AppThemeResponsiveness.getButtonTextStyle(context),
                 ),
               ),
-            ],
+            ),
           ),
-          SizedBox(height: AppTheme.getSmallSpacing(context)),
-          _buildTipItem('Use at least 8 characters'),
-          _buildTipItem('Include uppercase and lowercase letters'),
-          _buildTipItem('Add numbers and special characters'),
-          _buildTipItem('Avoid common words or personal info'),
-        ],
-      ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSecurityTips() {
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 1000),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value,
+          child: Container(
+            padding: EdgeInsets.all(AppThemeResponsiveness.getQuickStatsPadding(context)),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppThemeColor.primaryBlue.withOpacity(0.05),
+                  AppThemeColor.primaryIndigo.withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              border: Border.all(color: AppThemeColor.primaryBlue.withOpacity(0.2)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.tips_and_updates_rounded,
+                      color: AppThemeColor.primaryBlue,
+                      size: AppThemeResponsiveness.getQuickStatsIconSize(context),
+                    ),
+                    SizedBox(width: AppThemeResponsiveness.getQuickStatsIconPadding(context)),
+                    Text(
+                      'Security Tips',
+                      style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppThemeColor.blue800,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: AppThemeResponsiveness.getQuickStatsIconPadding(context)),
+                ...['Use at least 8 characters', 'Include uppercase and lowercase letters',
+                  'Add numbers and special characters', 'Avoid common words or personal info']
+                    .map((tip) => _buildTipItem(tip)),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildTipItem(String text) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppTheme.getSmallSpacing(context) * 0.5),
+      padding: EdgeInsets.symmetric(vertical: AppThemeResponsiveness.getQuickStatsIconPadding(context) * 0.5),
       child: Row(
         children: [
           Icon(
             Icons.check_circle_outline,
-            color: AppTheme.primaryBlue,
-            size: AppTheme.getIconSize(context) * 0.6,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getQuickStatsIconSize(context) * 0.7,
           ),
-          SizedBox(width: AppTheme.getSmallSpacing(context)),
+          SizedBox(width: AppThemeResponsiveness.getQuickStatsIconPadding(context)),
           Expanded(
             child: Text(
               text,
-              style: AppTheme.getBodyTextStyle(context).copyWith(
-                color: AppTheme.blue600,
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: AppThemeColor.blue600,
                 height: 1.4,
               ),
             ),
@@ -518,121 +507,118 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
     );
   }
 
+  String? _validateNewPassword(String? value) {
+    if (value!.isEmpty) return 'Please enter new password';
+    if (value.length < 8) return 'Password must be at least 8 characters';
+    if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
+      return 'Password must contain uppercase, lowercase, and number';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value!.isEmpty) return 'Please confirm new password';
+    if (value != _newPasswordController.text) return 'Passwords do not match';
+    return null;
+  }
+
   void _changePassword() async {
     if (_formKey.currentState!.validate()) {
-      // Scale animation for button press
-      _scaleController.forward().then((_) {
-        _scaleController.reverse();
-      });
-
+      _scaleController.forward().then((_) => _scaleController.reverse());
       setState(() => _isLoading = true);
-
-      // Simulate API call
       await Future.delayed(Duration(seconds: 2));
-
       setState(() => _isLoading = false);
-
-      // Show success dialog with responsive design
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
-            ),
-            child: Container(
-              constraints: BoxConstraints(
-                maxWidth: AppTheme.getDialogWidth(context),
-              ),
-              padding: AppTheme.getCardPadding(context),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
-                gradient: LinearGradient(
-                  colors: [Colors.white, Colors.green.shade50],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(AppTheme.getDefaultSpacing(context)),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.green.withOpacity(0.3),
-                          blurRadius: AppTheme.isMobile(context) ? 15 : 20,
-                          spreadRadius: AppTheme.isMobile(context) ? 3 : 5,
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.check_rounded,
-                      color: Colors.white,
-                      size: AppTheme.getIconSize(context) * 1.2,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.getMediumSpacing(context)),
-                  Text(
-                    'Password Changed!',
-                    style: AppTheme.getHeadingStyle(context).copyWith(
-                      fontSize: AppTheme.isMobile(context) ? 20 : (AppTheme.isTablet(context) ? 24 : 28),
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.blue800,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.getSmallSpacing(context)),
-                  Text(
-                    'Your password has been successfully updated. Your account is now more secure.',
-                    textAlign: TextAlign.center,
-                    style: AppTheme.getSubHeadingStyle(context).copyWith(
-                      fontSize: AppTheme.isMobile(context) ? 14 : (AppTheme.isTablet(context) ? 16 : 18),
-                      height: 1.5,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.getMediumSpacing(context)),
-                  Container(
-                    width: double.infinity,
-                    height: AppTheme.getButtonHeight(context),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.green, Colors.green.shade600],
-                      ),
-                      borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.getButtonBorderRadius(context)),
-                        ),
-                      ),
-                      child: Text(
-                        'Continue',
-                        style: AppTheme.getButtonTextStyle(context),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
+      _showSuccessDialog();
     } else {
-      // Trigger shake animation for validation errors
-      _shakeController.forward().then((_) {
-        _shakeController.reverse();
-      });
+      _shakeController.forward().then((_) => _shakeController.reverse());
     }
+  }
+
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+          ),
+          child: Container(
+            constraints: BoxConstraints(maxWidth: AppThemeResponsiveness.getDialogWidth(context)),
+            padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardPadding(context)),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+              gradient: LinearGradient(
+                colors: [Colors.white, Colors.green.shade50],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withOpacity(0.3),
+                        blurRadius: AppThemeResponsiveness.isSmallPhone(context) ? 15 : 20,
+                        spreadRadius: AppThemeResponsiveness.isSmallPhone(context) ? 3 : 5,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.check_rounded,
+                    color: Colors.white,
+                    size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+                  ),
+                ),
+                SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+                Text(
+                  'Password Changed!',
+                  style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+                    fontSize: AppThemeResponsiveness.getWelcomeBackTextStyle(context).fontSize! * 1.4,
+                    fontWeight: FontWeight.bold,
+                    color: AppThemeColor.blue800,
+                  ),
+                ),
+                SizedBox(height: AppThemeResponsiveness.getQuickStatsIconPadding(context)),
+                Text(
+                  'Your password has been successfully updated. Your account is now more secure.',
+                  textAlign: TextAlign.center,
+                  style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(height: 1.5),
+                ),
+                SizedBox(height: AppThemeResponsiveness.getQuickStatsSpacing(context)),
+                Container(
+                  width: double.infinity,
+                  height: AppThemeResponsiveness.getButtonHeight(context),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [Colors.green, Colors.green.shade600]),
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                      ),
+                    ),
+                    child: Text('Continue', style: AppThemeResponsiveness.getButtonTextStyle(context)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

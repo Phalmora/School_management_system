@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school/AdminStudentManagement/studentDetailsPage.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/AdminStudentManagement/studentModel.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class StudentListPage extends StatefulWidget {
   final String selectedClass;
@@ -119,30 +119,56 @@ class _StudentListPageState extends State<StudentListPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Delete'),
-          content: Text('Are you sure you want to remove this student?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+          ),
+          title: Text(
+            'Confirm Delete',
+            style: AppThemeResponsiveness.getHeadingStyle(context),
+          ),
+          content: Text(
+            'Are you sure you want to remove this student?',
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: AppThemeColor.primaryBlue,
+                  fontSize: AppThemeResponsiveness.getButtonTextStyle(context).fontSize,
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  students.removeWhere((s) => s.id == studentId);
-                  allStudents.removeWhere((s) => s.id == studentId);
-                  _filterStudents();
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Student removed successfully!'),
-                    backgroundColor: Colors.green,
+            SizedBox(
+              height: AppThemeResponsiveness.getButtonHeight(context) * 0.8,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    students.removeWhere((s) => s.id == studentId);
+                    allStudents.removeWhere((s) => s.id == studentId);
+                    _filterStudents();
+                  });
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Student removed successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: Text('Delete', style: TextStyle(color: Colors.white)),
+                ),
+                child: Text(
+                  'Delete',
+                  style: AppThemeResponsiveness.getButtonTextStyle(context),
+                ),
+              ),
             ),
           ],
         );
@@ -165,19 +191,25 @@ class _StudentListPageState extends State<StudentListPage> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: Text(isEditing ? 'Edit Student' : 'Add New Student'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+              ),
+              title: Text(
+                isEditing ? 'Edit Student' : 'Add New Student',
+                style: AppThemeResponsiveness.getHeadingStyle(context),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildTextField('Name', nameController, Icons.person),
-                    SizedBox(height: AppTheme.smallSpacing),
-                    _buildTextField('Email', emailController, Icons.email),
-                    SizedBox(height: AppTheme.smallSpacing),
-                    _buildTextField('Phone', phoneController, Icons.phone),
-                    SizedBox(height: AppTheme.smallSpacing),
-                    _buildTextField('Address', addressController, Icons.location_on),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    _buildTextField(context, 'Name', nameController, Icons.person),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                    _buildTextField(context, 'Email', emailController, Icons.email),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                    _buildTextField(context, 'Phone', phoneController, Icons.phone),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+                    _buildTextField(context, 'Address', addressController, Icons.location_on),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                     GestureDetector(
                       onTap: () async {
                         final DateTime? picked = await showDatePicker(
@@ -193,31 +225,51 @@ class _StudentListPageState extends State<StudentListPage> {
                         }
                       },
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+                          vertical: AppThemeResponsiveness.getMediumSpacing(context),
+                        ),
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey.shade400),
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.calendar_today, color: Colors.grey.shade600),
-                            SizedBox(width: 12),
+                            Icon(
+                              Icons.calendar_today,
+                              color: Colors.grey.shade600,
+                              size: AppThemeResponsiveness.getIconSize(context),
+                            ),
+                            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
                             Text(
                               'Date of Birth: ${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                              style: TextStyle(fontSize: 16),
+                              style: AppThemeResponsiveness.getBodyTextStyle(context),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                     DropdownButtonFormField<String>(
                       value: selectedStatus,
+                      style: AppThemeResponsiveness.getBodyTextStyle(context),
                       decoration: InputDecoration(
                         labelText: 'Admission Status',
-                        prefixIcon: Icon(Icons.verified_user),
+                        labelStyle: AppThemeResponsiveness.getInputLabelStyle(context),
+                        prefixIcon: Icon(
+                          Icons.verified_user,
+                          size: AppThemeResponsiveness.getIconSize(context),
+                          color: AppThemeColor.primaryBlue,
+                        ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                          borderSide: BorderSide(
+                            color: AppThemeColor.primaryBlue,
+                            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+                          ),
                         ),
                       ),
                       items: ['Active', 'Pending', 'Inactive'].map((status) {
@@ -235,48 +287,72 @@ class _StudentListPageState extends State<StudentListPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel'),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: AppThemeColor.primaryBlue,
+                      fontSize: AppThemeResponsiveness.getButtonTextStyle(context).fontSize,
+                    ),
+                  ),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (nameController.text.isNotEmpty &&
-                        emailController.text.isNotEmpty &&
-                        phoneController.text.isNotEmpty) {
-                      final newStudent = Student(
-                        id: isEditing ? student!.id : 'STU${(allStudents.length + 1).toString().padLeft(3, '0')}',
-                        name: nameController.text,
-                        email: emailController.text,
-                        phone: phoneController.text,
-                        className: widget.selectedClass,
-                        admissionStatus: selectedStatus,
-                        dateOfBirth: selectedDate,
-                        address: addressController.text,
-                      );
+                SizedBox(
+                  height: AppThemeResponsiveness.getButtonHeight(context) * 0.8,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (nameController.text.isNotEmpty &&
+                          emailController.text.isNotEmpty &&
+                          phoneController.text.isNotEmpty) {
+                        final newStudent = Student(
+                          id: isEditing ? student!.id : 'STU${(allStudents.length + 1).toString().padLeft(3, '0')}',
+                          name: nameController.text,
+                          email: emailController.text,
+                          phone: phoneController.text,
+                          className: widget.selectedClass,
+                          admissionStatus: selectedStatus,
+                          dateOfBirth: selectedDate,
+                          address: addressController.text,
+                        );
 
-                      setState(() {
-                        if (isEditing) {
-                          int index = students.indexWhere((s) => s.id == student!.id);
-                          int allIndex = allStudents.indexWhere((s) => s.id == student!.id);
-                          students[index] = newStudent;
-                          allStudents[allIndex] = newStudent;
-                        } else {
-                          students.add(newStudent);
-                          allStudents.add(newStudent);
-                        }
-                        _filterStudents();
-                      });
-                      Navigator.pop(context);
+                        setState(() {
+                          if (isEditing) {
+                            int index = students.indexWhere((s) => s.id == student!.id);
+                            int allIndex = allStudents.indexWhere((s) => s.id == student!.id);
+                            students[index] = newStudent;
+                            allStudents[allIndex] = newStudent;
+                          } else {
+                            students.add(newStudent);
+                            allStudents.add(newStudent);
+                          }
+                          _filterStudents();
+                        });
+                        Navigator.pop(context);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(isEditing ? 'Student updated successfully!' : 'Student added successfully!'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
-                  child: Text(isEditing ? 'Update' : 'Add', style: AppTheme.buttonTextStyle.copyWith(fontSize: 16)),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(isEditing ? 'Student updated successfully!' : 'Student added successfully!'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Please fill all required fields'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppThemeColor.primaryBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                      ),
+                    ),
+                    child: Text(
+                      isEditing ? 'Update' : 'Add',
+                      style: AppThemeResponsiveness.getButtonTextStyle(context),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -286,18 +362,27 @@ class _StudentListPageState extends State<StudentListPage> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, IconData icon) {
+  Widget _buildTextField(BuildContext context, String label, TextEditingController controller, IconData icon) {
     return TextField(
       controller: controller,
+      style: AppThemeResponsiveness.getBodyTextStyle(context),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon),
+        labelStyle: AppThemeResponsiveness.getInputLabelStyle(context),
+        prefixIcon: Icon(
+          icon,
+          size: AppThemeResponsiveness.getIconSize(context),
+          color: AppThemeColor.primaryBlue,
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-          borderSide: BorderSide(color: AppTheme.primaryBlue, width: AppTheme.focusedBorderWidth),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+          ),
         ),
       ),
     );
@@ -307,173 +392,596 @@ class _StudentListPageState extends State<StudentListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppThemeColor.primaryGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              bottom: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              left: AppThemeResponsiveness.getSmallSpacing(context),
+              right: AppThemeResponsiveness.getSmallSpacing(context),
+            ),
+            child: Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+                    ),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+                    ),
                     decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: Offset(0, 5))],
+                      color: AppThemeColor.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
-                        TextField(
-                          controller: searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Search by name, ID, or email',
-                            prefixIcon: Icon(Icons.search, color: AppTheme.primaryBlue),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: AppTheme.blue50,
-                          ),
-                        ),
-                        SizedBox(height: AppTheme.smallSpacing),
-                        Row(
-                          children: [
-                            Text('Filter by status: ', style: TextStyle(fontWeight: FontWeight.bold)),
-                            Expanded(
-                              child: DropdownButton<String>(
-                                value: selectedFilter,
-                                isExpanded: true,
-                                underline: Container(),
-                                items: ['All', 'Active', 'Pending', 'Inactive'].map((filter) {
-                                  return DropdownMenuItem(value: filter, child: Text(filter));
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedFilter = value!;
-                                    _filterStudents();
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
+                        // Search and Filter Section
+                        _buildSearchAndFilterSection(context),
+
+                        // Students Header
+                        _buildStudentsHeader(context),
+
+                        // Students List/Grid
+                        Expanded(
+                          child: _buildStudentsList(context),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: AppTheme.defaultSpacing),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-                      decoration: BoxDecoration(
-                        color: AppTheme.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                          topRight: Radius.circular(AppTheme.cardBorderRadius),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('${widget.selectedClass} Students List',
-                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.primaryBlue)),
-                                Icon(Icons.group, color: AppTheme.primaryBlue),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: filteredStudents.isEmpty
-                                ? Center(child: Text('No students found', style: TextStyle(fontSize: 18, color: Colors.grey.shade600)))
-                                : ListView.builder(
-                              padding: EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
-                              itemCount: filteredStudents.length,
-                              itemBuilder: (context, index) {
-                                final student = filteredStudents[index];
-                                return GestureDetector(
-                                  onTap: () => _navigateToStudentDetails(student),
-                                  child: Card(
-                                    margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
-                                    elevation: 3,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.all(AppTheme.mediumSpacing),
-                                      leading: CircleAvatar(
-                                        backgroundColor: AppTheme.primaryBlue,
-                                        child: Text(student.name.substring(0, 1).toUpperCase(),
-                                            style: TextStyle(color: AppTheme.white, fontWeight: FontWeight.bold)),
-                                      ),
-                                      title: Text(student.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                      subtitle: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 4),
-                                          Text('ID: ${student.id}'),
-                                          Text('Email: ${student.email}'),
-                                          Row(
-                                            children: [
-                                              Text('Status: '),
-                                              Container(
-                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                                decoration: BoxDecoration(
-                                                  color: student.admissionStatus == 'Active' ? Colors.green.shade100 : Colors.orange.shade100,
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                                child: Text(student.admissionStatus,
-                                                    style: TextStyle(
-                                                        color: student.admissionStatus == 'Active' ? Colors.green.shade800 : Colors.orange.shade800,
-                                                        fontSize: 12, fontWeight: FontWeight.bold)),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      trailing: PopupMenuButton<String>(
-                                        onSelected: (value) {
-                                          if (value == 'update') {
-                                            _editStudent(student);
-                                          } else if (value == 'delete') {
-                                            _removeStudent(student.id);
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) => [
-                                          PopupMenuItem(value: 'update', child: Row(children: [Icon(Icons.edit, color: AppTheme.primaryBlue), SizedBox(width: 8), Text('Update')])),
-                                          PopupMenuItem(value: 'delete', child: Row(children: [Icon(Icons.delete, color: Colors.red), SizedBox(width: 8), Text('Delete')])),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: _buildFloatingActionButton(context),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+        ),
+        margin: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.group,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Flexible(
+              child: Text(
+                '${widget.selectedClass} Students',
+                style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                    context,
+                    AppThemeResponsiveness.getSectionTitleStyle(context).fontSize! + 4,
                   ),
-                ],
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchAndFilterSection(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+      decoration: BoxDecoration(
+        color: AppThemeColor.blue50,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          TextField(
+            controller: searchController,
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+            decoration: InputDecoration(
+              hintText: 'Search by name, ID, or email',
+              hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+              prefixIcon: Icon(
+                Icons.search,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: AppThemeColor.white,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+                vertical: AppThemeResponsiveness.getMediumSpacing(context),
               ),
             ),
           ),
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton.extended(
-              onPressed: _addStudent,
-              backgroundColor: AppTheme.primaryBlue,
-              foregroundColor: Colors.white,
-              elevation: 8,
-              icon: Icon(Icons.person_add),
-              label: Text('Add Student', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          Row(
+            children: [
+              Text(
+                'Filter by status: ',
+                style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Expanded(
+                child: DropdownButton<String>(
+                  value: selectedFilter,
+                  isExpanded: true,
+                  underline: Container(),
+                  style: AppThemeResponsiveness.getBodyTextStyle(context),
+                  items: ['All', 'Active', 'Pending', 'Inactive'].map((filter) {
+                    return DropdownMenuItem(value: filter, child: Text(filter));
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedFilter = value!;
+                      _filterStudents();
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStudentsHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+        vertical: AppThemeResponsiveness.getMediumSpacing(context),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Students (${filteredStudents.length})',
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: AppThemeColor.primaryBlue,
+              fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                context,
+                AppThemeResponsiveness.getHeadingStyle(context).fontSize! + 4,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.group,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStudentsList(BuildContext context) {
+    if (filteredStudents.isEmpty) {
+      return _buildEmptyState(context);
+    }
+
+    return AppThemeResponsiveness.isDesktop(context) || AppThemeResponsiveness.isTablet(context)
+        ? _buildStudentsGrid(context)
+        : _buildStudentsListView(context);
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: AppThemeResponsiveness.getEmptyStateIconSize(context),
+            color: Colors.grey.shade400,
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          Text(
+            'No students found',
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: Colors.grey.shade600,
+            ),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          Text(
+            'Try adjusting your search terms or filters',
+            style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+              color: Colors.grey.shade500,
             ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildStudentsGrid(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: AppThemeResponsiveness.getGridCrossAxisCount(context),
+        crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+        mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+        childAspectRatio: AppThemeResponsiveness.getGridChildAspectRatio(context) * 0.75,
+      ),
+      itemCount: filteredStudents.length,
+      itemBuilder: (context, index) {
+        return _buildStudentGridCard(context, filteredStudents[index]);
+      },
+    );
+  }
+
+  Widget _buildStudentsListView(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      itemCount: filteredStudents.length,
+      itemBuilder: (context, index) {
+        return _buildStudentCard(context, filteredStudents[index]);
+      },
+    );
+  }
+
+  Widget _buildStudentGridCard(BuildContext context, Student student) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        gradient: LinearGradient(
+          colors: [
+            AppThemeColor.primaryBlue.withOpacity(0.8),
+            AppThemeColor.primaryBlue.withOpacity(0.6),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () => _navigateToStudentDetails(student),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        child: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getGridItemPadding(context)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: AppThemeColor.white.withOpacity(0.2),
+                    radius: AppThemeResponsiveness.getGridItemPadding(context),
+                    child: Text(
+                      student.name.substring(0, 1).toUpperCase(),
+                      style: AppThemeResponsiveness.getGridItemTitleStyle(context).copyWith(
+                        color: AppThemeColor.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  _buildStudentPopupMenu(context, student),
+                ],
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                student.name,
+                style: AppThemeResponsiveness.getGridItemTitleStyle(context).copyWith(
+                  color: AppThemeColor.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                'ID: ${student.id}',
+                style: AppThemeResponsiveness.getGridItemSubtitleStyle(context).copyWith(
+                  color: AppThemeColor.white.withOpacity(0.9),
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                student.email,
+                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                  color: AppThemeColor.white.withOpacity(0.8),
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(student.admissionStatus).withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: _getStatusColor(student.admissionStatus).withOpacity(0.5),
+                  ),
+                ),
+                child: Text(
+                  student.admissionStatus,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                    color: _getStatusColor(student.admissionStatus),
+                    fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 10),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Center(
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: AppThemeColor.white,
+                  size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStudentCard(BuildContext context, Student student) {
+    return Container(
+        margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
+    decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+    gradient: LinearGradient(
+    colors: [
+    AppThemeColor.primaryBlue.withOpacity(0.8),
+    AppThemeColor.primaryBlue.withOpacity(0.6),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    ),
+    boxShadow: [
+    BoxShadow(
+    color: Colors.black.withOpacity(0.1),
+    spreadRadius: 2,
+    blurRadius: 8,
+    offset: const Offset(0, 4),
+    ),
+    ],
+    ),
+    child: ListTile(
+    contentPadding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+    leading: CircleAvatar(
+    backgroundColor: AppThemeColor.white.withOpacity(0.2),
+    radius: AppThemeResponsiveness.getDashboardCardIconSize(context) / 2,
+    child: Text(
+    student.name.substring(0, 1).toUpperCase(),
+    style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+    color: AppThemeColor.white,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    ),
+    title: Text(
+    student.name,
+    style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+    color: AppThemeColor.white,
+    fontWeight: FontWeight.bold,
+    ),
+    ),
+    subtitle: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+    Text(
+    'ID: ${student.id}',
+    style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(
+    color: AppThemeColor.white.withOpacity(0.9),
+    ),
+    ),
+    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+    Text(
+    'Email: ${student.email}',
+    style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(
+    color: AppThemeColor.white.withOpacity(0.9),
+    ),
+    ),
+    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+    Row(
+    children: [
+    Text(
+    'Status: ',
+    style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+    color: AppThemeColor.white.withOpacity(0.8),
+    ),
+    ),
+      Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+          vertical: 2,
+        ),
+        decoration: BoxDecoration(
+          color: _getStatusColor(student.admissionStatus),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          student.admissionStatus,
+          style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+            color: AppThemeColor.white,
+            fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ],
+    ),
+    ],
+    ),
+      trailing: _buildStudentPopupMenu(context, student),
+      onTap: () => _navigateToStudentDetails(student),
+    ),
+    );
+  }
+
+  Widget _buildStudentPopupMenu(BuildContext context, Student student) {
+    return PopupMenuButton<String>(
+      icon: Icon(
+        Icons.more_vert,
+        color: AppThemeColor.white,
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
+      color: AppThemeColor.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+      ),
+      onSelected: (value) {
+        switch (value) {
+          case 'view':
+            _navigateToStudentDetails(student);
+            break;
+          case 'edit':
+            _editStudent(student);
+            break;
+          case 'delete':
+            _removeStudent(student.id);
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem<String>(
+          value: 'view',
+          child: Row(
+            children: [
+              Icon(
+                Icons.visibility,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'View Details',
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit,
+                color: Colors.orange,
+                size: AppThemeResponsiveness.getIconSize(context),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Edit Student',
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(
+                Icons.delete,
+                color: Colors.red,
+                size: AppThemeResponsiveness.getIconSize(context),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Delete Student',
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: _addStudent,
+      backgroundColor: AppThemeColor.primaryBlue,
+      foregroundColor: AppThemeColor.white,
+      elevation: 8,
+      highlightElevation: 12,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+      ),
+      icon: Icon(
+        Icons.add,
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
+      label: Text(
+        'Add Student',
+        style: AppThemeResponsiveness.getButtonTextStyle(context),
+      ),
+    );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return Colors.green;
+      case 'pending':
+        return Colors.orange;
+      case 'inactive':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override

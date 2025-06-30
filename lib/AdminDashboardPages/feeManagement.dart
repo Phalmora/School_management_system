@@ -1,67 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
-
-// Fee Slip Model
-class FeeSlip {
-  final String id;
-  final String studentId;
-  final String studentName;
-  final String className;
-  final double totalAmount;
-  final double paidAmount;
-  final double dueAmount;
-  final String status; // 'Paid', 'Due', 'Late'
-  final DateTime dueDate;
-  final DateTime? paidDate;
-  final List<FeeItem> feeItems;
-
-  FeeSlip({
-    required this.id,
-    required this.studentId,
-    required this.studentName,
-    required this.className,
-    required this.totalAmount,
-    required this.paidAmount,
-    required this.dueAmount,
-    required this.status,
-    required this.dueDate,
-    this.paidDate,
-    required this.feeItems,
-  });
-}
-
-// Fee Item Model
-class FeeItem {
-  final String name;
-  final double amount;
-  final String type; // 'tuition', 'transport', 'library', etc.
-
-  FeeItem({
-    required this.name,
-    required this.amount,
-    required this.type,
-  });
-}
-
-// Discount Model
-class Discount {
-  final String id;
-  final String name;
-  final String type; // 'percentage', 'fixed'
-  final double value;
-  final String description;
-  final bool isActive;
-
-  Discount({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.value,
-    required this.description,
-    required this.isActive,
-  });
-}
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/model/feeManagementAdmin.dart';
 
 class FeeManagementPage extends StatefulWidget {
   @override
@@ -189,9 +128,9 @@ class _FeeManagementPageState extends State<FeeManagementPage>
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildTextField('Student Name', studentNameController, Icons.person),
-                SizedBox(height: AppTheme.smallSpacing),
+                SizedBox(height: AppThemeColor.smallSpacing),
                 _buildTextField('Class', classNameController, Icons.class_),
-                SizedBox(height: AppTheme.smallSpacing),
+                SizedBox(height: AppThemeColor.smallSpacing),
                 _buildTextField('Total Amount', totalAmountController, Icons.currency_rupee),
               ],
             ),
@@ -206,10 +145,10 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                 // Add fee slip logic here
                 Navigator.pop(context);
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+              style: ElevatedButton.styleFrom(backgroundColor: AppThemeColor.primaryBlue),
               child: Text(
                 isEditing ? 'Update' : 'Generate',
-                style: AppTheme.buttonTextStyle.copyWith(fontSize: 16),
+                style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(fontSize: 16),
               ),
             ),
           ],
@@ -246,14 +185,14 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildTextField('Discount Name', nameController, Icons.local_offer),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     DropdownButtonFormField<String>(
                       value: selectedType,
                       decoration: InputDecoration(
                         labelText: 'Type',
                         prefixIcon: Icon(Icons.type_specimen),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+                          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
                         ),
                       ),
                       items: ['percentage', 'fixed'].map((type) {
@@ -268,9 +207,9 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                         });
                       },
                     ),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     _buildTextField('Value', valueController, Icons.numbers),
-                    SizedBox(height: AppTheme.smallSpacing),
+                    SizedBox(height: AppThemeColor.smallSpacing),
                     _buildTextField('Description', descriptionController, Icons.description),
                   ],
                 ),
@@ -285,10 +224,10 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                     // Add discount logic here
                     Navigator.pop(context);
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryBlue),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppThemeColor.primaryBlue),
                   child: Text(
                     isEditing ? 'Update' : 'Add',
-                    style: AppTheme.buttonTextStyle.copyWith(fontSize: 16),
+                    style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(fontSize: 16),
                   ),
                 ),
               ],
@@ -306,13 +245,13 @@ class _FeeManagementPageState extends State<FeeManagementPage>
         labelText: label,
         prefixIcon: Icon(icon),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.inputBorderRadius),
           borderSide: BorderSide(
-            color: AppTheme.primaryBlue,
-            width: AppTheme.focusedBorderWidth,
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeColor.focusedBorderWidth,
           ),
         ),
       ),
@@ -323,7 +262,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.all(AppTheme.defaultSpacing),
+          margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -332,7 +271,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryBlue,
+                  color: AppThemeColor.primaryBlue,
                 ),
               ),
               ElevatedButton.icon(
@@ -340,7 +279,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                 icon: Icon(Icons.add),
                 label: Text('Generate'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryBlue,
+                  backgroundColor: AppThemeColor.primaryBlue,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -349,12 +288,12 @@ class _FeeManagementPageState extends State<FeeManagementPage>
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+            padding: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
             itemCount: feeSlips.length,
             itemBuilder: (context, index) {
               final feeSlip = feeSlips[index];
               return Card(
-                margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+                margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -410,11 +349,11 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                   ),
                   trailing: IconButton(
                     onPressed: () => _editFeeSlip(feeSlip),
-                    icon: Icon(Icons.edit, color: AppTheme.primaryBlue),
+                    icon: Icon(Icons.edit, color: AppThemeColor.primaryBlue),
                   ),
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                      padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                       child: Column(
                         children: feeSlip.feeItems.map((item) => Padding(
                           padding: EdgeInsets.symmetric(vertical: 2),
@@ -444,7 +383,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
     final lateCount = feeSlips.where((f) => f.status == 'Late').length;
 
     return Padding(
-      padding: EdgeInsets.all(AppTheme.defaultSpacing),
+      padding: EdgeInsets.all(AppThemeColor.defaultSpacing),
       child: Column(
         children: [
           // Summary Cards
@@ -454,7 +393,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                 child: Card(
                   elevation: 3,
                   child: Padding(
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                    padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                     child: Column(
                       children: [
                         Icon(Icons.check_circle, color: Colors.green, size: 30),
@@ -465,12 +404,12 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                   ),
                 ),
               ),
-              SizedBox(width: AppTheme.smallSpacing),
+              SizedBox(width: AppThemeColor.smallSpacing),
               Expanded(
                 child: Card(
                   elevation: 3,
                   child: Padding(
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                    padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                     child: Column(
                       children: [
                         Icon(Icons.schedule, color: Colors.orange, size: 30),
@@ -481,12 +420,12 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                   ),
                 ),
               ),
-              SizedBox(width: AppTheme.smallSpacing),
+              SizedBox(width: AppThemeColor.smallSpacing),
               Expanded(
                 child: Card(
                   elevation: 3,
                   child: Padding(
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                    padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                     child: Column(
                       children: [
                         Icon(Icons.warning, color: Colors.red, size: 30),
@@ -499,7 +438,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
               ),
             ],
           ),
-          SizedBox(height: AppTheme.defaultSpacing),
+          SizedBox(height: AppThemeColor.defaultSpacing),
 
           // Payment Status List
           Expanded(
@@ -508,7 +447,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
               itemBuilder: (context, index) {
                 final feeSlip = feeSlips[index];
                 return Card(
-                  margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+                  margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: feeSlip.status == 'Paid'
@@ -548,7 +487,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.all(AppTheme.defaultSpacing),
+          margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -557,7 +496,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryBlue,
+                  color: AppThemeColor.primaryBlue,
                 ),
               ),
               ElevatedButton.icon(
@@ -565,7 +504,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                 icon: Icon(Icons.add),
                 label: Text('Add'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.primaryBlue,
+                  backgroundColor: AppThemeColor.primaryBlue,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -574,20 +513,20 @@ class _FeeManagementPageState extends State<FeeManagementPage>
         ),
         Expanded(
           child: ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+            padding: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
             itemCount: discounts.length,
             itemBuilder: (context, index) {
               final discount = discounts[index];
               return Card(
-                margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+                margin: EdgeInsets.only(bottom: AppThemeColor.smallSpacing),
                 elevation: 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(AppTheme.mediumSpacing),
+                  contentPadding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                   leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryBlue,
+                    backgroundColor: AppThemeColor.primaryBlue,
                     child: Icon(Icons.local_offer, color: Colors.white),
                   ),
                   title: Text(
@@ -620,7 +559,7 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                       ),
                       IconButton(
                         onPressed: () => _editDiscount(discount),
-                        icon: Icon(Icons.edit, color: AppTheme.primaryBlue),
+                        icon: Icon(Icons.edit, color: AppThemeColor.primaryBlue),
                       ),
                     ],
                   ),
@@ -638,17 +577,17 @@ class _FeeManagementPageState extends State<FeeManagementPage>
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
+        decoration: BoxDecoration(gradient: AppThemeColor.primaryGradient),
         child: SafeArea(
           child: Column(
             children: [
               // Header
               Container(
-                margin: EdgeInsets.all(AppTheme.defaultSpacing),
-                padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                margin: EdgeInsets.all(AppThemeColor.defaultSpacing),
+                padding: EdgeInsets.all(AppThemeColor.mediumSpacing),
                 decoration: BoxDecoration(
-                  color: AppTheme.white,
-                  borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+                  color: AppThemeColor.white,
+                  borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.1),
@@ -659,14 +598,14 @@ class _FeeManagementPageState extends State<FeeManagementPage>
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.payment, size: 32, color: AppTheme.primaryBlue),
-                    SizedBox(width: AppTheme.smallSpacing),
+                    Icon(Icons.payment, size: 32, color: AppThemeColor.primaryBlue),
+                    SizedBox(width: AppThemeColor.smallSpacing),
                     Text(
                       'Fee Management',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryBlue,
+                        color: AppThemeColor.primaryBlue,
                       ),
                     ),
                   ],
@@ -675,12 +614,12 @@ class _FeeManagementPageState extends State<FeeManagementPage>
 
               // Tab Bar
               Container(
-                margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
+                margin: EdgeInsets.symmetric(horizontal: AppThemeColor.defaultSpacing),
                 child: TabBar(
                   controller: _tabController,
-                  labelColor: AppTheme.white,
+                  labelColor: AppThemeColor.white,
                   unselectedLabelColor: Colors.grey,
-                  indicatorColor: AppTheme.white,
+                  indicatorColor: AppThemeColor.white,
                   tabs: [
                     Tab(text: 'Fee Slips', icon: Icon(Icons.receipt)),
                     Tab(text: 'Payment Status', icon: Icon(Icons.payment)),
@@ -693,14 +632,14 @@ class _FeeManagementPageState extends State<FeeManagementPage>
               Expanded(
                 child: Container(
                   margin: EdgeInsets.fromLTRB(
-                    AppTheme.defaultSpacing,
-                    AppTheme.smallSpacing,
-                    AppTheme.defaultSpacing,
-                    AppTheme.defaultSpacing,
+                    AppThemeColor.defaultSpacing,
+                    AppThemeColor.smallSpacing,
+                    AppThemeColor.defaultSpacing,
+                    AppThemeColor.defaultSpacing,
                   ),
                   decoration: BoxDecoration(
-                    color: AppTheme.white,
-                    borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+                    color: AppThemeColor.white,
+                    borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),

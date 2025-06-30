@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart' as AppTheme;
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/model/userRequestModel.dart';
 
 class UserRequestsPage extends StatefulWidget {
@@ -45,7 +44,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
 
   void _initializeAnimations() {
     _animationController = AnimationController(
-      duration: AppTheme.AppTheme.slideAnimationDuration,
+      duration: AppThemeColor.slideAnimationDuration,
       vsync: this,
     );
 
@@ -85,7 +84,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.AppTheme.primaryGradient),
+        decoration: const BoxDecoration(gradient: AppThemeColor.primaryGradient),
         child: SafeArea(
           child: Column(
             children: [
@@ -101,10 +100,10 @@ class _UserRequestsPageState extends State<UserRequestsPage>
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      padding: AppTheme.AppTheme.getScreenPadding(context),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       child: Text(
         'USER REQUESTS',
-        style: AppTheme.AppTheme.getFontStyle(context),
+        style: AppThemeResponsiveness.getFontStyle(context),
       ),
     );
   }
@@ -112,16 +111,16 @@ class _UserRequestsPageState extends State<UserRequestsPage>
   Widget _buildContentArea(BuildContext context) {
     return Expanded(
       child: Container(
-        constraints: BoxConstraints(maxWidth: AppTheme.AppTheme.getMaxWidth(context)),
+        constraints: BoxConstraints(maxWidth: AppThemeResponsiveness.getMaxWidth(context)),
         margin: EdgeInsets.only(
-          top: AppTheme.AppTheme.getSmallSpacing(context),
-          left: AppTheme.AppTheme.getMediumSpacing(context),
-          right: AppTheme.AppTheme.getMediumSpacing(context),
-          bottom: AppTheme.AppTheme.getMediumSpacing(context), // Added bottom margin
+          top: AppThemeResponsiveness.getSmallSpacing(context),
+          left: AppThemeResponsiveness.getMediumSpacing(context),
+          right: AppThemeResponsiveness.getMediumSpacing(context),
+          bottom: AppThemeResponsiveness.getMediumSpacing(context), // Added bottom margin
         ),
         decoration: BoxDecoration(
-          color: AppTheme.AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getExtraLargeSpacing(context)), // Full border radius
+          color: AppThemeColor.white,
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getExtraLargeSpacing(context)), // Full border radius
         ),
         child: FadeTransition(
           opacity: _fadeAnimation,
@@ -136,7 +135,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
 
   Widget _buildRequestsList(BuildContext context) {
     return ListView.builder(
-      padding: AppTheme.AppTheme.getScreenPadding(context),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       itemCount: userRequests.length,
       itemBuilder: (context, index) => _buildUserRequestCard(context, index),
     );
@@ -146,28 +145,28 @@ class _UserRequestsPageState extends State<UserRequestsPage>
     final request = userRequests[index];
 
     return Container(
-      margin: AppTheme.AppTheme.getHistoryCardMargin(context),
+      margin: AppThemeResponsiveness.getHistoryCardMargin(context),
       decoration: BoxDecoration(
-        color: AppTheme.AppTheme.white,
-        borderRadius: BorderRadius.circular(AppTheme.AppTheme.getCardBorderRadius(context)),
+        color:  AppThemeColor.white,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
             spreadRadius: 2,
-            blurRadius: AppTheme.AppTheme.getCardElevation(context),
+            blurRadius: AppThemeResponsiveness.getCardElevation(context),
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Padding(
-        padding: AppTheme.AppTheme.getCardPadding(context),
+        padding: AppThemeResponsiveness.getCardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildRequestInfo(context, index, request),
-            SizedBox(height: AppTheme.AppTheme.getSmallSpacing(context)),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
             _buildStatusBadge(context, request),
-            SizedBox(height: AppTheme.AppTheme.getMediumSpacing(context)),
+            SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
             _buildActionButtons(context, index),
           ],
         ),
@@ -179,27 +178,27 @@ class _UserRequestsPageState extends State<UserRequestsPage>
     return Row(
       children: [
         _buildRequestNumber(context, index),
-        SizedBox(width: AppTheme.AppTheme.getMediumSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
         Expanded(child: _buildRequestDetails(context, request)),
       ],
     );
   }
 
   Widget _buildRequestNumber(BuildContext context, int index) {
-    final iconSize = AppTheme.AppTheme.getIconSize(context);
+    final iconSize = AppThemeResponsiveness.getIconSize(context);
 
     return Container(
       width: iconSize * 1.5,
       height: iconSize * 1.5,
       decoration: BoxDecoration(
-        gradient: AppTheme.AppTheme.primaryGradient,
+        gradient: AppThemeColor.primaryGradient,
         borderRadius: BorderRadius.circular(iconSize * 0.75),
       ),
       child: Center(
         child: Text(
           '${index + 1}',
-          style: AppTheme.AppTheme.getButtonTextStyle(context).copyWith(
-            fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize,
+          style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+            fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize,
           ),
         ),
       ),
@@ -212,13 +211,13 @@ class _UserRequestsPageState extends State<UserRequestsPage>
       children: [
         Text(
           'Email: ${request.email}',
-          style: AppTheme.AppTheme.getHeadingStyle(context),
+          style: AppThemeResponsiveness.getHeadingStyle(context),
         ),
-        SizedBox(height: AppTheme.AppTheme.getSmallSpacing(context) * 0.4),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) * 0.4),
         Text(
           'Requested role: ${request.requestedRole}',
-          style: AppTheme.AppTheme.getSubHeadingStyle(context).copyWith(
-            color: AppTheme.AppTheme.blue600,
+          style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+            color: AppThemeColor.blue600,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -228,7 +227,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
 
   Widget _buildStatusBadge(BuildContext context, UserRequest request) {
     return Container(
-      padding: AppTheme.AppTheme.getStatusBadgePadding(context),
+      padding: AppThemeResponsiveness.getStatusBadgePadding(context),
       decoration: BoxDecoration(
         color: _getStatusColor(request.approvalStatus).withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
@@ -241,7 +240,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
         request.approvalStatus,
         style: TextStyle(
           color: _getStatusColor(request.approvalStatus),
-          fontSize: AppTheme.AppTheme.getStatusBadgeFontSize(context),
+          fontSize: AppThemeResponsiveness.getStatusBadgeFontSize(context),
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -249,7 +248,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
   }
 
   Widget _buildActionButtons(BuildContext context, int index) {
-    if (AppTheme.AppTheme.isMobile(context)) {
+    if (AppThemeResponsiveness.isMobile(context)) {
       return _buildMobileActionButtons(context, index);
     }
     return _buildDesktopActionButtons(context, index);
@@ -261,11 +260,11 @@ class _UserRequestsPageState extends State<UserRequestsPage>
         Row(
           children: [
             Expanded(child: _buildApproveButton(context, index)),
-            SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
             Expanded(child: _buildModifyButton(context, index)),
           ],
         ),
-        SizedBox(height: AppTheme.AppTheme.getSmallSpacing(context)),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         SizedBox(
           width: double.infinity,
           child: _buildDeclineButton(context, index),
@@ -278,9 +277,9 @@ class _UserRequestsPageState extends State<UserRequestsPage>
     return Row(
       children: [
         Expanded(child: _buildApproveButton(context, index)),
-        SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
         Expanded(child: _buildModifyButton(context, index)),
-        SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
         Expanded(child: _buildDeclineButton(context, index)),
       ],
     );
@@ -292,7 +291,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
       style: _getButtonStyle(context, Colors.green),
       child: Text(
         'Approve',
-        style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+        style: TextStyle(fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize),
       ),
     );
   }
@@ -300,10 +299,10 @@ class _UserRequestsPageState extends State<UserRequestsPage>
   Widget _buildModifyButton(BuildContext context, int index) {
     return ElevatedButton(
       onPressed: () => _showModifyDialog(index),
-      style: _getButtonStyle(context, AppTheme.AppTheme.blue600),
+      style: _getButtonStyle(context, AppThemeColor.blue600),
       child: Text(
         'Modify',
-        style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+        style: TextStyle(fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize),
       ),
     );
   }
@@ -314,7 +313,7 @@ class _UserRequestsPageState extends State<UserRequestsPage>
       style: _getButtonStyle(context, Colors.red),
       child: Text(
         'Decline',
-        style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+        style: TextStyle(fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize),
       ),
     );
   }
@@ -322,12 +321,12 @@ class _UserRequestsPageState extends State<UserRequestsPage>
   ButtonStyle _getButtonStyle(BuildContext context, Color backgroundColor) {
     return ElevatedButton.styleFrom(
       backgroundColor: backgroundColor,
-      foregroundColor: AppTheme.AppTheme.white,
-      elevation: AppTheme.AppTheme.getButtonElevation(context),
+      foregroundColor: AppThemeColor.white,
+      elevation: AppThemeResponsiveness.getButtonElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.AppTheme.getButtonBorderRadius(context)),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
       ),
-      minimumSize: Size(double.infinity, AppTheme.AppTheme.getButtonHeight(context) * 0.8),
+      minimumSize: Size(double.infinity, AppThemeResponsiveness.getButtonHeight(context) * 0.8),
     );
   }
 
@@ -352,22 +351,22 @@ class _UserRequestsPageState extends State<UserRequestsPage>
       context: context,
       builder: (context) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getCardBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         ),
         child: Container(
-          width: AppTheme.AppTheme.getDialogWidth(context),
-          padding: AppTheme.AppTheme.getScreenPadding(context),
+          width: AppThemeResponsiveness.getDialogWidth(context),
+          padding: AppThemeResponsiveness.getScreenPadding(context),
           decoration: BoxDecoration(
-            gradient: AppTheme.AppTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(AppTheme.AppTheme.getCardBorderRadius(context)),
+            gradient: AppThemeColor.primaryGradient,
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildDialogTitle(context),
-              SizedBox(height: AppTheme.AppTheme.getDefaultSpacing(context)),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
               _buildDialogTextField(context, roleController),
-              SizedBox(height: AppTheme.AppTheme.getDefaultSpacing(context)),
+              SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
               _buildDialogActions(context, index, roleController),
             ],
           ),
@@ -379,8 +378,8 @@ class _UserRequestsPageState extends State<UserRequestsPage>
   Widget _buildDialogTitle(BuildContext context) {
     return Text(
       'Modify Request',
-      style: AppTheme.AppTheme.getFontStyle(context).copyWith(
-        fontSize: AppTheme.AppTheme.getSubHeadingStyle(context).fontSize! * 1.25,
+      style: AppThemeResponsiveness.getFontStyle(context).copyWith(
+        fontSize: AppThemeResponsiveness.getSubHeadingStyle(context).fontSize! * 1.25,
       ),
     );
   }
@@ -389,24 +388,24 @@ class _UserRequestsPageState extends State<UserRequestsPage>
     return TextField(
       controller: controller,
       style: TextStyle(
-        color: AppTheme.AppTheme.white,
-        fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize,
+        color: AppThemeColor.white,
+        fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize,
       ),
       decoration: InputDecoration(
         labelText: 'Requested Role',
         labelStyle: TextStyle(
-          color: AppTheme.AppTheme.white70,
-          fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize,
+          color: AppThemeColor.white70,
+          fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getInputBorderRadius(context)),
-          borderSide: const BorderSide(color: AppTheme.AppTheme.white70),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: const BorderSide(color: AppThemeColor.white70),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getInputBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
           borderSide: BorderSide(
-            color: AppTheme.AppTheme.white,
-            width: AppTheme.AppTheme.getFocusedBorderWidth(context),
+            color: AppThemeColor.white,
+            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
           ),
         ),
       ),
@@ -420,35 +419,35 @@ class _UserRequestsPageState extends State<UserRequestsPage>
           child: ElevatedButton(
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.AppTheme.white.withOpacity(0.2),
-              foregroundColor: AppTheme.AppTheme.white,
+              backgroundColor: AppThemeColor.white.withOpacity(0.2),
+              foregroundColor: AppThemeColor.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.AppTheme.getButtonBorderRadius(context)),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
               ),
-              side: const BorderSide(color: AppTheme.AppTheme.white70),
-              minimumSize: Size(double.infinity, AppTheme.AppTheme.getButtonHeight(context) * 0.8),
+              side: const BorderSide(color: AppThemeColor.white70),
+              minimumSize: Size(double.infinity, AppThemeResponsiveness.getButtonHeight(context) * 0.8),
             ),
             child: Text(
               'Cancel',
-              style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+              style: TextStyle(fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize),
             ),
           ),
         ),
-        SizedBox(width: AppTheme.AppTheme.getSmallSpacing(context)),
+        SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
         Expanded(
           child: ElevatedButton(
             onPressed: () => _handleModifySave(context, index, controller),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.AppTheme.white,
-              foregroundColor: AppTheme.AppTheme.primaryBlue,
+              backgroundColor: AppThemeColor.white,
+              foregroundColor: AppThemeColor.primaryBlue,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.AppTheme.getButtonBorderRadius(context)),
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
               ),
-              minimumSize: Size(double.infinity, AppTheme.AppTheme.getButtonHeight(context) * 0.8),
+              minimumSize: Size(double.infinity, AppThemeResponsiveness.getButtonHeight(context) * 0.8),
             ),
             child: Text(
               'Save',
-              style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+              style: TextStyle(fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize),
             ),
           ),
         ),
@@ -486,14 +485,14 @@ class _UserRequestsPageState extends State<UserRequestsPage>
       SnackBar(
         content: Text(
           message,
-          style: TextStyle(fontSize: AppTheme.AppTheme.getBodyTextStyle(context).fontSize),
+          style: TextStyle(fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize),
         ),
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.AppTheme.getInputBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
-        margin: AppTheme.AppTheme.getScreenPadding(context),
+        margin: AppThemeResponsiveness.getScreenPadding(context),
       ),
     );
   }

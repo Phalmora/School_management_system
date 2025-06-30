@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/button.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/customWidgets/inputField.dart';
 
 class AdmissionBasicInfoScreen extends StatefulWidget {
   @override
@@ -33,6 +34,16 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
   DateTime _selectedDate = DateTime.now();
   DateTime _selectedDateOfBirth = DateTime.now().subtract(Duration(days: 365 * 5)); // Default to 5 years ago
 
+  // Consistent field dimensions
+  static const double FIELD_HEIGHT = 56.0;
+  static const double VERTICAL_PADDING = 16.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneController.addListener(_onPhoneNumberChanged);
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -45,70 +56,84 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
     super.dispose();
   }
 
+  void _onPhoneNumberChanged() {
+    setState(() {
+      _showOtpButton = _phoneController.text.length >= 10;
+      if (_otpSent) {
+        _showOtpField = false;
+        _otpSent = false;
+        _otpController.clear();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: AppTheme.getMaxWidth(context),
+                maxWidth: AppThemeResponsiveness.getMaxWidth(context),
               ),
               child: SingleChildScrollView(
-                padding: AppTheme.getScreenPadding(context),
+                padding: AppThemeResponsiveness.getScreenPadding(context),
                 child: Column(
                   children: [
                     _buildProgressIndicator(1, 4),
-                    SizedBox(height: AppTheme.getDefaultSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                     Text(
                       'Student Information',
-                      style: AppTheme.getFontStyle(context),
+                      style: AppThemeResponsiveness.getFontStyle(context),
                     ),
-                    SizedBox(height: AppTheme.getSmallSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
                     Text(
                       'Please fill in all the required information',
-                      style: AppTheme.getSplashSubtitleStyle(context),
+                      style: AppThemeResponsiveness.getSplashSubtitleStyle(context),
                     ),
-                    SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                    SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                     Card(
-                      elevation: AppTheme.getCardElevation(context),
+                      elevation: AppThemeResponsiveness.getCardElevation(context),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppTheme.getCardBorderRadius(context)),
+                        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
                       ),
                       child: Padding(
-                        padding: AppTheme.getCardPadding(context),
+                        padding: AppThemeResponsiveness.getCardPadding(context),
                         child: Form(
                           key: _formKey,
                           child: Column(
                             children: [
-                              _buildTextField(
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _nameController,
                                 label: 'Full Name *',
                                 icon: Icons.person,
                                 validator: (value) =>
                                 value!.isEmpty ? 'Please enter student name' : null,
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               _buildDateOfBirthPicker(),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               _buildGenderDropdown(),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _nationalityController,
                                 label: 'Nationality *',
                                 icon: Icons.flag,
                                 validator: (value) =>
                                 value!.isEmpty ? 'Please enter nationality' : null,
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _aadharController,
-                                label: 'Aadhar Number / National ID *',
+                                label: 'Aadhaar Number / National ID *',
                                 icon: Icons.credit_card,
                                 keyboardType: TextInputType.number,
                                 validator: (value) {
@@ -117,29 +142,31 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
                                   return null;
                                 },
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               _buildCategoryDropdown(),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               _buildAcademicYearDropdown(),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               _buildClassDropdown(),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               _buildDatePicker(),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               _buildStudentTypeDropdown(),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               // Show Previous School field only when Transfer is selected
                               if (_selectedStudentType == 'Transfer') ...[
-                                _buildTextField(
+                                AppTextFieldBuilder.build(
+                                  context: context,
                                   controller: _previousSchoolController,
                                   label: 'Previous School *',
                                   icon: Icons.school,
                                   validator: (value) =>
                                   value!.isEmpty ? 'Please enter previous school name' : null,
                                 ),
-                                SizedBox(height: AppTheme.getMediumSpacing(context)),
+                                SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               ],
-                              _buildTextField(
+                              AppTextFieldBuilder.build(
+                                context: context,
                                 controller: _emailController,
                                 label: 'Email *',
                                 icon: Icons.email,
@@ -150,19 +177,9 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
                                   return null;
                                 },
                               ),
-                              SizedBox(height: AppTheme.getMediumSpacing(context)),
-                              _buildTextField(
-                                controller: _phoneController,
-                                label: 'Phone Number *',
-                                icon: Icons.phone,
-                                keyboardType: TextInputType.phone,
-                                validator: (value) {
-                                  if (value!.isEmpty) return 'Please enter phone number';
-                                  if (value.length < 10) return 'Please enter valid phone number';
-                                  return null;
-                                },
-                              ),
-                              SizedBox(height: AppTheme.getExtraLargeSpacing(context)),
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              _buildPhoneFieldWithOTP(),
+                              SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
                               buildActionButtons(),
                             ],
                           ),
@@ -179,135 +196,50 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
     );
   }
 
-  Widget _buildProgressIndicator(int currentStep, int totalSteps) {
-    return Container(
-      padding: AppTheme.getVerticalPadding(context),
-      child: Row(
-        children: List.generate(totalSteps, (index) {
-          bool isCompleted = index < currentStep;
-          bool isCurrent = index == currentStep - 1;
-
-          return Expanded(
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: AppTheme.getSmallSpacing(context) / 4,
-              ),
-              height: AppTheme.isMobile(context) ? 4 : 6,
-              decoration: BoxDecoration(
-                color: isCompleted || isCurrent
-                    ? AppTheme.blue600
-                    : Colors.grey[300],
-                borderRadius: BorderRadius.circular(AppTheme.isMobile(context) ? 2 : 3),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    TextInputType? keyboardType,
-    int? maxLines,
-    String? Function(String?)? validator,
-  }) {
-    bool isPhoneField = controller == _phoneController;
-    int effectiveMaxLines = maxLines ?? AppTheme.getTextFieldMaxLines(context);
-
+  Widget _buildPhoneFieldWithOTP() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          maxLines: effectiveMaxLines,
-          validator: validator,
-          onChanged: isPhoneField ? _onPhoneNumberChanged : null,
-          style: AppTheme.getBodyTextStyle(context),
-          decoration: InputDecoration(
-            labelText: label,
-            labelStyle: AppTheme.getSubHeadingStyle(context),
-            prefixIcon: Icon(
-              icon,
-              size: AppTheme.getIconSize(context),
-              color: Colors.grey[600],
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-              borderSide: BorderSide(
-                color: AppTheme.blue600,
-                width: AppTheme.getFocusedBorderWidth(context),
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-              borderSide: BorderSide(
-                color: Colors.grey,
-                width: 1.0,
-              ),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: AppTheme.getDefaultSpacing(context),
-              vertical: AppTheme.getMediumSpacing(context),
-            ),
-            filled: true,
-            fillColor: Colors.white,
-          ),
+        // Phone number field with onChanged callback
+        AppTextFieldBuilder.build(
+          context: context,
+          controller: _phoneController,
+          label: 'Phone Number *',
+          icon: Icons.phone,
+          keyboardType: TextInputType.phone,
+          onChanged: (value) {
+            setState(() {
+              _showOtpButton = value.length >= 10;
+              if (_otpSent) {
+                _showOtpField = false;
+                _otpSent = false;
+                _otpController.clear();
+              }
+            });
+          },
+          validator: (value) {
+            if (value!.isEmpty) return 'Please enter phone number';
+            if (value.length < 10) return 'Please enter valid phone number';
+            return null;
+          },
         ),
 
-        // Show OTP button for phone field
-        if (isPhoneField && _showOtpButton && !_otpSent) ...[
-          SizedBox(height: AppTheme.getMediumSpacing(context)),
+        // Show OTP button when phone number is valid
+        if (_showOtpButton && !_otpSent) ...[
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
           _buildOtpButton('Send OTP', _sendOtp),
         ],
 
-        // Show OTP input field
-        if (isPhoneField && _showOtpField) ...[
-          SizedBox(height: AppTheme.getMediumSpacing(context)),
-          TextFormField(
+        // Show OTP input field after OTP is sent
+        if (_showOtpField) ...[
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          AppTextFieldBuilder.build(
+            context: context,
             controller: _otpController,
+            label: 'Enter Verification Code',
+            icon: Icons.security,
             keyboardType: TextInputType.number,
             maxLength: 6,
-            style: AppTheme.getBodyTextStyle(context),
-            decoration: InputDecoration(
-              labelText: 'Enter Verification Code',
-              labelStyle: AppTheme.getSubHeadingStyle(context),
-              prefixIcon: Icon(
-                Icons.security,
-                size: AppTheme.getIconSize(context),
-                color: Colors.grey[600],
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-                borderSide: BorderSide(
-                  color: AppTheme.blue600,
-                  width: AppTheme.getFocusedBorderWidth(context),
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-                borderSide: BorderSide(
-                  color: Colors.grey,
-                  width: 1.0,
-                ),
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: AppTheme.getDefaultSpacing(context),
-                vertical: AppTheme.getMediumSpacing(context),
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              counterText: '',
-            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter verification code';
@@ -318,45 +250,99 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
               return null;
             },
           ),
-          SizedBox(height: AppTheme.getMediumSpacing(context)),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
           _buildOtpButton('Verify OTP', _verifyOtp),
         ],
       ],
     );
   }
-
-  Widget _buildOtpButton(String text, VoidCallback onPressed) {
+  Widget _buildProgressIndicator(int currentStep, int totalSteps) {
     return Container(
-      height: AppTheme.getButtonHeight(context),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.blue600,
-          foregroundColor: Colors.white,
-          elevation: AppTheme.getButtonElevation(context),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          ),
-        ),
-        child: Text(
-          text,
-          style: AppTheme.getButtonTextStyle(context),
-        ),
+      padding: AppThemeResponsiveness.getVerticalPadding(context),
+      child: Row(
+        children: List.generate(totalSteps, (index) {
+          bool isCompleted = index < currentStep;
+          bool isCurrent = index == currentStep - 1;
+
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: AppThemeResponsiveness.getSmallSpacing(context) / 4,
+              ),
+              height: AppThemeResponsiveness.isMobile(context) ? 4 : 6,
+              decoration: BoxDecoration(
+                color: isCompleted || isCurrent
+                    ? AppThemeColor.blue600
+                    : Colors.grey[300],
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.isMobile(context) ? 2 : 3),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
 
-  void _onPhoneNumberChanged(String value) {
-    setState(() {
-      _showOtpButton = value.length >= 10;
-      if (_otpSent) {
-        _showOtpField = false;
-        _otpSent = false;
-        _otpController.clear();
-      }
-    });
+  // Common input decoration for consistency
+  InputDecoration _getInputDecoration({
+    required String label,
+    required IconData icon,
+  }) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: AppThemeResponsiveness.getSubHeadingStyle(context),
+      prefixIcon: Icon(
+        icon,
+        size: AppThemeResponsiveness.getIconSize(context),
+        color: Colors.grey[600],
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        borderSide: BorderSide(
+          color: AppThemeColor.blue600,
+          width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        borderSide: BorderSide(
+          color: Colors.grey,
+          width: 1.0,
+        ),
+      ),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+        vertical: VERTICAL_PADDING,
+      ),
+      filled: true,
+      fillColor: Colors.white,
+    );
   }
 
+  Widget _buildOtpButton(String text, VoidCallback onPressed) {
+    return SizedBox(
+      height: AppThemeResponsiveness.getButtonHeight(context),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppThemeColor.blue600,
+          foregroundColor: Colors.white,
+          elevation: AppThemeResponsiveness.getButtonElevation(context),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          ),
+        ),
+        child: Text(
+          text,
+          style: AppThemeResponsiveness.getButtonTextStyle(context),
+        ),
+      ),
+    );
+  }
+  
   void _sendOtp() {
     setState(() {
       _showOtpField = true;
@@ -368,7 +354,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
       SnackBar(
         content: Text(
           'OTP sent successfully!',
-          style: AppTheme.getBodyTextStyle(context),
+          style: AppThemeResponsiveness.getBodyTextStyle(context),
         ),
         backgroundColor: Colors.green,
       ),
@@ -381,7 +367,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
         SnackBar(
           content: Text(
             'Phone number verified successfully!',
-            style: AppTheme.getBodyTextStyle(context),
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
           ),
           backgroundColor: Colors.green,
         ),
@@ -391,7 +377,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
         SnackBar(
           content: Text(
             'Please enter a valid 6-digit OTP',
-            style: AppTheme.getBodyTextStyle(context),
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
           ),
           backgroundColor: Colors.red,
         ),
@@ -411,7 +397,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
             return Theme(
               data: Theme.of(context).copyWith(
                 colorScheme: ColorScheme.light(
-                  primary: AppTheme.blue600,
+                  primary: AppThemeColor.blue600,
                   onPrimary: Colors.white,
                   surface: Colors.white,
                   onSurface: Colors.black,
@@ -428,13 +414,14 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
         }
       },
       child: Container(
+        height: FIELD_HEIGHT,
         padding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
+          horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+          vertical: VERTICAL_PADDING,
         ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
           color: Colors.white,
         ),
         child: Row(
@@ -442,13 +429,13 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
             Icon(
               Icons.cake,
               color: Colors.grey[600],
-              size: AppTheme.getIconSize(context),
+              size: AppThemeResponsiveness.getIconSize(context),
             ),
-            SizedBox(width: AppTheme.getMediumSpacing(context)),
+            SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
             Expanded(
               child: Text(
                 "Date of Birth: ${_selectedDateOfBirth.day}/${_selectedDateOfBirth.month}/${_selectedDateOfBirth.year}",
-                style: AppTheme.getBodyTextStyle(context),
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
               ),
             ),
           ],
@@ -458,256 +445,156 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
   }
 
   Widget _buildGenderDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedGender,
-      style: AppTheme.getBodyTextStyle(context),
-      dropdownColor: Colors.white,
-      decoration: InputDecoration(
-        labelText: 'Gender *',
-        labelStyle: AppTheme.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          Icons.person_outline,
-          size: AppTheme.getIconSize(context),
+    return SizedBox(
+      height: FIELD_HEIGHT,
+      child: DropdownButtonFormField<String>(
+        value: _selectedGender,
+        style: AppThemeResponsiveness.getBodyTextStyle(context),
+        dropdownColor: Colors.white,
+        decoration: _getInputDecoration(
+          label: 'Gender *',
+          icon: Icons.person_outline,
+        ),
+        items: _genderOptions.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: Colors.black87,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedGender = newValue;
+          });
+        },
+        validator: (value) => value == null ? 'Please select gender' : null,
+        icon: Icon(
+          Icons.arrow_drop_down,
           color: Colors.grey[600],
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: AppTheme.blue600,
-            width: AppTheme.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      items: _genderOptions.map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: AppTheme.getBodyTextStyle(context).copyWith(
-              color: Colors.black87,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedGender = newValue;
-        });
-      },
-      validator: (value) => value == null ? 'Please select gender' : null,
-      icon: Icon(
-        Icons.arrow_drop_down,
-        color: Colors.grey[600],
       ),
     );
   }
 
   Widget _buildCategoryDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedCategory,
-      style: AppTheme.getBodyTextStyle(context),
-      dropdownColor: Colors.white,
-      decoration: InputDecoration(
-        labelText: 'Category *',
-        labelStyle: AppTheme.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          Icons.category,
-          size: AppTheme.getIconSize(context),
+    return SizedBox(
+      height: FIELD_HEIGHT,
+      child: DropdownButtonFormField<String>(
+        value: _selectedCategory,
+        style: AppThemeResponsiveness.getBodyTextStyle(context),
+        dropdownColor: Colors.white,
+        decoration: _getInputDecoration(
+          label: 'Category *',
+          icon: Icons.category,
+        ),
+        items: _categoryOptions.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: Colors.black87,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedCategory = newValue;
+          });
+        },
+        validator: (value) => value == null ? 'Please select category' : null,
+        icon: Icon(
+          Icons.arrow_drop_down,
           color: Colors.grey[600],
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: AppTheme.blue600,
-            width: AppTheme.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      items: _categoryOptions.map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: AppTheme.getBodyTextStyle(context).copyWith(
-              color: Colors.black87,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedCategory = newValue;
-        });
-      },
-      validator: (value) => value == null ? 'Please select category' : null,
-      icon: Icon(
-        Icons.arrow_drop_down,
-        color: Colors.grey[600],
       ),
     );
   }
 
   Widget _buildAcademicYearDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedAcademicYear,
-      style: AppTheme.getBodyTextStyle(context),
-      dropdownColor: Colors.white,
-      decoration: InputDecoration(
-        labelText: 'Academic Year *',
-        labelStyle: AppTheme.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          Icons.calendar_today,
-          size: AppTheme.getIconSize(context),
+    return SizedBox(
+      height: FIELD_HEIGHT,
+      child: DropdownButtonFormField<String>(
+        value: _selectedAcademicYear,
+        style: AppThemeResponsiveness.getBodyTextStyle(context),
+        dropdownColor: Colors.white,
+        decoration: _getInputDecoration(
+          label: 'Academic Year *',
+          icon: Icons.calendar_today,
+        ),
+        items: [
+          '2024-2025',
+          '2025-2026',
+          '2026-2027',
+          '2027-2028',
+          '2028-2029'
+        ].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: Colors.black87,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedAcademicYear = newValue!;
+          });
+        },
+        validator: (value) => value == null ? 'Please select an academic year' : null,
+        icon: Icon(
+          Icons.arrow_drop_down,
           color: Colors.grey[600],
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: AppTheme.blue600,
-            width: AppTheme.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      items: [
-        '2024-2025',
-        '2025-2026',
-        '2026-2027',
-        '2027-2028',
-        '2028-2029'
-      ].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: AppTheme.getBodyTextStyle(context).copyWith(
-              color: Colors.black87,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedAcademicYear = newValue!;
-        });
-      },
-      validator: (value) => value == null ? 'Please select an academic year' : null,
-      icon: Icon(
-        Icons.arrow_drop_down,
-        color: Colors.grey[600],
       ),
     );
   }
 
   Widget _buildClassDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedClass,
-      style: AppTheme.getBodyTextStyle(context),
-      dropdownColor: Colors.white,
-      decoration: InputDecoration(
-        labelText: 'Class to be Admitted In *',
-        labelStyle: AppTheme.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          Icons.class_,
-          size: AppTheme.getIconSize(context),
+    return SizedBox(
+      height: FIELD_HEIGHT,
+      child: DropdownButtonFormField<String>(
+        value: _selectedClass,
+        style: AppThemeResponsiveness.getBodyTextStyle(context),
+        dropdownColor: Colors.white,
+        decoration: _getInputDecoration(
+          label: 'Class to be Admitted In *',
+          icon: Icons.class_,
+        ),
+        items: [
+          'Nursery', 'LKG', 'UKG',
+          '1st Grade', '2nd Grade', '3rd Grade', '4th Grade',
+          '5th Grade', '6th Grade', '7th Grade', '8th Grade',
+          '9th Grade', '10th Grade', '11th Grade', '12th Grade'
+        ].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: Colors.black87,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedClass = newValue!;
+          });
+        },
+        validator: (value) => value == null ? 'Please select a class' : null,
+        icon: Icon(
+          Icons.arrow_drop_down,
           color: Colors.grey[600],
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: AppTheme.blue600,
-            width: AppTheme.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      items: [
-        'Nursery', 'LKG', 'UKG',
-        '1st Grade', '2nd Grade', '3rd Grade', '4th Grade',
-        '5th Grade', '6th Grade', '7th Grade', '8th Grade',
-        '9th Grade', '10th Grade', '11th Grade', '12th Grade'
-      ].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: AppTheme.getBodyTextStyle(context).copyWith(
-              color: Colors.black87,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedClass = newValue!;
-        });
-      },
-      validator: (value) => value == null ? 'Please select a class' : null,
-      icon: Icon(
-        Icons.arrow_drop_down,
-        color: Colors.grey[600],
       ),
     );
   }
@@ -724,7 +611,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
             return Theme(
               data: Theme.of(context).copyWith(
                 colorScheme: ColorScheme.light(
-                  primary: AppTheme.blue600,
+                  primary: AppThemeColor.blue600,
                   onPrimary: Colors.white,
                   surface: Colors.white,
                   onSurface: Colors.black,
@@ -741,13 +628,14 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
         }
       },
       child: Container(
+        height: FIELD_HEIGHT,
         padding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
+          horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+          vertical: VERTICAL_PADDING,
         ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
           color: Colors.white,
         ),
         child: Row(
@@ -755,13 +643,13 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
             Icon(
               Icons.date_range,
               color: Colors.grey[600],
-              size: AppTheme.getIconSize(context),
+              size: AppThemeResponsiveness.getIconSize(context),
             ),
-            SizedBox(width: AppTheme.getMediumSpacing(context)),
+            SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
             Expanded(
               child: Text(
                 "Admission Date: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}",
-                style: AppTheme.getBodyTextStyle(context),
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
               ),
             ),
           ],
@@ -771,117 +659,60 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
   }
 
   Widget _buildStudentTypeDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedStudentType,
-      style: AppTheme.getBodyTextStyle(context),
-      dropdownColor: Colors.white,
-      decoration: InputDecoration(
-        labelText: 'Student Type *',
-        labelStyle: AppTheme.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          Icons.person_outline,
-          size: AppTheme.getIconSize(context),
+    return SizedBox(
+      height: FIELD_HEIGHT,
+      child: DropdownButtonFormField<String>(
+        value: _selectedStudentType,
+        style: AppThemeResponsiveness.getBodyTextStyle(context),
+        dropdownColor: Colors.white,
+        decoration: _getInputDecoration(
+          label: 'Student Type *',
+          icon: Icons.person_outline,
+        ),
+        items: [
+          'New',
+          'Transfer'
+        ].map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(
+              value,
+              style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                color: Colors.black87,
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            _selectedStudentType = newValue!;
+          });
+        },
+        validator: (value) => value == null ? 'Please select student type' : null,
+        icon: Icon(
+          Icons.arrow_drop_down,
           color: Colors.grey[600],
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: AppTheme.blue600,
-            width: AppTheme.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppTheme.getDefaultSpacing(context),
-          vertical: AppTheme.getMediumSpacing(context),
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      items: [
-        'New',
-        'Transfer'
-      ].map((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: AppTheme.getBodyTextStyle(context).copyWith(
-              color: Colors.black87,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedStudentType = newValue!;
-        });
-      },
-      validator: (value) => value == null ? 'Please select student type' : null,
-      icon: Icon(
-        Icons.arrow_drop_down,
-        color: Colors.grey[600],
       ),
     );
   }
 
   Widget buildActionButtons() {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: Container(
-            height: AppTheme.getButtonHeight(context),
-            child: _buildAnimatedButton(
-              text: 'Back',
-              onPressed: () => Navigator.pop(context),
-              isSecondary: true,
-            ),
-          ),
+        PrimaryButton(
+          title: 'Next',
+          icon: Icon(Icons.arrow_forward, color: Colors.white),
+          onPressed: _nextPage,
         ),
-        SizedBox(width: AppTheme.getMediumSpacing(context)),
-        Expanded(
-          child: Container(
-            height: AppTheme.getButtonHeight(context),
-            child: _buildAnimatedButton(
-              text: 'Next',
-              onPressed: _nextPage,
-            ),
-          ),
-        ),
+        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+        SecondaryButton(
+          title: 'Back',
+          icon: Icon(Icons.arrow_back_rounded, color: AppThemeColor.blue600),
+          color: AppThemeColor.blue600,
+          onPressed: () => Navigator.pop(context),
+        )
       ],
-    );
-  }
-
-  Widget _buildAnimatedButton({
-    required String text,
-    required VoidCallback onPressed,
-    bool isSecondary = false,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSecondary ? Colors.grey[300] : AppTheme.blue600,
-        foregroundColor: isSecondary ? Colors.black87 : Colors.white,
-        elevation: AppTheme.getButtonElevation(context),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.getInputBorderRadius(context)),
-        ),
-      ),
-      child: Text(
-        text,
-        style: AppTheme.getButtonTextStyle(context).copyWith(
-          color: isSecondary ? Colors.black87 : Colors.white,
-        ),
-      ),
     );
   }
 
@@ -893,7 +724,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
           SnackBar(
             content: Text(
               'Please verify your phone number first',
-              style: AppTheme.getBodyTextStyle(context),
+              style: AppThemeResponsiveness.getBodyTextStyle(context),
             ),
             backgroundColor: Colors.orange,
           ),
@@ -906,7 +737,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
           SnackBar(
             content: Text(
               'Please enter and verify the 6-digit OTP',
-              style: AppTheme.getBodyTextStyle(context),
+              style: AppThemeResponsiveness.getBodyTextStyle(context),
             ),
             backgroundColor: Colors.red,
           ),
@@ -943,7 +774,7 @@ class _AdmissionBasicInfoScreenState extends State<AdmissionBasicInfoScreen> {
         SnackBar(
           content: Text(
             'Please fill in all required fields',
-            style: AppTheme.getBodyTextStyle(context),
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
           ),
           backgroundColor: Colors.red,
         ),

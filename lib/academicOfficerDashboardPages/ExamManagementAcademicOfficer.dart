@@ -1,65 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/CommonLogic/tabBar.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/model/examManagement.dart';
 
-// Models
-class ExamSession {
-  final String id;
-  final String name;
-  final String className;
-  final String subject;
-  final DateTime deadline;
-  final bool isLocked;
-  final int totalStudents;
-  final int marksEntered;
-  final DateTime createdAt;
-
-  ExamSession({
-    required this.id,
-    required this.name,
-    required this.className,
-    required this.subject,
-    required this.deadline,
-    this.isLocked = false,
-    this.totalStudents = 0,
-    this.marksEntered = 0,
-    required this.createdAt,
-  });
-
-  ExamSession copyWith({
-    String? id,
-    String? name,
-    String? className,
-    String? subject,
-    DateTime? deadline,
-    bool? isLocked,
-    int? totalStudents,
-    int? marksEntered,
-    DateTime? createdAt,
-  }) {
-    return ExamSession(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      className: className ?? this.className,
-      subject: subject ?? this.subject,
-      deadline: deadline ?? this.deadline,
-      isLocked: isLocked ?? this.isLocked,
-      totalStudents: totalStudents ?? this.totalStudents,
-      marksEntered: marksEntered ?? this.marksEntered,
-      createdAt: createdAt ?? this.createdAt,
-    );
-  }
-
-  double get completionPercentage {
-    if (totalStudents == 0) return 0.0;
-    return (marksEntered / totalStudents) * 100;
-  }
-
-  bool get isOverdue {
-    return DateTime.now().isAfter(deadline) && !isLocked;
-  }
-}
 
 // Main Exam Management Screen
 class ExamManagementScreen extends StatefulWidget {
@@ -131,13 +75,26 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
       appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
             children: [
               _buildAppBar(context),
-              _buildTabBar(context),
+              CustomTabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(text: 'Active'),
+                  Tab(text: 'Overdue'),
+                  Tab(text: 'Completed'),
+                ],
+                getSpacing: AppThemeResponsiveness.getDefaultSpacing,
+                getBorderRadius: AppThemeResponsiveness.getInputBorderRadius,
+                getFontSize: AppThemeResponsiveness.getTabFontSize,
+                backgroundColor: AppThemeColor.blue50,
+                selectedColor: AppThemeColor.primaryBlue,
+                unselectedColor: AppThemeColor.blue600,
+              ),
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
@@ -160,18 +117,18 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
     if (isSmallScreen) {
       return FloatingActionButton(
         onPressed: () => _showCreateExamDialog(),
-        backgroundColor: AppTheme.primaryPurple,
-        child: const Icon(Icons.add, color: AppTheme.white),
+        backgroundColor: AppThemeColor.primaryIndigo,
+        child: const Icon(Icons.add, color: AppThemeColor.white),
       );
     }
 
     return FloatingActionButton.extended(
       onPressed: () => _showCreateExamDialog(),
-      backgroundColor: AppTheme.primaryPurple,
-      icon: const Icon(Icons.add, color: AppTheme.white),
+      backgroundColor: AppThemeColor.primaryIndigo,
+      icon: const Icon(Icons.add, color: AppThemeColor.white),
       label: const Text(
         'New Exam',
-        style: TextStyle(color: AppTheme.white, fontWeight: FontWeight.bold),
+        style: TextStyle(color: AppThemeColor.white, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -184,12 +141,12 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
       padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
       child: Row(
         children: [
-          const Icon(Icons.school, color: AppTheme.white, size: 28),
+          const Icon(Icons.school, color: AppThemeColor.white, size: 28),
           SizedBox(width: screenWidth * 0.02),
           Expanded(
             child: Text(
               'Exam Management',
-              style: AppTheme.FontStyle.copyWith(
+              style: AppThemeResponsiveness.FontStyle.copyWith(
                 fontSize: isSmallScreen ? 18 : 24,
               ),
               overflow: TextOverflow.ellipsis,
@@ -197,41 +154,8 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
           ),
           IconButton(
             onPressed: () => _showBulkActionsDialog(),
-            icon: const Icon(Icons.more_vert, color: AppTheme.white),
+            icon: const Icon(Icons.more_vert, color: AppThemeColor.white),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabBar(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
-      decoration: BoxDecoration(
-        color: AppTheme.white.withAlpha(51), // 20% opacity
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-      ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-        ),
-        labelColor: AppTheme.primaryBlue,
-        unselectedLabelColor: AppTheme.white,
-        labelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: screenWidth < 400 ? 12 : 14,
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: screenWidth < 400 ? 12 : 14,
-        ),
-        tabs: const [
-          Tab(text: 'Active'),
-          Tab(text: 'Overdue'),
-          Tab(text: 'Completed'),
         ],
       ),
     );
@@ -266,7 +190,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
             Icon(
               Icons.assignment_outlined,
               size: 64,
-              color: AppTheme.white.withAlpha(128), // 50% opacity
+              color: AppThemeColor.white.withAlpha(128), // 50% opacity
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             Padding(
@@ -274,7 +198,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
               child: Text(
                 emptyMessage,
                 style: const TextStyle(
-                  color: AppTheme.white70,
+                  color: AppThemeColor.white70,
                   fontSize: 16,
                   fontFamily: 'Roboto',
                 ),
@@ -301,9 +225,9 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
     return Container(
       margin: EdgeInsets.only(bottom: screenWidth * 0.04),
       child: Card(
-        elevation: AppTheme.cardElevation,
+        elevation: AppThemeColor.cardElevation,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         child: Container(
           padding: EdgeInsets.all(screenWidth * 0.04),
@@ -340,7 +264,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
                     ? Colors.red.withAlpha(51) // 20% opacity
                     : exam.isLocked
                     ? Colors.green.withAlpha(51) // 20% opacity
-                    : AppTheme.blue50,
+                    : AppThemeColor.blue50,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -353,7 +277,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
                     ? Colors.red
                     : exam.isLocked
                     ? Colors.green
-                    : AppTheme.primaryBlue,
+                    : AppThemeColor.primaryBlue,
                 size: isSmallScreen ? 20 : 24,
               ),
             ),
@@ -414,7 +338,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
       chipColor = Colors.red;
       chipText = 'Overdue';
     } else {
-      chipColor = AppTheme.primaryBlue;
+      chipColor = AppThemeColor.primaryBlue;
       chipText = 'Active';
     }
 
@@ -430,7 +354,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
       child: Text(
         chipText,
         style: TextStyle(
-          color: AppTheme.white,
+          color: AppThemeColor.white,
           fontSize: screenWidth < 400 ? 10 : 12,
           fontWeight: FontWeight.bold,
         ),
@@ -560,7 +484,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
                 ? Colors.green
                 : exam.isOverdue
                 ? Colors.red
-                : AppTheme.primaryBlue,
+                : AppThemeColor.primaryBlue,
           ),
           minHeight: 6,
         ),
@@ -582,8 +506,8 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
               icon: const Icon(Icons.edit_calendar, size: 16),
               label: const Text('Edit Deadline'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.blue100,
-                foregroundColor: AppTheme.blue800,
+                backgroundColor: AppThemeColor.blue100,
+                foregroundColor: AppThemeColor.blue800,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -604,7 +528,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
               label: Text(exam.isLocked ? 'Unlock' : 'Lock'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: exam.isLocked ? Colors.green : Colors.orange,
-                foregroundColor: AppTheme.white,
+                foregroundColor: AppThemeColor.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -625,8 +549,8 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
             icon: const Icon(Icons.edit_calendar, size: 16),
             label: const Text('Edit Deadline'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.blue100,
-              foregroundColor: AppTheme.blue800,
+              backgroundColor: AppThemeColor.blue100,
+              foregroundColor: AppThemeColor.blue800,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -645,7 +569,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
             label: Text(exam.isLocked ? 'Unlock' : 'Lock'),
             style: ElevatedButton.styleFrom(
               backgroundColor: exam.isLocked ? Colors.green : Colors.orange,
-              foregroundColor: AppTheme.white,
+              foregroundColor: AppThemeColor.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -667,7 +591,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: const ColorScheme.light(
-              primary: AppTheme.primaryBlue,
+              primary: AppThemeColor.primaryBlue,
             ),
           ),
           child: child!,
@@ -683,7 +607,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
           return Theme(
             data: Theme.of(context).copyWith(
               colorScheme: const ColorScheme.light(
-                primary: AppTheme.primaryBlue,
+                primary: AppThemeColor.primaryBlue,
               ),
             ),
             child: child!,
@@ -717,7 +641,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         title: Text(exam.isLocked ? 'Unlock Exam' : 'Lock Exam'),
         content: Text(
@@ -759,7 +683,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         title: const Text('Create New Exam'),
         content: const Text('Feature coming soon...'),
@@ -778,7 +702,7 @@ class _ExamManagementScreenState extends State<ExamManagementScreen>
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeColor.cardBorderRadius),
         ),
         title: const Text('Bulk Actions'),
         content: Column(

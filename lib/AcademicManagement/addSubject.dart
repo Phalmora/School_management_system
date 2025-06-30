@@ -1,5 +1,7 @@
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeColor.dart';
+import 'package:school/customWidgets/commonCustomWidget/themeResponsiveness.dart';
 
 class AddSubjectScreen extends StatefulWidget {
   @override
@@ -19,11 +21,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF42A5F5), Color(0xFF8E24AA)],
-          ),
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
@@ -31,13 +29,17 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
               _buildHeader('Add New Subject'),
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+                    color: AppThemeColor.white,
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppThemeColor.black.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
                   ),
                   child: _buildSubjectForm(),
                 ),
@@ -51,23 +53,29 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
 
   Widget _buildHeader(String title) {
     return Padding(
-      padding: EdgeInsets.all(20),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 28),
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
+            ),
             onPressed: () => Navigator.pop(context),
           ),
-          SizedBox(width: 10),
-          Icon(Icons.book, color: Colors.white, size: 32),
-          SizedBox(width: 15),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
+          SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+          Icon(
+            Icons.book,
+            color: AppThemeColor.white,
+            size: AppThemeResponsiveness.getHeaderIconSize(context),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
+            child: Text(
+              title,
+              style: AppThemeResponsiveness.getFontStyle(context),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -77,13 +85,13 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
 
   Widget _buildSubjectForm() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(20),
+      padding: AppThemeResponsiveness.getScreenPadding(context),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _subjectNameController,
               label: 'Subject Name',
@@ -91,7 +99,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
               icon: Icons.book,
               validator: (value) => value!.isEmpty ? 'Please enter subject name' : null,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _subjectCodeController,
               label: 'Subject Code',
@@ -99,7 +107,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
               icon: Icons.code,
               validator: (value) => value!.isEmpty ? 'Please enter subject code' : null,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildInputField(
               controller: _descriptionController,
               label: 'Description',
@@ -107,10 +115,11 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
               icon: Icons.description,
               maxLines: 3,
             ),
-            SizedBox(height: 20),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             _buildClassSelection(),
-            SizedBox(height: 40),
+            SizedBox(height: AppThemeResponsiveness.getLargeSpacing(context)),
             _buildSubmitButton('Create Subject'),
+            SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
           ],
         ),
       ),
@@ -122,7 +131,7 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
     required String label,
     required String hint,
     required IconData icon,
-    int maxLines = 1,
+    int? maxLines,
     String? Function(String?)? validator,
   }) {
     return Column(
@@ -130,31 +139,55 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getSubtitleTextStyle(context),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         TextFormField(
           controller: controller,
-          maxLines: maxLines,
+          maxLines: maxLines ?? AppThemeResponsiveness.getTextFieldMaxLines(context),
           validator: validator,
           decoration: InputDecoration(
             hintText: hint,
-            prefixIcon: Icon(icon, color: Color(0xFF42A5F5)),
+            hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+            prefixIcon: Icon(
+              icon,
+              color: AppThemeColor.primaryBlue,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyd),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Color(0xFF42A5F5), width: 2),
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: AppThemeColor.primaryBlue,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.greyl),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(color: AppThemeColor.red400),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+              borderSide: BorderSide(
+                color: AppThemeColor.red600,
+                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+              ),
             ),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: AppThemeColor.blue50,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+              vertical: AppThemeResponsiveness.getMediumSpacing(context),
+            ),
           ),
+          style: AppThemeResponsiveness.getBodyTextStyle(context),
         ),
       ],
     );
@@ -166,24 +199,23 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
       children: [
         Text(
           'Assign to Classes',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+          style: AppThemeResponsiveness.getSubtitleTextStyle(context),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
         Container(
-          padding: EdgeInsets.all(15),
+          padding: AppThemeResponsiveness.getScreenPadding(context),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.grey.shade50,
+            border: Border.all(color: AppThemeColor.greyl),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+            color: AppThemeColor.blue50,
           ),
           child: Column(
             children: _availableClasses.map((className) {
               return CheckboxListTile(
-                title: Text(className),
+                title: Text(
+                  className,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context),
+                ),
                 value: _selectedClasses.contains(className),
                 onChanged: (bool? value) {
                   setState(() {
@@ -194,8 +226,11 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
                     }
                   });
                 },
-                activeColor: Color(0xFF42A5F5),
-                contentPadding: EdgeInsets.zero,
+                activeColor: AppThemeColor.primaryBlue,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+                ),
+                controlAffinity: ListTileControlAffinity.leading,
               );
             }).toList(),
           ),
@@ -206,23 +241,21 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
 
   Widget _buildSubmitButton(String text) {
     return Container(
-      height: 50,
+      height: AppThemeResponsiveness.getButtonHeight(context),
       child: ElevatedButton(
         onPressed: () => _submitForm(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF42A5F5),
+          backgroundColor: AppThemeColor.primaryBlue,
+          foregroundColor: AppThemeColor.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
           ),
-          elevation: 5,
+          elevation: AppThemeResponsiveness.getButtonElevation(context),
+          shadowColor: AppThemeColor.primaryBlue.withOpacity(0.3),
         ),
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+          style: AppThemeResponsiveness.getButtonTextStyle(context),
         ),
       ),
     );
@@ -230,13 +263,49 @@ class _AddSubjectScreenState extends State<AddSubjectScreen> {
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Subject created successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+      _showSuccessMessage();
       Navigator.pop(context);
     }
+  }
+
+  void _showSuccessMessage() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Text(
+                'Subject created successfully!',
+                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                  color: AppThemeColor.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppThemeColor.green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        ),
+        margin: AppThemeResponsiveness.getScreenPadding(context),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _subjectNameController.dispose();
+    _subjectCodeController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 }

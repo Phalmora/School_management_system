@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.school"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34  // Explicitly set to Android 14
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -24,8 +24,8 @@ android {
         applicationId = "com.example.school"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 21  // Minimum recommended for modern apps
+        targetSdk = 34  // Explicitly set to Android 14
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
@@ -35,6 +35,14 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+        }
+    }
+
+    // Kotlin DSL syntax for packaging options
+    packaging {
+        resources {
+            pickFirsts += "**/libc++_shared.so"
+            pickFirsts += "**/libjsc.so"
         }
     }
 }

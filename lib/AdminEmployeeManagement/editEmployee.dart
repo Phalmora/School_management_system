@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/model/employeeModel.dart';
 
 // Add/Edit Teacher Page
@@ -105,60 +104,61 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
       appBar: AppBarCustom(),
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header
+              // Responsive Header
+                    SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
               Padding(
-                padding: EdgeInsets.all(AppTheme.defaultSpacing),
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.arrow_back, color: AppTheme.white),
-                    ),
-                    Icon(
-                      isEditing ? Icons.edit : Icons.person_add,
-                      color: AppTheme.white,
-                      size: 30,
-                    ),
-                    SizedBox(width: AppTheme.mediumSpacing),
-                    Text(
-                      isEditing ? 'Edit Teacher' : 'Add Teacher',
-                      style: AppTheme.FontStyle,
-                    ),
-                  ],
+                padding: AppThemeResponsiveness.getScreenPadding(context),
+                child: Expanded(
+                  child: Text(
+                    isEditing ? 'Edit Teacher' : 'Add Teacher',
+                    style: AppThemeResponsiveness.getFontStyle(context),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
 
-              // Form
+              // Responsive Form Container
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
+                  width: AppThemeResponsiveness.getMaxWidth(context),
+                  margin: EdgeInsets.symmetric(
+                    horizontal: AppThemeResponsiveness.getMediumSpacing(context),
+                  ),
                   decoration: BoxDecoration(
-                    color: AppTheme.white,
+                    color: AppThemeColor.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                      topRight: Radius.circular(AppTheme.cardBorderRadius),
+                      topLeft: Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                      topRight: Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
                     ),
                   ),
                   child: Form(
                     key: _formKey,
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.all(AppTheme.defaultSpacing),
+                      padding: AppThemeResponsiveness.getResponsivePadding(
+                        context,
+                        AppThemeResponsiveness.getDefaultSpacing(context),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Teacher ID Display
+                          // Responsive Teacher ID Display
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(AppTheme.mediumSpacing),
+                            padding: AppThemeResponsiveness.getResponsivePadding(
+                              context,
+                              AppThemeResponsiveness.getMediumSpacing(context),
+                            ),
                             decoration: BoxDecoration(
-                              color: AppTheme.blue50,
-                              borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                              border: Border.all(color: AppTheme.blue200),
+                              color: AppThemeColor.blue50,
+                              borderRadius: BorderRadius.circular(
+                                AppThemeResponsiveness.getInputBorderRadius(context),
+                              ),
+                              border: Border.all(color: AppThemeColor.blue200),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,28 +166,28 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
                                 Text(
                                   'Teacher ID',
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppTheme.blue600,
+                                    fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12.0),
+                                    color: AppThemeColor.blue600,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(height: 5),
+                                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
                                 Text(
-                                  _employeeId,
+                                  _employeeId.isEmpty ? 'Auto-generated' : _employeeId,
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 18.0),
                                     fontWeight: FontWeight.bold,
-                                    color: AppTheme.blue800,
+                                    color: AppThemeColor.blue800,
                                   ),
                                 ),
                               ],
                             ),
                           ),
 
-                          SizedBox(height: AppTheme.defaultSpacing),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                          // Name Field
-                          _buildTextField(
+                          // Responsive Form Fields
+                          _buildResponsiveTextField(
                             controller: _nameController,
                             label: 'Full Name',
                             icon: Icons.person,
@@ -195,14 +195,17 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter teacher name';
                               }
+                              if (value.length < 2) {
+                                return 'Name must be at least 2 characters';
+                              }
                               return null;
                             },
                           ),
 
-                          SizedBox(height: AppTheme.defaultSpacing),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                          // Role/Position Dropdown
-                          _buildDropdownField(
+                          // Responsive Role/Position Dropdown
+                          _buildResponsiveDropdownField(
                             controller: _roleController,
                             label: 'Role/Position',
                             icon: Icons.work,
@@ -215,10 +218,10 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
                             },
                           ),
 
-                          SizedBox(height: AppTheme.defaultSpacing),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                          // Subject/Department Dropdown
-                          _buildDropdownField(
+                          // Responsive Subject/Department Dropdown
+                          _buildResponsiveDropdownField(
                             controller: _departmentController,
                             label: 'Subject/Department',
                             icon: Icons.school,
@@ -231,10 +234,10 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
                             },
                           ),
 
-                          SizedBox(height: AppTheme.defaultSpacing),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                          // Phone Field
-                          _buildTextField(
+                          // Responsive Phone Field
+                          _buildResponsiveTextField(
                             controller: _phoneController,
                             label: 'Phone Number',
                             icon: Icons.phone,
@@ -243,14 +246,20 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter phone number';
                               }
+                              if (value.length < 10) {
+                                return 'Phone number must be at least 10 digits';
+                              }
+                              if (!RegExp(r'^[0-9+\-\s()]+$').hasMatch(value)) {
+                                return 'Please enter a valid phone number';
+                              }
                               return null;
                             },
                           ),
 
-                          SizedBox(height: AppTheme.defaultSpacing),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                          // Email Field
-                          _buildTextField(
+                          // Responsive Email Field
+                          _buildResponsiveTextField(
                             controller: _emailController,
                             label: 'Email Address',
                             icon: Icons.email,
@@ -266,28 +275,43 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
                             },
                           ),
 
-                          SizedBox(height: AppTheme.extraLargeSpacing),
+                          SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
 
-                          // Save Button
+                          // Responsive Save Button
                           SizedBox(
                             width: double.infinity,
-                            height: AppTheme.buttonHeight,
+                            height: AppThemeResponsiveness.getButtonHeight(context),
                             child: ElevatedButton(
                               onPressed: _saveEmployee,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.primaryBlue,
-                                foregroundColor: AppTheme.white,
-                                elevation: AppTheme.buttonElevation,
+                                backgroundColor: AppThemeColor.primaryBlue,
+                                foregroundColor: AppThemeColor.white,
+                                elevation: AppThemeResponsiveness.getButtonElevation(context),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(AppTheme.buttonBorderRadius),
+                                  borderRadius: BorderRadius.circular(
+                                    AppThemeResponsiveness.getButtonBorderRadius(context),
+                                  ),
                                 ),
                               ),
-                              child: Text(
-                                isEditing ? 'Update Teacher' : 'Save Teacher',
-                                style: AppTheme.buttonTextStyle,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    isEditing ? Icons.update : Icons.save,
+                                    size: AppThemeResponsiveness.getIconSize(context),
+                                  ),
+                                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+                                  Text(
+                                    isEditing ? 'Update Teacher' : 'Save Teacher',
+                                    style: AppThemeResponsiveness.getButtonTextStyle(context),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
+
+                          // Add extra spacing for better scroll experience
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                         ],
                       ),
                     ),
@@ -301,43 +325,66 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
     );
   }
 
-  Widget _buildTextField({
+  Widget _buildResponsiveTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    int maxLines = 1,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
+      maxLines: maxLines,
+      style: AppThemeResponsiveness.getBodyTextStyle(context),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: AppTheme.primaryBlue),
+        labelStyle: AppThemeResponsiveness.getInputLabelStyle(context),
+        hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+        prefixIcon: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
+          child: Icon(
+            icon,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-          borderSide: BorderSide(color: AppTheme.blue200),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: AppThemeColor.blue200),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
           borderSide: BorderSide(
-            color: AppTheme.primaryBlue,
-            width: AppTheme.focusedBorderWidth,
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-          borderSide: BorderSide(color: AppTheme.blue200),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: AppThemeColor.blue200),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: Colors.red.shade600, width: 2.0),
         ),
         filled: true,
-        fillColor: AppTheme.white,
-        labelStyle: TextStyle(color: AppTheme.blue600),
+        fillColor: AppThemeColor.white,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getMediumSpacing(context),
+          vertical: AppThemeResponsiveness.getMediumSpacing(context),
+        ),
       ),
     );
   }
 
-  Widget _buildDropdownField({
+  Widget _buildResponsiveDropdownField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
@@ -345,53 +392,90 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
     String? Function(String?)? validator,
   }) {
     return DropdownButtonFormField<String>(
-      value: controller.text.isNotEmpty && items.contains(controller.text) ? controller.text : null,
+      value: controller.text.isNotEmpty && items.contains(controller.text)
+          ? controller.text
+          : null,
       validator: validator,
+      style: AppThemeResponsiveness.getBodyTextStyle(context),
+      dropdownColor: AppThemeColor.white,
+      icon: Icon(
+        Icons.arrow_drop_down,
+        color: AppThemeColor.primaryBlue,
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: AppTheme.primaryBlue),
+        labelStyle: AppThemeResponsiveness.getInputLabelStyle(context),
+        hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+        prefixIcon: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
+          child: Icon(
+            icon,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-          borderSide: BorderSide(color: AppTheme.blue200),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: AppThemeColor.blue200),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
           borderSide: BorderSide(
-            color: AppTheme.primaryBlue,
-            width: AppTheme.focusedBorderWidth,
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-          borderSide: BorderSide(color: AppTheme.blue200),
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: AppThemeColor.blue200),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          borderSide: BorderSide(color: Colors.red.shade600, width: 2.0),
         ),
         filled: true,
-        fillColor: AppTheme.white,
-        labelStyle: TextStyle(color: AppTheme.blue600),
+        fillColor: AppThemeColor.white,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getMediumSpacing(context),
+          vertical: AppThemeResponsiveness.getMediumSpacing(context),
+        ),
       ),
       items: items.map((String item) {
         return DropdownMenuItem<String>(
           value: item,
-          child: Text(item),
+          child: Text(
+            item,
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+            overflow: TextOverflow.ellipsis,
+          ),
         );
       }).toList(),
       onChanged: (String? newValue) {
         if (newValue != null) {
-          controller.text = newValue;
+          setState(() {
+            controller.text = newValue;
+          });
         }
       },
+      isExpanded: true,
+      menuMaxHeight: AppThemeResponsiveness.isMobile(context) ? 200 : 300,
     );
   }
 
   void _saveEmployee() {
     if (_formKey.currentState!.validate()) {
       final employee = Employee(
-        id: _employeeId,
+        id: _employeeId.isEmpty ? _generateEmployeeId() : _employeeId,
         name: _nameController.text.trim(),
         role: _roleController.text.trim(),
         department: _departmentController.text.trim(),
         phone: _phoneController.text.trim(),
-        email: _emailController.text.trim(),
+        email: _emailController.text.trim().toLowerCase(),
       );
 
       widget.onSave(employee);
@@ -399,15 +483,52 @@ class _AddEditEmployeePageState extends State<AddEditEmployeePage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            widget.employee != null
-                ? 'Teacher updated successfully!'
-                : 'Teacher added successfully!',
+          content: Row(
+            children: [
+              Icon(
+                widget.employee != null ? Icons.check_circle : Icons.add_circle,
+                color: AppThemeColor.white,
+                size: AppThemeResponsiveness.getIconSize(context),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Expanded(
+                child: Text(
+                  widget.employee != null
+                      ? 'Teacher updated successfully!'
+                      : 'Teacher added successfully!',
+                  style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                    color: AppThemeColor.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.green.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+          ),
+          margin: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+          duration: Duration(seconds: 3),
+          action: SnackBarAction(
+            label: 'OK',
+            textColor: AppThemeColor.white,
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
         ),
       );
     }
+  }
+
+  String _generateEmployeeId() {
+    // Generate a simple employee ID based on timestamp and random characters
+    final now = DateTime.now();
+    final timeStamp = '${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}';
+    final random = (1000 + (9999 - 1000) * (DateTime.now().millisecondsSinceEpoch % 1000) / 1000).round();
+    return 'EMP$timeStamp$random';
   }
 
   @override

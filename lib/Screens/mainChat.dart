@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 // Chat Selection Page
 class MainChat extends StatelessWidget {
@@ -16,7 +15,6 @@ class MainChat extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [Color(0xFF42A5F5), Color(0xFF5C6BC0)],
-            // colors: [greylight, greydark ],
           ),
         ),
         child: SafeArea(
@@ -24,48 +22,31 @@ class MainChat extends StatelessWidget {
             children: [
               // Chat Options
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(AppTheme.defaultSpacing),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+                  ),
+                  padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // Title Section
                       Padding(
-                        padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-                        child: const Text(
+                        padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+                        child: Text(
                           'Select Chat With',
-                          style: AppTheme.FontStyle,
+                          style: AppThemeResponsiveness.getFontStyle(context),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      // Teacher Option
-                      _buildChatOption(
-                        context: context,
-                        title: 'Teacher',
-                        subtitle: 'Chat with your teachers',
-                        icon: Icons.school,
-                        iconColor: Colors.blue,
-                        userType: 'Teacher',
-                      ),
-                      const SizedBox(height: AppTheme.defaultSpacing),
-                      // Admin Option
-                      _buildChatOption(
-                        context: context,
-                        title: 'Admin',
-                        subtitle: 'Contact administration',
-                        icon: Icons.admin_panel_settings,
-                        iconColor: Colors.green,
-                        userType: 'Admin',
-                      ),
 
-                      const SizedBox(height: AppTheme.defaultSpacing),
+                      SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
 
-                      // Academic Officer Option
-                      _buildChatOption(
-                        context: context,
-                        title: 'Academic Officer',
-                        subtitle: 'Academic support and guidance',
-                        icon: Icons.account_balance,
-                        iconColor: Colors.orange,
-                        userType: 'Academic Officer',
+                      // Chat Options - Responsive Layout
+                      Flexible(
+                        child: AppThemeResponsiveness.isTablet(context) || AppThemeResponsiveness.isDesktop(context)
+                            ? _buildTabletDesktopLayout(context)
+                            : _buildMobileLayout(context),
                       ),
                     ],
                   ),
@@ -78,6 +59,84 @@ class MainChat extends StatelessWidget {
     );
   }
 
+  Widget _buildMobileLayout(BuildContext context) {
+    return Column(
+      children: [
+        _buildChatOption(
+          context: context,
+          title: 'Student',
+          subtitle: 'Chat with student',
+          icon: Icons.person,
+          iconColor: Colors.teal,
+          userType: 'Student',
+        ),
+        SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+        _buildChatOption(
+          context: context,
+          title: 'Teacher',
+          subtitle: 'Chat with your teachers',
+          icon: Icons.school,
+          iconColor: Colors.blue,
+          userType: 'Teacher',
+        ),
+        SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+        _buildChatOption(
+          context: context,
+          title: 'Admin',
+          subtitle: 'Contact administration',
+          icon: Icons.admin_panel_settings,
+          iconColor: Colors.green,
+          userType: 'Admin',
+        ),
+        SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
+        _buildChatOption(
+          context: context,
+          title: 'Academic Officer',
+          subtitle: 'Academic support and guidance',
+          icon: Icons.account_balance,
+          iconColor: Colors.orange,
+          userType: 'Academic Officer',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabletDesktopLayout(BuildContext context) {
+    return GridView.count(
+      shrinkWrap: true,
+      crossAxisCount: AppThemeResponsiveness.isDesktop(context) ? 3 : 2,
+      crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+      mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+      childAspectRatio: AppThemeResponsiveness.isDesktop(context) ? 1.2 : 1.0,
+      children: [
+        _buildChatOption(
+          context: context,
+          title: 'Teacher',
+          subtitle: 'Chat with your teachers',
+          icon: Icons.school,
+          iconColor: Colors.blue,
+          userType: 'Teacher',
+        ),
+        _buildChatOption(
+          context: context,
+          title: 'Admin',
+          subtitle: 'Contact administration',
+          icon: Icons.admin_panel_settings,
+          iconColor: Colors.green,
+          userType: 'Admin',
+        ),
+        _buildChatOption(
+          context: context,
+          title: 'Academic Officer',
+          subtitle: 'Academic support and guidance',
+          icon: Icons.account_balance,
+          iconColor: Colors.orange,
+          userType: 'Academic Officer',
+        ),
+      ],
+    );
+  }
+
   Widget _buildChatOption({
     required BuildContext context,
     required String title,
@@ -87,12 +146,12 @@ class MainChat extends StatelessWidget {
     required String userType,
   }) {
     return Card(
-      elevation: AppTheme.cardElevation,
+      elevation: AppThemeResponsiveness.getCardElevation(context),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
         onTap: () {
           Navigator.push(
             context,
@@ -101,55 +160,100 @@ class MainChat extends StatelessWidget {
             ),
           );
         },
-        child: Padding(
-          padding: const EdgeInsets.all(AppTheme.defaultSpacing),
-          child: Row(
+        child: Container(
+          padding: AppThemeResponsiveness.getCardPadding(context),
+          child: AppThemeResponsiveness.isMobile(context)
+              ? _buildMobileChatOption(context, title, subtitle, icon, iconColor)
+              : _buildTabletChatOption(context, title, subtitle, icon, iconColor),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileChatOption(
+      BuildContext context,
+      String title,
+      String subtitle,
+      IconData icon,
+      Color iconColor,
+      ) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+            color: iconColor,
+          ),
+        ),
+        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.all(AppTheme.mediumSpacing),
-                decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  size: 32,
-                  color: iconColor,
-                ),
+              Text(
+                title,
+                style: AppThemeResponsiveness.getDashboardCardTitleStyle(context),
               ),
-              const SizedBox(width: AppTheme.mediumSpacing),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.grey[400],
-                size: 20,
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                subtitle,
+                style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
               ),
             ],
           ),
         ),
-      ),
+        Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.grey[400],
+          size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabletChatOption(
+      BuildContext context,
+      String title,
+      String subtitle,
+      IconData icon,
+      Color iconColor,
+      ) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            icon,
+            size: AppThemeResponsiveness.getDashboardCardIconSize(context) * 1.2,
+            color: iconColor,
+          ),
+        ),
+        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+        Text(
+          title,
+          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+        Text(
+          subtitle,
+          style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }
@@ -249,7 +353,7 @@ class _ChatPageState extends State<ChatPage> {
       case 'Academic Officer':
         return Colors.orange;
       default:
-        return AppTheme.primaryBlue;
+        return AppThemeColor.primaryBlue;
     }
   }
 
@@ -258,41 +362,49 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppTheme.primaryBlue,
+        backgroundColor: AppThemeColor.primaryBlue,
+        toolbarHeight: AppThemeResponsiveness.getAppBarHeight(context),
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back, color: AppTheme.white),
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppThemeColor.white,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
         ),
         title: Row(
           children: [
             CircleAvatar(
+              radius: AppThemeResponsiveness.isMobile(context) ? 20 : 24,
               backgroundColor: _getUserColor().withOpacity(0.2),
               child: Icon(
                 _getUserIcon(),
                 color: _getUserColor(),
-                size: 24,
+                size: AppThemeResponsiveness.getIconSize(context),
               ),
             ),
-            const SizedBox(width: AppTheme.smallSpacing),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.userType,
-                  style: const TextStyle(
-                    color: AppTheme.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.userType,
+                    style: TextStyle(
+                      color: AppThemeColor.white,
+                      fontSize: AppThemeResponsiveness.isMobile(context) ? 18 : 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const Text(
-                  'Online',
-                  style: TextStyle(
-                    color: AppTheme.white70,
-                    fontSize: 12,
+                  Text(
+                    'Online',
+                    style: TextStyle(
+                      color: AppThemeColor.white70,
+                      fontSize: AppThemeResponsiveness.isMobile(context) ? 12 : 14,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -301,157 +413,182 @@ class _ChatPageState extends State<ChatPage> {
             onPressed: () {
               // Add call functionality
             },
-            icon: const Icon(Icons.call, color: AppTheme.white),
+            icon: Icon(
+              Icons.call,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
           ),
           IconButton(
             onPressed: () {
               // Add more options
             },
-            icon: const Icon(Icons.more_vert, color: AppTheme.white),
+            icon: Icon(
+              Icons.more_vert,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Messages List
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-              ),
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.all(AppTheme.smallSpacing),
-                itemCount: messages.length,
-                itemBuilder: (context, index) {
-                  final message = messages[index];
-                  return _buildMessageBubble(message);
-                },
-              ),
-            ),
-          ),
-
-          // Message Input
-          Container(
-            padding: const EdgeInsets.all(AppTheme.smallSpacing),
-            decoration: BoxDecoration(
-              color: AppTheme.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  blurRadius: 5,
-                  offset: const Offset(0, -2),
+      body: Container(
+        constraints: BoxConstraints(
+          maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+        ),
+        child: Column(
+          children: [
+            // Messages List
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
                 ),
-              ],
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    return _buildMessageBubble(message);
+                  },
+                ),
+              ),
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'Type a message...',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
+
+            // Message Input
+            Container(
+              padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
+              decoration: BoxDecoration(
+                color: AppThemeColor.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 5,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(
+                          AppThemeResponsiveness.getInputBorderRadius(context) * 2.5,
                         ),
                       ),
-                      onSubmitted: (_) => _sendMessage(),
+                      child: TextField(
+                        controller: _messageController,
+                        style: AppThemeResponsiveness.getBodyTextStyle(context),
+                        decoration: InputDecoration(
+                          hintText: 'Type a message...',
+                          hintStyle: AppThemeResponsiveness.getCaptionTextStyle(context),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+                            vertical: AppThemeResponsiveness.getSmallSpacing(context),
+                          ),
+                        ),
+                        onSubmitted: (_) => _sendMessage(),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: AppTheme.smallSpacing),
-                Container(
-                  decoration: const BoxDecoration(
-                    gradient: AppTheme.primaryGradient,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: _sendMessage,
-                    icon: const Icon(
-                      Icons.send,
-                      color: AppTheme.white,
+                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+                  Container(
+                    width: AppThemeResponsiveness.getButtonHeight(context),
+                    height: AppThemeResponsiveness.getButtonHeight(context),
+                    decoration: const BoxDecoration(
+                      gradient: AppThemeColor.primaryGradient,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      onPressed: _sendMessage,
+                      icon: Icon(
+                        Icons.send,
+                        color: AppThemeColor.white,
+                        size: AppThemeResponsiveness.getIconSize(context),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMessageBubble(ChatMessage message) {
+    final isTabletOrDesktop = AppThemeResponsiveness.isTablet(context) || AppThemeResponsiveness.isDesktop(context);
+    final maxWidth = AppThemeResponsiveness.getScreenWidth(context) * (isTabletOrDesktop ? 0.6 : 0.8);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: AppThemeResponsiveness.getSmallSpacing(context) / 2),
       child: Row(
         mainAxisAlignment:
         message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           if (!message.isMe) ...[
             CircleAvatar(
-              radius: 16,
+              radius: AppThemeResponsiveness.isMobile(context) ? 16 : 20,
               backgroundColor: _getUserColor().withOpacity(0.2),
               child: Icon(
                 _getUserIcon(),
                 color: _getUserColor(),
-                size: 16,
+                size: AppThemeResponsiveness.isMobile(context) ? 16 : 20,
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
           ],
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: message.isMe ? AppTheme.primaryBlue : AppTheme.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  bottomLeft: message.isMe
-                      ? const Radius.circular(20)
-                      : const Radius.circular(4),
-                  bottomRight: message.isMe
-                      ? const Radius.circular(4)
-                      : const Radius.circular(20),
+          Container(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppThemeResponsiveness.getMediumSpacing(context),
+              vertical: AppThemeResponsiveness.getSmallSpacing(context),
+            ),
+            decoration: BoxDecoration(
+              color: message.isMe ? AppThemeColor.primaryBlue : AppThemeColor.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                topRight: Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                bottomLeft: message.isMe
+                    ? Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context))
+                    : const Radius.circular(4),
+                bottomRight: message.isMe
+                    ? const Radius.circular(4)
+                    : Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 3,
-                    offset: const Offset(0, 1),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  message.text,
+                  style: TextStyle(
+                    color: message.isMe ? AppThemeColor.white : Colors.black87,
+                    fontSize: AppThemeResponsiveness.getBodyTextStyle(context).fontSize,
                   ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    message.text,
-                    style: TextStyle(
-                      color: message.isMe ? AppTheme.white : Colors.black87,
-                      fontSize: 16,
-                    ),
+                ),
+                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                Text(
+                  _formatTime(message.timestamp),
+                  style: TextStyle(
+                    color: message.isMe
+                        ? AppThemeColor.white70
+                        : Colors.grey[600],
+                    fontSize: AppThemeResponsiveness.getCaptionTextStyle(context).fontSize,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _formatTime(message.timestamp),
-                    style: TextStyle(
-                      color: message.isMe
-                          ? AppTheme.white70
-                          : Colors.grey[600],
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

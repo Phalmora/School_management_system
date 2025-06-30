@@ -1,28 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
-
-class Student {
-  final String id;
-  final String name;
-  final String email;
-  final String phone;
-  final String className;
-  final String admissionStatus;
-  final DateTime dateOfBirth;
-  final String address;
-
-  Student({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.className,
-    required this.admissionStatus,
-    required this.dateOfBirth,
-    required this.address,
-  });
-}
+import 'package:school/AdminStudentManagement/studentModel.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class StudentDetailsPage extends StatelessWidget {
   final Student student;
@@ -51,33 +29,38 @@ class StudentDetailsPage extends StatelessWidget {
     }
   }
 
-  Widget _buildDetailCard(String title, String value, IconData icon) {
+  Widget _buildDetailCard(BuildContext context, String title, String value, IconData icon) {
     return Card(
-      elevation: 2,
-      margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
+      elevation: AppThemeResponsiveness.getCardElevation(context),
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getSmallSpacing(context)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(AppTheme.mediumSpacing),
+        padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
         child: Row(
           children: [
-            Icon(icon, color: AppTheme.primaryBlue, size: 24),
-            SizedBox(width: AppTheme.mediumSpacing),
+            Icon(
+              icon,
+              color: AppThemeColor.primaryBlue,
+              size: AppThemeResponsiveness.getIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: AppThemeResponsiveness.getInputLabelStyle(context).copyWith(
                       color: Colors.grey.shade600,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
                   Text(
                     value,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
@@ -91,173 +74,320 @@ class StudentDetailsPage extends StatelessWidget {
     );
   }
 
+  Widget _buildHeader(BuildContext context) {
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+        ),
+        margin: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.person,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Flexible(
+              child: Text(
+                'Student Details',
+                style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                    context,
+                    AppThemeResponsiveness.getSectionTitleStyle(context).fontSize! + 4,
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileCard(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+      ),
+      margin: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+      ),
+      child: Card(
+        elevation: AppThemeResponsiveness.getCardElevation(context) * 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        ),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(AppThemeResponsiveness.getLargeSpacing(context)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+            gradient: LinearGradient(
+              colors: [AppThemeColor.primaryBlue, AppThemeColor.primaryBlue.withOpacity(0.8)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: AppThemeResponsiveness.getResponsiveSize(context, 35, 45, 55),
+                backgroundColor: Colors.white,
+                child: Text(
+                  student.name.substring(0, 1).toUpperCase(),
+                  style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                    fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 32),
+                    fontWeight: FontWeight.bold,
+                    color: AppThemeColor.primaryBlue,
+                  ),
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+              Text(
+                student.name,
+                style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 24),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                student.className,
+                style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+                  color: Colors.white.withOpacity(0.9),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppThemeResponsiveness.getMediumSpacing(context),
+                  vertical: AppThemeResponsiveness.getSmallSpacing(context),
+                ),
+                decoration: BoxDecoration(
+                  color: _getStatusColor(student.admissionStatus).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                  border: Border.all(
+                    color: _getStatusColor(student.admissionStatus),
+                    width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+                  ),
+                ),
+                child: Text(
+                  student.admissionStatus,
+                  style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailsSection(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+      ),
+      margin: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+      ),
+      child: Card(
+        elevation: AppThemeResponsiveness.getCardElevation(context),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Student Information',
+                style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+                  color: AppThemeColor.primaryBlue,
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+
+              _buildDetailCard(context, 'Student ID', student.id, Icons.badge),
+              _buildDetailCard(context, 'Email Address', student.email, Icons.email),
+              _buildDetailCard(context, 'Phone Number', student.phone, Icons.phone),
+              _buildDetailCard(
+                  context,
+                  'Date of Birth',
+                  '${student.dateOfBirth.day}/${student.dateOfBirth.month}/${student.dateOfBirth.year}',
+                  Icons.cake
+              ),
+              _buildDetailCard(
+                  context,
+                  'Age',
+                  '${_calculateAge(student.dateOfBirth)} years old',
+                  Icons.person
+              ),
+              _buildDetailCard(context, 'Class', student.className, Icons.school),
+              _buildDetailCard(
+                  context,
+                  'Address',
+                  student.address.isEmpty ? 'Not provided' : student.address,
+                  Icons.location_on
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+      ),
+      margin: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+      ),
+      child: AppThemeResponsiveness.isDesktop(context) || AppThemeResponsiveness.isTablet(context)
+          ? Row(
+        children: [
+          Expanded(
+            child: _buildEditButton(context),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
+            child: _buildBackButton(context),
+          ),
+        ],
+      )
+          : Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            child: _buildEditButton(context),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          SizedBox(
+            width: double.infinity,
+            child: _buildBackButton(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEditButton(BuildContext context) {
+    return SizedBox(
+      height: AppThemeResponsiveness.getButtonHeight(context),
+      child: ElevatedButton.icon(
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Edit functionality can be added here'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        },
+        icon: Icon(
+          Icons.edit,
+          size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+        ),
+        label: Text(
+          'Edit Student',
+          style: AppThemeResponsiveness.getButtonTextStyle(context),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppThemeColor.primaryBlue,
+          foregroundColor: Colors.white,
+          elevation: AppThemeResponsiveness.getButtonElevation(context),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return SizedBox(
+      height: AppThemeResponsiveness.getButtonHeight(context),
+      child: OutlinedButton.icon(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: Icon(
+          Icons.arrow_back,
+          size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+        ),
+        label: Text(
+          'Back to List',
+          style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppThemeColor.primaryBlue,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppThemeColor.primaryBlue,
+          side: BorderSide(
+            color: AppThemeColor.primaryBlue,
+            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
-        decoration: BoxDecoration(gradient: AppTheme.primaryGradient),
+        decoration: const BoxDecoration(
+          gradient: AppThemeColor.primaryGradient,
+        ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(AppTheme.defaultSpacing),
+            padding: EdgeInsets.only(
+              top: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              bottom: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              left: AppThemeResponsiveness.getSmallSpacing(context),
+              right: AppThemeResponsiveness.getSmallSpacing(context),
+            ),
             child: Column(
               children: [
-                // Header Card with Avatar
-                Card(
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                  ),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(AppTheme.largeSpacing),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                      gradient: LinearGradient(
-                        colors: [AppTheme.primaryBlue, AppTheme.primaryBlue.withOpacity(0.8)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            student.name.substring(0, 1).toUpperCase(),
-                            style: TextStyle(
-                              fontSize: 36,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryBlue,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: AppTheme.mediumSpacing),
-                        Text(
-                          student.name,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          student.className,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white.withOpacity(0.9),
-                          ),
-                        ),
-                        SizedBox(height: AppTheme.smallSpacing),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: _getStatusColor(student.admissionStatus).withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: _getStatusColor(student.admissionStatus),
-                              width: 2,
-                            ),
-                          ),
-                          child: Text(
-                            student.admissionStatus,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // Header
+                _buildHeader(context),
 
-                SizedBox(height: AppTheme.defaultSpacing),
+                // Profile Card
+                _buildProfileCard(context),
+
+                SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
                 // Details Section
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Student Information',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryBlue,
-                          ),
-                        ),
-                        SizedBox(height: AppTheme.mediumSpacing),
+                _buildDetailsSection(context),
 
-                        _buildDetailCard('Student ID', student.id, Icons.badge),
-                        _buildDetailCard('Email Address', student.email, Icons.email),
-                        _buildDetailCard('Phone Number', student.phone, Icons.phone),
-                        _buildDetailCard(
-                            'Date of Birth',
-                            '${student.dateOfBirth.day}/${student.dateOfBirth.month}/${student.dateOfBirth.year}',
-                            Icons.cake
-                        ),
-                        _buildDetailCard('Age', '${_calculateAge(student.dateOfBirth)} years old', Icons.person),
-                        _buildDetailCard('Class', student.className, Icons.school),
-                        _buildDetailCard('Address', student.address.isEmpty ? 'Not provided' : student.address, Icons.location_on),
-                      ],
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: AppTheme.defaultSpacing),
+                SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
                 // Action Buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // You can add edit functionality here
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Edit functionality can be added here')),
-                          );
-                        },
-                        icon: Icon(Icons.edit),
-                        label: Text('Edit Student'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: AppTheme.mediumSpacing),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(Icons.arrow_back),
-                        label: Text('Back to List'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppTheme.primaryBlue,
-                          side: BorderSide(color: AppTheme.primaryBlue),
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _buildActionButtons(context),
               ],
             ),
           ),

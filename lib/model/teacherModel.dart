@@ -1,4 +1,3 @@
-
 // Data Models
 class Teacher {
   final String id;

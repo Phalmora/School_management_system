@@ -1,48 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class ReportsAnalyticsPage extends StatelessWidget {
   const ReportsAnalyticsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    final isTablet = screenWidth > 600;
-    final crossAxisCount = isTablet ? 3 : 2;
-
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
           child: SingleChildScrollView(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: screenHeight - MediaQuery.of(context).padding.top - kToolbarHeight,
+                minHeight: AppThemeResponsiveness.getScreenHeight(context) -
+                    MediaQuery.of(context).padding.top -
+                    AppThemeResponsiveness.getAppBarHeight(context),
               ),
               child: Column(
                 children: [
-                  SizedBox(height: AppTheme.smallSpacing ?? 8),
+                  SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
 
                   // Header Section
                   Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: AppTheme.defaultSpacing ?? 16,
-                    ),
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing ?? 12),
+                    margin: AppThemeResponsiveness.getHorizontalPadding(context),
+                    padding: AppThemeResponsiveness.getCardPadding(context),
                     decoration: BoxDecoration(
-                      color: AppTheme.white ?? Colors.white,
+                      color: AppThemeColor.white,
                       borderRadius: BorderRadius.circular(
-                        AppTheme.cardBorderRadius ?? 12,
+                        AppThemeResponsiveness.getCardBorderRadius(context),
                       ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
-                          blurRadius: 10,
+                          blurRadius: AppThemeResponsiveness.getCardElevation(context),
                           offset: const Offset(0, 5),
                         ),
                       ],
@@ -55,180 +49,100 @@ class ReportsAnalyticsPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Reports & Analytics',
-                                style: TextStyle(
-                                  fontSize: isTablet ? 24 : 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.primaryBlue ?? Colors.blue,
-                                  fontFamily: 'Roboto',
-                                ),
+                                style: AppThemeResponsiveness.getTitleTextStyle(context),
                               ),
-                              SizedBox(height: 4),
+                              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
                               Text(
                                 'Generate and view detailed reports',
-                                style: TextStyle(
-                                  fontSize: isTablet ? 16 : 14,
-                                  color: Colors.grey.shade600,
-                                  fontFamily: 'Roboto',
-                                ),
+                                style: AppThemeResponsiveness.getSubHeadingStyle(context),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(width: 12),
+                        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
                         Icon(
                           Icons.analytics,
-                          color: AppTheme.primaryBlue ?? Colors.blue,
-                          size: isTablet ? 32 : 28,
+                          color: AppThemeColor.primaryBlue,
+                          size: AppThemeResponsiveness.getHeaderIconSize(context),
                         ),
                       ],
                     ),
                   ),
 
-                  SizedBox(height: AppTheme.defaultSpacing ?? 16),
+                  SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                  // Content
+                  // Content Container
                   Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: AppTheme.defaultSpacing ?? 16,
-                    ),
+                    margin: AppThemeResponsiveness.getHorizontalPadding(context),
                     decoration: BoxDecoration(
-                      color: AppTheme.white ?? Colors.white,
+                      color: AppThemeColor.white,
                       borderRadius: BorderRadius.circular(
-                        AppTheme.cardBorderRadius ?? 12,
+                        AppThemeResponsiveness.getCardBorderRadius(context),
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.all(AppTheme.defaultSpacing ?? 16),
+                      padding: AppThemeResponsiveness.getCardPadding(context),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Reports Grid
-                          SizedBox(
-                            height: isTablet ? 400 : 320,
-                            child: GridView.count(
-                              crossAxisCount: crossAxisCount,
-                              crossAxisSpacing: AppTheme.mediumSpacing ?? 12,
-                              mainAxisSpacing: AppTheme.mediumSpacing ?? 12,
-                              childAspectRatio: _calculateAspectRatio(screenWidth, isTablet),
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                _buildReportCard(
-                                  title: 'Attendance Summary',
-                                  subtitle: 'Daily & Monthly Reports',
-                                  icon: Icons.calendar_today,
-                                  color: AppTheme.primaryBlue ?? Colors.blue,
-                                  onTap: () => _navigateToAttendanceReport(context),
-                                ),
-                                _buildReportCard(
-                                  title: 'Financial Reports',
-                                  subtitle: 'Income & Expense Analysis',
-                                  icon: Icons.trending_up,
-                                  color: Colors.green.shade600,
-                                  onTap: () => _navigateToFinancialReport(context),
-                                ),
-                                _buildReportCard(
-                                  title: 'Fee Collection',
-                                  subtitle: 'Payment Status & Due',
-                                  icon: Icons.payment,
-                                  color: Colors.orange.shade600,
-                                  onTap: () => _navigateToFeeCollectionReport(context),
-                                ),
-                                _buildReportCard(
-                                  title: 'Student Analytics',
-                                  subtitle: 'Performance Overview',
-                                  icon: Icons.bar_chart,
-                                  color: AppTheme.primaryPurple ?? Colors.purple,
-                                  onTap: () => _navigateToStudentAnalytics(context),
-                                ),
-                              ],
-                            ),
+                          GridView.count(
+                            crossAxisCount: AppThemeResponsiveness.getDashboardGridCrossAxisCount(context),
+                            crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+                            mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+                            childAspectRatio: AppThemeResponsiveness.getDashboardGridChildAspectRatio(context),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              _buildReportCard(
+                                context: context,
+                                title: 'Attendance Summary',
+                                icon: Icons.calendar_today,
+                                color: AppThemeColor.primaryBlue,
+                                onTap: () => _navigateToAttendanceReport(context),
+                              ),
+                              _buildReportCard(
+                                context: context,
+                                title: 'Financial Reports',
+                                icon: Icons.trending_up,
+                                color: Colors.green.shade600,
+                                onTap: () => _navigateToFinancialReport(context),
+                              ),
+                              _buildReportCard(
+                                context: context,
+                                title: 'Fee Collection',
+                                icon: Icons.payment,
+                                color: Colors.orange.shade600,
+                                onTap: () => _navigateToFeeCollectionReport(context),
+                              ),
+                              _buildReportCard(
+                                context: context,
+                                title: 'Student Analytics',
+                                icon: Icons.bar_chart,
+                                color: AppThemeColor.primaryIndigo,
+                                onTap: () => _navigateToStudentAnalytics(context),
+                              ),
+                            ],
                           ),
 
-                          SizedBox(height: AppTheme.mediumSpacing ?? 12),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
                           // Quick Actions Section
                           Text(
                             'Quick Actions',
-                            style: TextStyle(
-                              fontSize: isTablet ? 20 : 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryPurple ?? Colors.purple,
-                              fontFamily: 'Roboto',
+                            style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(
+                              color: AppThemeColor.primaryIndigo,
                             ),
                           ),
-                          SizedBox(height: AppTheme.mediumSpacing ?? 12),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
 
-                          // Responsive button layout
-                          if (isTablet)
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildActionButton(
-                                    title: 'Export All Reports',
-                                    icon: Icons.download,
-                                    onPressed: () => _exportAllReports(context),
-                                  ),
-                                ),
-                                SizedBox(width: AppTheme.mediumSpacing ?? 12),
-                                Expanded(
-                                  child: _buildActionButton(
-                                    title: 'Email Reports',
-                                    icon: Icons.email,
-                                    onPressed: () => _emailReports(context),
-                                  ),
-                                ),
-                                SizedBox(width: AppTheme.mediumSpacing ?? 12),
-                                Expanded(
-                                  child: _buildActionButton(
-                                    title: 'Schedule Reports',
-                                    icon: Icons.schedule,
-                                    onPressed: () => _scheduleReports(context),
-                                  ),
-                                ),
-                              ],
-                            )
-                          else
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildActionButton(
-                                        title: 'Export All',
-                                        icon: Icons.download,
-                                        onPressed: () => _exportAllReports(context),
-                                      ),
-                                    ),
-                                    SizedBox(width: AppTheme.mediumSpacing ?? 12),
-                                    Expanded(
-                                      child: _buildActionButton(
-                                        title: 'Email Reports',
-                                        icon: Icons.email,
-                                        onPressed: () => _emailReports(context),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: AppTheme.smallSpacing ?? 8),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: _buildActionButton(
-                                    title: 'Schedule Reports',
-                                    icon: Icons.schedule,
-                                    onPressed: () => _scheduleReports(context),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                          SizedBox(height: AppTheme.defaultSpacing ?? 16),
+                          _buildQuickActions(context),
+                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                         ],
                       ),
                     ),
                   ),
-
-                  SizedBox(height: AppTheme.defaultSpacing ?? 16),
+                  SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                 ],
               ),
             ),
@@ -238,190 +152,267 @@ class ReportsAnalyticsPage extends StatelessWidget {
     );
   }
 
-  double _calculateAspectRatio(double screenWidth, bool isTablet) {
-    if (isTablet) {
-      return screenWidth > 800 ? 1.3 : 1.2;
-    } else {
-      return screenWidth > 400 ? 1.15 : 1.0;
-    }
-  }
-
   Widget _buildReportCard({
+    required BuildContext context,
     required String title,
-    required String subtitle,
     required IconData icon,
     required Color color,
     required VoidCallback onTap,
   }) {
-    return Builder(
-      builder: (context) {
-        final screenWidth = MediaQuery.of(context).size.width;
-        final isTablet = screenWidth > 600;
+    return Card(
+      elevation: AppThemeResponsiveness.getCardElevation(context),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        child: Container(
+          height: 180, // ✅ Increased height to fix overflow
+          padding: AppThemeResponsiveness.getDashboardCardPadding(context) > 20
+              ? EdgeInsets.all(AppThemeResponsiveness.getDashboardCardPadding(context))
+              : AppThemeResponsiveness.getCardPadding(context),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(
+                    AppThemeResponsiveness.getResponsiveRadius(context, 10.0),
+                  ),
+                ),
+                child: Icon(
+                  icon,
+                  size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+                  color: color,
+                ),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
 
-        return Card(
-          elevation: AppTheme.cardElevation ?? 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              AppTheme.cardBorderRadius ?? 12,
-            ),
-          ),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(
-              AppTheme.cardBorderRadius ?? 12,
-            ),
-            child: Container(
-              padding: EdgeInsets.all(
-                isTablet ? (AppTheme.defaultSpacing ?? 16) : (AppTheme.mediumSpacing ?? 12),
+              // Title text
+              Text(
+                title,
+                style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+                  color: color,
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 16.0),
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(isTablet ? 14 : 10),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      icon,
-                      size: isTablet ? 32 : 28,
-                      color: color,
-                    ),
-                  ),
-                  SizedBox(height: AppTheme.smallSpacing ?? 8),
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: isTablet ? 16 : 14,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                        fontFamily: 'Roboto',
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  Flexible(
-                    child: Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: isTablet ? 12 : 10,
-                        color: Colors.grey.shade600,
-                        fontFamily: 'Roboto',
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+
+
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
+
+  Widget _buildQuickActions(BuildContext context) {
+    if (AppThemeResponsiveness.isTablet(context) || AppThemeResponsiveness.isDesktop(context)) {
+      return Row(
+        children: [
+          Expanded(
+            child: _buildActionButton(
+              context: context,
+              title: 'Export All Reports',
+              icon: Icons.download,
+              onPressed: () => _exportAllReports(context),
+            ),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
+            child: _buildActionButton(
+              context: context,
+              title: 'Email Reports',
+              icon: Icons.email,
+              onPressed: () => _emailReports(context),
+            ),
+          ),
+          SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+          Expanded(
+            child: _buildActionButton(
+              context: context,
+              title: 'Schedule Reports',
+              icon: Icons.schedule,
+              onPressed: () => _scheduleReports(context),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: _buildActionButton(
+                  context: context,
+                  title: AppThemeResponsiveness.isSmallPhone(context) ? 'Export' : 'Export All',
+                  icon: Icons.download,
+                  onPressed: () => _exportAllReports(context),
+                ),
+              ),
+              SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
+              Expanded(
+                child: _buildActionButton(
+                  context: context,
+                  title: AppThemeResponsiveness.isSmallPhone(context) ? 'Email' : 'Email Reports',
+                  icon: Icons.email,
+                  onPressed: () => _emailReports(context),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          SizedBox(
+            width: double.infinity,
+            child: _buildActionButton(
+              context: context,
+              title: 'Schedule Reports',
+              icon: Icons.schedule,
+              onPressed: () => _scheduleReports(context),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
   Widget _buildActionButton({
+    required BuildContext context,
     required String title,
     required IconData icon,
     required VoidCallback onPressed,
   }) {
-    return Builder(
-      builder: (context) {
-        final screenWidth = MediaQuery.of(context).size.width;
-        final isTablet = screenWidth > 600;
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(
+        icon,
+        color: AppThemeColor.white,
+        size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+      ),
+      label: Flexible(
+        child: Text(
+          title,
+          style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+            fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppThemeColor.primaryBlue,
+        padding: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.getDefaultSpacing(context) * 0.7,
+          horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+        ),
+        elevation: AppThemeResponsiveness.getButtonElevation(context),
+        minimumSize: Size(0, AppThemeResponsiveness.getButtonHeight(context) * 0.8),
+      ),
+    );
+  }
 
-        return ElevatedButton.icon(
-          onPressed: onPressed,
-          icon: Icon(
-            icon,
-            color: AppTheme.white ?? Colors.white,
-            size: isTablet ? 18 : 16,
+  void _showInfoDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getDialogBorderRadius(context)),
           ),
-          label: Flexible(
+          title: Text(
+            title,
+            style: AppThemeResponsiveness.getDialogTitleStyle(context),
+          ),
+          content: SizedBox(
+            width: AppThemeResponsiveness.getDialogWidth(context),
             child: Text(
-              title,
-              style: TextStyle(
-                color: AppTheme.white ?? Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Roboto',
-                fontSize: isTablet ? 14 : 12,
-              ),
-              overflow: TextOverflow.ellipsis,
+              content,
+              style: AppThemeResponsiveness.getDialogContentStyle(context),
             ),
           ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.primaryBlue ?? Colors.blue,
-            padding: EdgeInsets.symmetric(
-              vertical: isTablet ? 14 : 10,
-              horizontal: isTablet ? 16 : 12,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                AppTheme.buttonBorderRadius ?? 8,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: AppThemeColor.primaryBlue,
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 14.0),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-            elevation: AppTheme.buttonElevation ?? 2,
-          ),
+          ],
         );
       },
     );
   }
 
-  // Navigation methods
   void _navigateToAttendanceReport(BuildContext context) {
-    // Navigate to attendance report page
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening Attendance Summary...')),
-    );
-  }
-
-  void _emailReports(BuildContext context) {
-    // TODO: Implement email logic
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Preparing email reports...')),
+    _showInfoDialog(
+      context,
+      'Attendance Summary',
+      'Opening detailed attendance reports with daily and monthly analytics...',
     );
   }
 
   void _navigateToFinancialReport(BuildContext context) {
-    // Navigate to financial report page
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening Financial Reports...')),
+    _showInfoDialog(
+      context,
+      'Financial Reports',
+      'Opening comprehensive financial analysis including income and expense breakdowns...',
     );
   }
 
   void _navigateToFeeCollectionReport(BuildContext context) {
-    // Navigate to fee collection report page
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening Fee Collection Reports...')),
+    _showInfoDialog(
+      context,
+      'Fee Collection',
+      'Opening fee collection reports with payment status and due amount details...',
     );
   }
 
   void _navigateToStudentAnalytics(BuildContext context) {
-    // Navigate to student analytics page
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening Student Analytics...')),
+    _showInfoDialog(
+      context,
+      'Student Analytics',
+      'Opening student performance analytics and comprehensive overview reports...',
     );
   }
 
   void _exportAllReports(BuildContext context) {
-    // Export all reports functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Exporting all reports...')),
+    _showInfoDialog(
+      context,
+      'Export Reports',
+      'Preparing all reports for export. This may take a few moments...',
+    );
+  }
+
+  void _emailReports(BuildContext context) {
+    _showInfoDialog(
+      context,
+      'Email Reports',
+      'Preparing reports for email delivery. Please configure your email settings...',
     );
   }
 
   void _scheduleReports(BuildContext context) {
-    // Schedule reports functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Opening report scheduler...')),
+    _showInfoDialog(
+      context,
+      'Schedule Reports',
+      'Opening report scheduler to set up automated report generation...',
     );
   }
 }

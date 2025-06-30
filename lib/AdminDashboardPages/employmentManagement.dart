@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school/AdminEmployeeManagement/editEmployee.dart';
 import 'package:school/AdminEmployeeManagement/teacherDetails.dart';
-import 'package:school/customWidgets/appBar.dart';
-import 'package:school/customWidgets/theme.dart';
+import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/model/employeeModel.dart';
-
 
 // Main Teacher Management Page
 class EmployeeManagementPage extends StatefulWidget {
@@ -121,295 +119,636 @@ class _EmployeeManagementPageState extends State<EmployeeManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarCustom(),
-      body: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppThemeColor.primaryGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              bottom: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+              left: AppThemeResponsiveness.getSmallSpacing(context),
+              right: AppThemeResponsiveness.getSmallSpacing(context),
             ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  SizedBox(height: 20),
-
-                  // Search and Filter Section
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-                    padding: EdgeInsets.all(AppTheme.mediumSpacing),
+            child: Column(
+              children: [
+                _buildHeader(context),
+                Expanded(
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+                    ),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+                    ),
                     decoration: BoxDecoration(
-                      color: AppTheme.white,
-                      borderRadius: BorderRadius.circular(AppTheme.cardBorderRadius),
+                      color: AppThemeColor.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
                           blurRadius: 10,
-                          offset: Offset(0, 5),
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Column(
                       children: [
-                        TextField(
-                          controller: searchController,
-                          decoration: InputDecoration(
-                            hintText: 'Search by name, ID, email, subject, department',
-                            hintStyle: TextStyle(fontSize: 12),
-                            prefixIcon: Icon(Icons.search, color: AppTheme.primaryBlue),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(AppTheme.inputBorderRadius),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: AppTheme.blue50,
-                          ),
-                        ),
-                        SizedBox(height: AppTheme.smallSpacing),
-                        Row(
-                          children: [
-                            Text(
-                              'Filter by subject: ',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.blue800,
-                              ),
-                            ),
-                            Expanded(
-                              child: DropdownButton<String>(
-                                value: selectedDepartmentFilter,
-                                isExpanded: true,
-                                underline: Container(),
-                                items: availableDepartments.map((department) {
-                                  return DropdownMenuItem(
-                                    value: department,
-                                    child: Text(department),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedDepartmentFilter = value!;
-                                    _filterEmployees();
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
+                        // Search and Filter Section
+                        _buildSearchSection(context),
+
+                        // Employees Header
+                        _buildEmployeesHeader(context),
+
+                        // Employees List/Grid
+                        Expanded(
+                          child: _buildEmployeesList(context),
                         ),
                       ],
                     ),
                   ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: _buildFloatingActionButton(context),
+    );
+  }
 
-                  SizedBox(height: AppTheme.defaultSpacing),
+  Widget _buildHeader(BuildContext context) {
+    return Center(
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: AppThemeResponsiveness.getMaxWidth(context),
+        ),
+        margin: EdgeInsets.symmetric(
+          horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: AppThemeResponsiveness.getDashboardVerticalPadding(context),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.people,
+              color: AppThemeColor.white,
+              size: AppThemeResponsiveness.getHeaderIconSize(context),
+            ),
+            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+            Flexible(
+              child: Text(
+                'Employee Management',
+                style: AppThemeResponsiveness.getSectionTitleStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                    context,
+                    AppThemeResponsiveness.getSectionTitleStyle(context).fontSize! + 4,
+                  ),
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-                  // Teacher List
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: AppTheme.defaultSpacing),
-                      decoration: BoxDecoration(
-                        color: AppTheme.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(AppTheme.cardBorderRadius),
-                          topRight: Radius.circular(AppTheme.cardBorderRadius),
+  Widget _buildSearchSection(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+      decoration: BoxDecoration(
+        color: AppThemeColor.blue50,
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          TextField(
+            controller: searchController,
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+            decoration: InputDecoration(
+              hintText: 'Name, ID, email, role, department',
+              hintStyle: AppThemeResponsiveness.getInputHintStyle(context),
+              prefixIcon: Icon(
+                Icons.search,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: AppThemeColor.white,
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+                vertical: AppThemeResponsiveness.getMediumSpacing(context),
+              ),
+            ),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  'Filter by subject: ',
+                  style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppThemeColor.blue800,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppThemeResponsiveness.getSmallSpacing(context),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppThemeColor.white,
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                    border: Border.all(
+                      color: AppThemeColor.blue200,
+                      width: 1,
+                    ),
+                  ),
+                  child: DropdownButton<String>(
+                    value: selectedDepartmentFilter,
+                    isExpanded: true,
+                    underline: Container(),
+                    style: AppThemeResponsiveness.getBodyTextStyle(context),
+                    items: availableDepartments.map((department) {
+                      return DropdownMenuItem(
+                        value: department,
+                        child: Text(
+                          department,
+                          style: AppThemeResponsiveness.getBodyTextStyle(context),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          // List Header
-                          Container(
-                            padding: EdgeInsets.all(AppTheme.mediumSpacing),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Teachers (${filteredEmployees.length})',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.primaryBlue,
-                                  ),
-                                ),
-                                Icon(Icons.school, color: AppTheme.primaryBlue),
-                              ],
-                            ),
-                          ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedDepartmentFilter = value!;
+                        _filterEmployees();
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-                          Expanded(
-                            child: filteredEmployees.isEmpty
-                                ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.search_off,
-                                    size: 64,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                  SizedBox(height: AppTheme.smallSpacing),
-                                  Text(
-                                    'No teachers found',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  SizedBox(height: AppTheme.smallSpacing),
-                                  Text(
-                                    'Try adjusting your search or filter',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey.shade500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                                : ListView.builder(
-                              padding: EdgeInsets.symmetric(horizontal: AppTheme.mediumSpacing),
-                              itemCount: filteredEmployees.length,
-                              itemBuilder: (context, index) {
-                                final employee = filteredEmployees[index];
-                                return Card(
-                                  elevation: 3,
-                                  margin: EdgeInsets.only(bottom: AppTheme.smallSpacing),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => TeacherDetailsPage(teacher: employee),
-                                        ),
-                                      );
-                                    },
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                            AppTheme.blue50,
-                                            AppTheme.white,
-                                          ],
-                                        ),
-                                      ),
-                                      child: ListTile(
-                                        contentPadding: EdgeInsets.all(AppTheme.mediumSpacing),
-                                        leading: CircleAvatar(
-                                          backgroundColor: AppTheme.primaryBlue,
-                                          child: Text(
-                                            employee.name.substring(0, 1).toUpperCase(),
-                                            style: TextStyle(
-                                              color: AppTheme.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        title: Text(
-                                          employee.name,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        subtitle: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(height: 4),
-                                            Text('ID: ${employee.id}'),
-                                            Text('${employee.role} • ${employee.department}'),
-                                            Text('📞 ${employee.phone}'),
-                                            Text('📧 ${employee.email}'),
-                                          ],
-                                        ),
-                                        trailing: PopupMenuButton(
-                                          itemBuilder: (context) => [
-                                            PopupMenuItem(
-                                              value: 'update',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.edit, color: AppTheme.primaryBlue),
-                                                  SizedBox(width: 8),
-                                                  Text('Update'),
-                                                ],
-                                              ),
-                                            ),
-                                            PopupMenuItem(
-                                              value: 'delete',
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.delete, color: Colors.red),
-                                                  SizedBox(width: 8),
-                                                  Text('Delete'),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                          onSelected: (value) {
-                                            if (value == 'update') {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) => AddEditEmployeePage(
-                                                    employee: employee,
-                                                    employeeIndex: index,
-                                                    onSave: (updatedEmployee) => _updateEmployee(index, updatedEmployee),
-                                                  ),
-                                                ),
-                                              );
-                                            } else if (value == 'delete') {
-                                              _showDeleteDialog(index);
-                                            }
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
+  Widget _buildEmployeesHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
+        vertical: AppThemeResponsiveness.getMediumSpacing(context),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Teachers (${filteredEmployees.length})',
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: AppThemeColor.primaryBlue,
+              fontSize: AppThemeResponsiveness.getResponsiveFontSize(
+                context,
+                AppThemeResponsiveness.getHeadingStyle(context).fontSize! + 4,
+              ),
+            ),
+          ),
+          Icon(
+            Icons.school,
+            color: AppThemeColor.primaryBlue,
+            size: AppThemeResponsiveness.getIconSize(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmployeesList(BuildContext context) {
+    if (filteredEmployees.isEmpty) {
+      return _buildEmptyState(context);
+    }
+
+    return AppThemeResponsiveness.isDesktop(context) || AppThemeResponsiveness.isTablet(context)
+        ? _buildEmployeesGrid(context)
+        : _buildEmployeesListView(context);
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: AppThemeResponsiveness.getEmptyStateIconSize(context),
+            color: Colors.grey.shade400,
+          ),
+          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+          Text(
+            'No teachers found',
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: Colors.grey.shade600,
+            ),
+          ),
+          SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+          Text(
+            'Try adjusting your search or filter',
+            style: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
+              color: Colors.grey.shade500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmployeesGrid(BuildContext context) {
+    return GridView.builder(
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: AppThemeResponsiveness.getGridCrossAxisCount(context),
+        crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
+        mainAxisSpacing: AppThemeResponsiveness.getDashboardGridMainAxisSpacing(context),
+        childAspectRatio: AppThemeResponsiveness.getGridChildAspectRatio(context) * 0.7,
+      ),
+      itemCount: filteredEmployees.length,
+      itemBuilder: (context, index) {
+        return _buildEmployeeGridCard(context, filteredEmployees[index], index);
+      },
+    );
+  }
+
+  Widget _buildEmployeesListView(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
+      itemCount: filteredEmployees.length,
+      itemBuilder: (context, index) {
+        return _buildEmployeeCard(context, filteredEmployees[index], index);
+      },
+    );
+  }
+
+  Widget _buildEmployeeGridCard(BuildContext context, Employee employee, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppThemeColor.blue50,
+            AppThemeColor.white,
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeacherDetailsPage(teacher: employee),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        child: Padding(
+          padding: EdgeInsets.all(AppThemeResponsiveness.getGridItemPadding(context)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CircleAvatar(
+                    backgroundColor: AppThemeColor.primaryBlue,
+                    radius: AppThemeResponsiveness.getIconSize(context) * 0.8,
+                    child: Text(
+                      employee.name.substring(0, 1).toUpperCase(),
+                      style: TextStyle(
+                        color: AppThemeColor.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 16),
                       ),
+                    ),
+                  ),
+                  _buildEmployeePopupMenu(context, employee, index),
+                ],
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                employee.name,
+                style: AppThemeResponsiveness.getGridItemTitleStyle(context).copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                'ID: ${employee.id}',
+                style: AppThemeResponsiveness.getGridItemSubtitleStyle(context),
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                '${employee.role}',
+                style: AppThemeResponsiveness.getGridItemSubtitleStyle(context),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Text(
+                employee.department,
+                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                  fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 12),
+                  color: AppThemeColor.primaryBlue,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const Spacer(),
+              Row(
+                children: [
+                  Icon(
+                    Icons.phone,
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.6,
+                    color: Colors.grey.shade600,
+                  ),
+                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                  Expanded(
+                    child: Text(
+                      employee.phone,
+                      style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                        fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 10),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-
-          // Floating Action Button
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddEditEmployeePage(
-                      employeeId: _generateEmployeeId(),
-                      onSave: _addEmployee,
+              SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+              Row(
+                children: [
+                  Icon(
+                    Icons.email,
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.6,
+                    color: Colors.grey.shade600,
+                  ),
+                  SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                  Expanded(
+                    child: Text(
+                      employee.email,
+                      style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
+                        fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 10),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                );
-              },
-              backgroundColor: AppTheme.primaryBlue,
-              foregroundColor: Colors.white,
-              elevation: 8,
-              icon: Icon(Icons.person_add),
-              label: Text(
-                'Add Teacher',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+                ],
               ),
-            ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmployeeCard(BuildContext context, Employee employee, int index) {
+    return Container(
+      margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getMediumSpacing(context)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppThemeColor.blue50,
+            AppThemeColor.white,
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
+        leading: CircleAvatar(
+          backgroundColor: AppThemeColor.primaryBlue,
+          radius: AppThemeResponsiveness.getDashboardCardIconSize(context) * 0.6,
+          child: Text(
+            employee.name.substring(0, 1).toUpperCase(),
+            style: TextStyle(
+              color: AppThemeColor.white,
+              fontWeight: FontWeight.bold,
+              fontSize: AppThemeResponsiveness.getResponsiveFontSize(context, 16),
+            ),
+          ),
+        ),
+        title: Text(
+          employee.name,
+          style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
+            Text(
+              'ID: ${employee.id}',
+              style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
+            ),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+            Text(
+              '${employee.role} • ${employee.department}',
+              style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context),
+            ),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+            Row(
+              children: [
+                Icon(
+                  Icons.phone,
+                  size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+                  color: Colors.grey.shade600,
+                ),
+                SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                Expanded(
+                  child: Text(
+                    employee.phone,
+                    style: AppThemeResponsiveness.getBodyTextStyle(context),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+            Row(
+              children: [
+                Icon(
+                  Icons.email,
+                  size: AppThemeResponsiveness.getIconSize(context) * 0.7,
+                  color: Colors.grey.shade600,
+                ),
+                SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context) / 2),
+                Expanded(
+                  child: Text(
+                    employee.email,
+                    style: AppThemeResponsiveness.getBodyTextStyle(context),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        trailing: _buildEmployeePopupMenu(context, employee, index),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TeacherDetailsPage(teacher: employee),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmployeePopupMenu(BuildContext context, Employee employee, int index) {
+    return PopupMenuButton<String>(
+      icon: Icon(
+        Icons.more_vert,
+        color: AppThemeColor.primaryBlue,
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+      ),
+      onSelected: (value) {
+        if (value == 'update') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddEditEmployeePage(
+                employee: employee,
+                employeeIndex: index,
+                onSave: (updatedEmployee) => _updateEmployee(index, updatedEmployee),
+              ),
+            ),
+          );
+        } else if (value == 'delete') {
+          _showDeleteDialog(index);
+        }
+      },
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem(
+          value: 'update',
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit,
+                color: AppThemeColor.primaryBlue,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Update',
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(
+                Icons.delete,
+                color: Colors.red,
+                size: AppThemeResponsiveness.getIconSize(context) * 0.8,
+              ),
+              SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
+              Text(
+                'Delete',
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddEditEmployeePage(
+              employeeId: _generateEmployeeId(),
+              onSave: _addEmployee,
+            ),
+          ),
+        );
+      },
+      backgroundColor: AppThemeColor.primaryBlue,
+      foregroundColor: AppThemeColor.white,
+      elevation: AppThemeResponsiveness.getButtonElevation(context),
+      icon: Icon(
+        Icons.person_add,
+        size: AppThemeResponsiveness.getIconSize(context),
+      ),
+      label: Text(
+        'Add Teacher',
+        style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
       ),
     );
   }
@@ -419,29 +758,52 @@ class _EmployeeManagementPageState extends State<EmployeeManagementPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Teacher'),
-          content: Text('Are you sure you want to delete ${filteredEmployees[index].name}?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getCardBorderRadius(context)),
+          ),
+          title: Text(
+            'Delete Teacher',
+            style: AppThemeResponsiveness.getHeadingStyle(context),
+          ),
+          content: Text(
+            'Are you sure you want to delete ${filteredEmployees[index].name}?',
+            style: AppThemeResponsiveness.getBodyTextStyle(context),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _deleteEmployee(index);
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Teacher deleted successfully!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: AppTheme.white,
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: AppThemeColor.primaryBlue,
+                  fontSize: AppThemeResponsiveness.getButtonTextStyle(context).fontSize,
+                ),
               ),
-              child: Text('Delete'),
+            ),
+            SizedBox(
+              height: AppThemeResponsiveness.getButtonHeight(context) * 0.8,
+              child: ElevatedButton(
+                onPressed: () {
+                  _deleteEmployee(index);
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Teacher deleted successfully!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
+                  ),
+                ),
+                child: Text(
+                  'Delete',
+                  style: AppThemeResponsiveness.getButtonTextStyle(context),
+                ),
+              ),
             ),
           ],
         );
