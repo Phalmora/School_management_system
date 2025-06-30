@@ -1,4 +1,4 @@
-// lib/models/student.dart
+
 class Student {
   final int id;
   final String name;
