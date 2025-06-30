@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school/customWidgets/button.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/sectionTitle.dart';
@@ -232,53 +233,21 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
   }
 
   Widget buildActionButtons() {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: Container(
-            height: AppThemeResponsiveness.getButtonHeight(context),
-            child: _buildAnimatedButton(
-              text: 'Back',
-              onPressed: () => Navigator.pop(context),
-              isSecondary: true,
-            ),
-          ),
+        PrimaryButton(
+          title: 'Next',
+          icon: Icon(Icons.arrow_forward, color: Colors.white),
+          onPressed: _nextPage,
         ),
-        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
-        Expanded(
-          child: Container(
-            height: AppThemeResponsiveness.getButtonHeight(context),
-            child: _buildAnimatedButton(
-              text: 'Next',
-              onPressed: _nextPage,
-            ),
-          ),
-        ),
+        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+        SecondaryButton(
+          title: 'Back',
+          icon: Icon(Icons.arrow_back_rounded, color: AppThemeColor.blue600),
+          color: AppThemeColor.blue600,
+          onPressed: () => Navigator.pop(context),
+        )
       ],
-    );
-  }
-
-  Widget _buildAnimatedButton({
-    required String text,
-    required VoidCallback onPressed,
-    bool isSecondary = false,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSecondary ? Colors.grey[300] : AppThemeColor.blue600,
-        foregroundColor: isSecondary ? Colors.black87 : Colors.white,
-        elevation: AppThemeResponsiveness.getButtonElevation(context),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-        ),
-      ),
-      child: Text(
-        text,
-        style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
-          color: isSecondary ? Colors.black87 : Colors.white,
-        ),
-      ),
     );
   }
 
