@@ -60,6 +60,7 @@ import 'package:school/parentDashboardPages/parentCommunity.dart';
 import 'package:school/parentDashboardPages/parentFeedbackScreen.dart';
 import 'package:school/schoolDetails.dart';
 import 'package:school/splashScreen.dart';
+import 'package:school/studentConnectionTry.dart'; //Student connection with backend trial
 import 'package:school/teacherDashboardPages/attendanceTeacher.dart';
 import 'package:school/teacherDashboardPages/messageTeacher.dart';
 import 'package:school/teacherDashboardPages/profileTeacher.dart';
@@ -85,10 +86,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Roboto',
       ),
-      home: SplashScreen(),
+      // home: SplashScreen(),
       // home: MainChat(),
       // home: AppSettingsPage(),
       // home: Notifications(),
+      home: StudentListScreen(), //try for student connection
       routes: {
         '/login': (context) => LoginPage(),
         '/change-password': (context) => ChangePasswordPage(),
@@ -162,6 +164,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
 
 
 
