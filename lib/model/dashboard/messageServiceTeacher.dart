@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
-import 'package:school/model/messageModelTeacher.dart'; // Import for debugPrint
+import 'package:school/model/dashboard/messageModelTeacher.dart'; // Import for debugPrint
 
 /// A service to manage message data (simulated in-memory).
 ///

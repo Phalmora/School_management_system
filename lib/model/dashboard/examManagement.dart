@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 // Models
 class ExamSession {
   final String id;

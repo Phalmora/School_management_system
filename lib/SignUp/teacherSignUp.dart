@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/datePicker.dart';
+import 'package:school/customWidgets/dropDownCommon.dart';
 import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/button.dart';
 import 'package:school/customWidgets/loginCustomWidgets/loginSPanText.dart';
 import 'package:school/customWidgets/loginCustomWidgets/signUpTitle.dart';
+import 'package:school/customWidgets/snackBar.dart';
 import 'package:school/customWidgets/validation.dart';
 
 class TeacherSignupPage extends StatefulWidget {
@@ -22,7 +24,6 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _subjectController = TextEditingController();
 
   // Date Controllers - Using TextEditingController for AppDatePicker
   final _dateOfBirthController = TextEditingController();
@@ -35,12 +36,7 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
 
   // Dropdown values
   String? _selectedGender;
-
-  final List<String> _genders = ['Male', 'Female', 'Other'];
-  final List<String> _subjects = [
-    'Mathematics', 'Science', 'English', 'Hindi', 'Social Studies',
-    'Physics', 'Chemistry', 'Biology', 'Computer Science', 'Physical Education'
-  ];
+  String? _selectedSubject;
 
   @override
   Widget build(BuildContext context) {
@@ -173,14 +169,11 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
                 validator: ValidationUtils.validatePhone,
               ),
             ),
-            // Gender Dropdown - Updated to match other fields
+            // Gender Dropdown - Using AppDropdown
             SizedBox(
               width: _getFieldWidth(context, constraints, columns),
-              child: _buildStyledDropdownField(
+              child: AppDropdown.gender(
                 value: _selectedGender,
-                items: _genders,
-                label: 'Gender',
-                icon: Icons.people,
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedGender = newValue;
@@ -203,23 +196,18 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
                 },
               ),
             ),
-            // Subject Dropdown - Updated to match other fields
             SizedBox(
               width: _getFieldWidth(context, constraints, columns),
-              child: _buildStyledDropdownField(
-                value: _subjectController.text.isEmpty ? null : _subjectController.text,
-                items: _subjects,
-                label: 'Subject',
-                icon: Icons.book,
+              child: AppDropdown.subject(
+                value: _selectedSubject,
                 onChanged: (String? newValue) {
                   setState(() {
-                    _subjectController.text = newValue ?? '';
+                    _selectedSubject = newValue;
                   });
                 },
                 validator: ValidationUtils.validateSubject,
               ),
             ),
-            // Joining Date - Using AppDatePicker
             SizedBox(
               width: _getFieldWidth(context, constraints, columns),
               child: AppDatePicker.genericDate(
@@ -293,82 +281,6 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
     }
   }
 
-  // Updated dropdown field to match AppTextFieldBuilder styling
-  Widget _buildStyledDropdownField({
-    required String? value,
-    required List<String> items,
-    required String label,
-    required IconData icon,
-    required void Function(String?) onChanged,
-    String? Function(String?)? validator,
-  }) {
-    return DropdownButtonFormField<String>(
-      value: value,
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(
-            item,
-            style: AppThemeResponsiveness.getBodyTextStyle(context),
-          ),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      validator: validator,
-      style: AppThemeResponsiveness.getBodyTextStyle(context),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: AppThemeResponsiveness.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          icon,
-          size: AppThemeResponsiveness.getIconSize(context),
-          color: Colors.grey[600],
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-          borderSide: BorderSide(
-            color: AppThemeColor.blue600,
-            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-          borderSide: const BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-          borderSide: BorderSide(color: Colors.red.shade400),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppThemeResponsiveness.getDefaultSpacing(context) * 1.5,
-          vertical: AppThemeResponsiveness.getSmallSpacing(context) * 2.5,
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      dropdownColor: Colors.white,
-      icon: Icon(
-        Icons.keyboard_arrow_down,
-        color: Colors.grey[600],
-        size: AppThemeResponsiveness.getIconSize(context),
-      ),
-    );
-  }
-
   // Helper method to parse date from string for validation
   DateTime? _parseDateFromString(String dateString) {
     try {
@@ -398,23 +310,12 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
 
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Teacher account created successfully!',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Teacher account created successfully!',
+            backgroundColor: Colors.green,
+            icon: Icons.check_circle_outline,
           );
-
-          // Navigate to login page
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/login',
@@ -424,20 +325,11 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
       } catch (error) {
         // Handle error
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Failed to create account. Please try again.',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Failed to create account. Please try again.',
+            backgroundColor: Colors.red,
+            icon: Icons.error,
           );
         }
       } finally {
@@ -457,7 +349,6 @@ class _TeacherSignupPageState extends State<TeacherSignupPage> {
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _subjectController.dispose();
     _dateOfBirthController.dispose();
     _joiningDateController.dispose();
     _scrollController.dispose();

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:school/customWidgets/button.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/mainFooter.dart';
-import 'package:school/model/buttonModel.dart';
 
 class AdmissionMainScreen extends StatelessWidget {
   @override

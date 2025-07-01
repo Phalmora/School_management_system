@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/model/mainNotification.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({super.key});
@@ -548,19 +549,3 @@ class _NotificationsState extends State<Notifications> {
   }
 }
 
-// Data model for notifications
-class NotificationItem {
-  final String title;
-  final String message;
-  final String time;
-  final IconData icon;
-  bool isRead;
-
-  NotificationItem({
-    required this.title,
-    required this.message,
-    required this.time,
-    required this.icon,
-    this.isRead = false,
-  });
-}

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:school/customWidgets/button.dart';
+import 'package:school/customWidgets/inputField.dart';
+import 'package:school/customWidgets/snackBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
@@ -8,53 +11,22 @@ class ForgotPasswordScreen extends StatefulWidget {
   _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
-    with SingleTickerProviderStateMixin {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _otpController = TextEditingController();
 
   bool _isLoading = false;
   bool _isEmailMethod = true;
   bool _isOtpSent = false;
   bool _isEmailVerified = false;
 
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: AppThemeColor.slideAnimationDuration,
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
-    _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-
-    _animationController.forward();
-  }
-
   @override
   void dispose() {
-    _animationController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _otpController.dispose();
     super.dispose();
   }
 
@@ -63,71 +35,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     return Scaffold(
       appBar: AppBarCustom(),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           gradient: AppThemeColor.primaryGradient,
         ),
         child: SafeArea(
-          child: AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child) {
-              return FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: AppThemeResponsiveness.getScreenPadding(context),
-                      child: Column(
-                        children: [
-                          SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
-                          _buildHeader(context),
-                          SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
-                          _buildMainCard(context),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: AppThemeResponsiveness.getScreenPadding(context),
+                child: _buildMainCard(context),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.lock_reset,
-            size: AppThemeResponsiveness.getHeaderIconSize(context) * 1.5,
-            color: Colors.white,
-          ),
-        ),
-        SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
-        Text(
-          'Forgot Password?',
-          style: AppThemeResponsiveness.getFontStyle(context),
-        ),
-        SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
-        Text(
-          'Don\'t worry! We\'ll help you reset it',
-          style: AppThemeResponsiveness.getSplashSubtitleStyle(context),
-        ),
-      ],
-    );
-  }
-
   Widget _buildMainCard(BuildContext context) {
     return Container(
       width: AppThemeResponsiveness.getMaxWidth(context),
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height * 0.6,
+      ),
       child: Card(
         elevation: AppThemeResponsiveness.getCardElevation(context),
         shape: RoundedRectangleBorder(
@@ -138,6 +70,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (!_isOtpSent) ...[
@@ -163,10 +96,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Choose Recovery Method',
-          style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
-            color: AppThemeColor.blue600,
+        Center(
+          child: Text(
+            'Choose Recovery Method',
+            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
+              color: AppThemeColor.blue600,
+            ),
           ),
         ),
         SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
@@ -209,8 +144,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       }) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: AppThemeColor.buttonAnimationDuration,
+      child: Container(
         padding: AppThemeResponsiveness.getCardPadding(context) * 0.8,
         decoration: BoxDecoration(
           color: isSelected ? AppThemeColor.blue600.withOpacity(0.1) : Colors.grey[50],
@@ -259,38 +193,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           ),
         ),
         SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
-        TextFormField(
+        // Using custom AppTextFieldBuilder
+        AppTextFieldBuilder.build(
+          context: context,
           controller: _isEmailMethod ? _emailController : _phoneController,
+          label: _isEmailMethod
+              ? 'Enter your registered email'
+              : 'Enter your registered phone number',
+          icon: _isEmailMethod ? Icons.email_outlined : Icons.phone_outlined,
           keyboardType: _isEmailMethod ? TextInputType.emailAddress : TextInputType.phone,
-          style: AppThemeResponsiveness.getBodyTextStyle(context),
-          decoration: InputDecoration(
-            hintText: _isEmailMethod
-                ? 'Enter your registered email'
-                : 'Enter your registered phone number',
-            hintStyle: AppThemeResponsiveness.getCaptionTextStyle(context),
-            prefixIcon: Icon(
-              _isEmailMethod ? Icons.email_outlined : Icons.phone_outlined,
-              color: AppThemeColor.blue600,
-              size: AppThemeResponsiveness.getIconSize(context),
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              borderSide: BorderSide(color: Colors.grey[300]!),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              borderSide: BorderSide(
-                color: AppThemeColor.blue600,
-                width: AppThemeResponsiveness.getFocusedBorderWidth(context),
-              ),
-            ),
-            filled: true,
-            fillColor: Colors.grey[50],
-            contentPadding: EdgeInsets.symmetric(
-              horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
-              vertical: AppThemeResponsiveness.getMediumSpacing(context),
-            ),
-          ),
           validator: (value) {
             if (value == null || value.isEmpty) {
               return _isEmailMethod
@@ -340,53 +251,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   Widget _buildSendButton(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: AppThemeResponsiveness.getButtonHeight(context),
-      child: ElevatedButton(
-        onPressed: _isLoading ? null : _sendResetRequest,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppThemeColor.blue600,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
-          ),
-          elevation: AppThemeResponsiveness.getButtonElevation(context),
-        ),
-        child: _isLoading
-            ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: AppThemeResponsiveness.getIconSize(context) * 0.8,
-              height: AppThemeResponsiveness.getIconSize(context) * 0.8,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            ),
-            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
-            Text(
-              'Sending...',
-              style: AppThemeResponsiveness.getButtonTextStyle(context),
-            ),
-          ],
-        )
-            : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              _isEmailMethod ? Icons.send : Icons.sms,
-              color: Colors.white,
-              size: AppThemeResponsiveness.getIconSize(context) * 0.8,
-            ),
-            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
-            Text(
-              _isEmailMethod ? 'Send Reset Link' : 'Send OTP',
-              style: AppThemeResponsiveness.getButtonTextStyle(context),
-            ),
-          ],
-        ),
+    // Using custom PrimaryButton
+    return PrimaryButton(
+      title: _isEmailMethod ? 'Send Reset Link' : 'Send OTP',
+      icon: Icon(
+        _isEmailMethod ? Icons.send : Icons.sms,
+        color: Colors.white,
+        size: AppThemeResponsiveness.getIconSize(context) * 0.8,
       ),
+      onPressed: _sendResetRequest,
+      isLoading: _isLoading,
     );
   }
 
@@ -440,52 +314,38 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               ),
               if (!_isEmailMethod) ...[
                 SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
-                TextFormField(
+                // Using custom AppTextFieldBuilder for OTP input
+                AppTextFieldBuilder.build(
+                  context: context,
+                  controller: _otpController,
+                  label: 'Enter 6-digit OTP',
+                  icon: Icons.security,
                   keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
-                    fontSize: AppThemeResponsiveness.isMobile(context) ? 20 : 24,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 4,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '000000',
-                    hintStyle: TextStyle(color: Colors.grey[400]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-                      borderSide: BorderSide(color: Colors.green[300]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-                      borderSide: BorderSide(color: Colors.green[600]!, width: 2),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-                  ),
+                  maxLength: 6,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
                     LengthLimitingTextInputFormatter(6),
                   ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the OTP';
+                    }
+                    if (value.length != 6) {
+                      return 'OTP must be 6 digits';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
-                Container(
-                  width: double.infinity,
-                  height: AppThemeResponsiveness.getButtonHeight(context),
-                  child: ElevatedButton(
-                    onPressed: _verifyOtp,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[600],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
-                      ),
-                      elevation: AppThemeResponsiveness.getButtonElevation(context),
-                    ),
-                    child: Text(
-                      'Verify OTP',
-                      style: AppThemeResponsiveness.getButtonTextStyle(context),
-                    ),
+                // Using custom PrimaryButton for OTP verification
+                PrimaryButton(
+                  title: 'Verify OTP',
+                  icon: Icon(
+                    Icons.verified_user,
+                    color: Colors.white,
+                    size: AppThemeResponsiveness.getIconSize(context) * 0.8,
                   ),
+                  onPressed: _verifyOtp,
                 ),
               ],
             ],
@@ -500,6 +360,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 _isOtpSent = false;
                 _emailController.clear();
                 _phoneController.clear();
+                _otpController.clear();
               }),
               child: Text(
                 'Try Different Method',
@@ -563,17 +424,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           AppThemeResponsiveness.isSmallPhone(context)
               ? Column(
             children: [
-              _buildSupportButton(
-                context,
-                icon: Icons.phone,
-                label: 'Call Support',
+              // Using custom SecondaryButton for support actions
+              SecondaryButton(
+                title: 'Call Support',
+                icon: Icon(Icons.phone, size: AppThemeResponsiveness.getIconSize(context) * 0.7),
+                color: AppThemeColor.blue600,
                 onPressed: _contactSupport,
               ),
               SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context)),
-              _buildSupportButton(
-                context,
-                icon: Icons.email,
-                label: 'Email Us',
+              SecondaryButton(
+                title: 'Email Us',
+                icon: Icon(Icons.email, size: AppThemeResponsiveness.getIconSize(context) * 0.7),
+                color: AppThemeColor.blue600,
                 onPressed: _emailSupport,
               ),
             ],
@@ -581,19 +443,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               : Row(
             children: [
               Expanded(
-                child: _buildSupportButton(
-                  context,
-                  icon: Icons.phone,
-                  label: 'Call Support',
+                child: SecondaryButton(
+                  title: 'Call',
+                  icon: Icon(Icons.phone, size: AppThemeResponsiveness.getIconSize(context) * 0.7),
+                  color: AppThemeColor.blue600,
                   onPressed: _contactSupport,
                 ),
               ),
               SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
               Expanded(
-                child: _buildSupportButton(
-                  context,
-                  icon: Icons.email,
-                  label: 'Email Us',
+                child: SecondaryButton(
+                  title: 'Email Us',
+                  icon: Icon(Icons.email, size: AppThemeResponsiveness.getIconSize(context) * 0.7),
+                  color: AppThemeColor.blue600,
                   onPressed: _emailSupport,
                 ),
               ),
@@ -604,37 +466,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     );
   }
 
-  Widget _buildSupportButton(
-      BuildContext context, {
-        required IconData icon,
-        required String label,
-        required VoidCallback onPressed,
-      }) {
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: AppThemeResponsiveness.getIconSize(context) * 0.7),
-      label: Text(
-        label,
-        style: AppThemeResponsiveness.getBodyTextStyle(context),
-      ),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppThemeColor.blue600,
-        side: BorderSide(color: AppThemeColor.blue600),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-        ),
-        padding: EdgeInsets.symmetric(
-          vertical: AppThemeResponsiveness.getSmallSpacing(context),
-          horizontal: AppThemeResponsiveness.getMediumSpacing(context),
-        ),
-      ),
-    );
-  }
-
   void _sendResetRequest() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
+      // Simulate API call
       await Future.delayed(Duration(seconds: 2));
 
       setState(() {
@@ -642,69 +478,45 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         _isOtpSent = true;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.white, size: 20),
-              SizedBox(width: 8),
-              Text(_isEmailMethod
-                  ? 'Reset link sent to your email!'
-                  : 'OTP sent to your phone!'),
-            ],
-          ),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
+      AppSnackBar.show(
+        context,
+        message: _isEmailMethod
+            ? 'Reset link sent to your email!'
+            : 'OTP sent to your phone!',
+        backgroundColor: Colors.green,
+        icon: Icons.check_circle,
       );
     }
   }
 
   void _verifyOtp() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.white, size: 20),
-            SizedBox(width: 8),
-            Text('OTP verified successfully!'),
-          ],
-        ),
+    if (_otpController.text.length == 6) {
+      AppSnackBar.show(
+        context,
+        message: 'OTP verified successfully!',
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    );
+        icon: Icons.check_circle,
+      );
 
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.pushReplacementNamed(context, '/reset-password');
-    });
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pushReplacementNamed(context, '/reset-password');
+      });
+    } else {
+      AppSnackBar.show(
+        context,
+        message: 'Please enter a valid 6-digit OTP',
+        backgroundColor: Colors.red,
+        icon: Icons.error,
+      );
+    }
   }
 
   void _resendCode() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.refresh, color: Colors.white, size: 20),
-            SizedBox(width: 8),
-            Text(_isEmailMethod ? 'Reset link sent again!' : 'OTP sent again!'),
-          ],
-        ),
-        backgroundColor: AppThemeColor.blue600,
-        duration: Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
+    AppSnackBar.show(
+      context,
+      message: _isEmailMethod ? 'Reset link sent again!' : 'OTP sent again!',
+      backgroundColor: AppThemeColor.blue600,
+      icon: Icons.refresh,
     );
   }
 
@@ -713,16 +525,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     try {
       await launchUrl(phoneUri);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Unable to open phone dialer'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
+      AppSnackBar.show(
+        context,
+        message: 'Unable to open phone dialer',
+        backgroundColor: Colors.red,
+        icon: Icons.error,
       );
     }
   }
@@ -740,16 +547,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     try {
       await launchUrl(emailUri);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Unable to open email app'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
+      AppSnackBar.show(
+        context,
+        message: 'Unable to open email app',
+        backgroundColor: Colors.red,
+        icon: Icons.error,
       );
     }
   }

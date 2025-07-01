@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/button.dart';
+import 'package:school/customWidgets/admissionCustomWidgets/admissionProcessIndicator.dart';
+import 'package:school/customWidgets/admissionCustomWidgets/backAndNextButton.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/sectionTitle.dart';
@@ -49,7 +50,7 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
                 padding: AppThemeResponsiveness.getScreenPadding(context),
                 child: Column(
                   children: [
-                    _buildProgressIndicator(3, 4),
+                    ProgressIndicatorBar(currentStep: 3, totalSteps: 4),
                     SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                     Text(
                       'Contact & Address Information',
@@ -83,7 +84,24 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
                                 value!.isEmpty ? 'Please enter full address' : null,
                               ),
                               SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
-                              _buildCityStateRow(),
+                              AppTextFieldBuilder.build(
+                                context: context,
+                                controller: _cityController,
+                                label: 'City *',
+                                icon: Icons.location_city,
+                                validator: (value) =>
+                                value!.isEmpty ? 'Please enter city' : null,
+                              ),
+
+                              SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
+                              AppTextFieldBuilder.build(
+                                context: context,
+                                controller: _stateController,
+                                label: 'State/Province *',
+                                icon: Icons.map,
+                                validator: (value) =>
+                                value!.isEmpty ? 'Please enter state' : null,
+                              ),
                               SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                               AppTextFieldBuilder.build(
                                 context: context,
@@ -134,7 +152,10 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
                                 keyboardType: TextInputType.phone,
                               ),
                               SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
-                              buildActionButtons(),
+                              FormNavigationButtons(
+                                onNext: _nextPage,
+                                onBack: () => Navigator.pop(context),
+                              ),
                             ],
                           ),
                         ),
@@ -147,107 +168,6 @@ class _AdmissionContactScreenState extends State<AdmissionContactScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildProgressIndicator(int currentStep, int totalSteps) {
-    return Container(
-      padding: AppThemeResponsiveness.getVerticalPadding(context),
-      child: Row(
-        children: List.generate(totalSteps, (index) {
-          bool isCompleted = index < currentStep;
-          bool isCurrent = index == currentStep - 1;
-
-          return Expanded(
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: AppThemeResponsiveness.getSmallSpacing(context) / 4,
-              ),
-              height: AppThemeResponsiveness.isMobile(context) ? 4 : 6,
-              decoration: BoxDecoration(
-                color: isCompleted || isCurrent
-                    ? AppThemeColor.blue600
-                    : Colors.grey[300],
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.isMobile(context) ? 2 : 3),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget _buildCityStateRow() {
-    // On mobile, stack vertically for better UX
-    if (AppThemeResponsiveness.isMobile(context)) {
-      return Column(
-        children: [
-          AppTextFieldBuilder.build(
-            context: context,
-            controller: _cityController,
-            label: 'City *',
-            icon: Icons.location_city,
-            validator: (value) =>
-            value!.isEmpty ? 'Please enter city' : null,
-          ),
-
-          SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
-          AppTextFieldBuilder.build(
-            context: context,
-            controller: _stateController,
-            label: 'State/Province *',
-            icon: Icons.map,
-            validator: (value) =>
-            value!.isEmpty ? 'Please enter state' : null,
-          ),
-        ],
-      );
-    }
-
-    // On tablet and desktop, use row layout
-    return Row(
-      children: [
-        Expanded(
-          child: AppTextFieldBuilder.build(
-            context: context,
-            controller: _cityController,
-            label: 'City *',
-            icon: Icons.location_city,
-            validator: (value) =>
-            value!.isEmpty ? 'Please enter city' : null,
-          ),
-        ),
-        SizedBox(width: AppThemeResponsiveness.getMediumSpacing(context)),
-        Expanded(
-          child: AppTextFieldBuilder.build(
-            context: context,
-            controller: _stateController,
-            label: 'State/Province *',
-            icon: Icons.map,
-            validator: (value) =>
-            value!.isEmpty ? 'Please enter state' : null,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildActionButtons() {
-    return Column(
-      children: [
-        PrimaryButton(
-          title: 'Next',
-          icon: Icon(Icons.arrow_forward, color: Colors.white),
-          onPressed: _nextPage,
-        ),
-        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
-        SecondaryButton(
-          title: 'Back',
-          icon: Icon(Icons.arrow_back_rounded, color: AppThemeColor.blue600),
-          color: AppThemeColor.blue600,
-          onPressed: () => Navigator.pop(context),
-        )
-      ],
     );
   }
 

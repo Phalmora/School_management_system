@@ -4,7 +4,7 @@ import 'package:school/customWidgets/datePicker.dart';
 import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/pagesMainHeading.dart';
 
-import 'package:school/model/admissionStatusModel.dart';
+import 'package:school/model/admission/admissionStatusModel.dart';
 
 class AdmissionStatusScreen extends StatefulWidget {
   @override

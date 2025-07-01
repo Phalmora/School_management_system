@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school/CommonLogic/tabBar.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/attendanceModel.dart';
-import 'package:school/model/attendanceService.dart';
+import 'package:school/model/dashboard/attendanceModelTeacher.dart';
+import 'package:school/model/dashboard/attendanceServiceTeacher.dart';
 
 class AttendancePageTeacher extends StatefulWidget {
   const AttendancePageTeacher({Key? key}) : super(key: key);

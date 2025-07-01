@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/employeeModel.dart';
+import 'package:school/model/dashboard/employeeModel.dart';
 
 // Add/Edit Teacher Page
 class AddEditEmployeePage extends StatefulWidget {

@@ -112,7 +112,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
             badge: '2',
             onTap: () {
               _toggleFab();
-              Navigator.pushNamed(context, '/teacher-chat');
+              Navigator.pushNamed(context, '/main-chat');
             },
           ),
           const SizedBox(height: 8),
@@ -124,7 +124,7 @@ class _ExpandableFabState extends State<ExpandableFab> with SingleTickerProvider
             badge: '3',
             onTap: () {
               _toggleFab();
-              Navigator.pushNamed(context, '/teacher-notifications');
+              Navigator.pushNamed(context, '/notifications');
             },
           ),
         ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/adminProfileModel.dart';
+import 'package:school/model/dashboard/adminProfileModel.dart';
 
 
 class AdminProfilePage extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school/CommonLogic/tabBar.dart';
 import 'package:school/customWidgets/pagesMainHeading.dart';
-import 'package:school/model/studentAndMarksModel.dart';
+import 'package:school/model/dashboard/studentAndMarksModelStudent.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class SubjectsMarksScreen extends StatefulWidget {

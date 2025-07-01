@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/customWidgets/dropDownCommon.dart';
 import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/button.dart';
 import 'package:school/customWidgets/loginCustomWidgets/loginSPanText.dart';
 import 'package:school/customWidgets/loginCustomWidgets/signUpTitle.dart';
+import 'package:school/customWidgets/snackBar.dart';
 import 'package:school/customWidgets/validation.dart';
 
 class ParentSignUpPage extends StatefulWidget {
@@ -30,9 +32,6 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
-
-  // Dropdown Options
-  final List<String> _relationships = ['Father', 'Mother', 'Guardian'];
 
   @override
   Widget build(BuildContext context) {
@@ -182,17 +181,15 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> {
               ),
             SizedBox(
               width: _getFieldWidth(constraints, columns, largeSpacing),
-              child: _buildDropdownField(
+              child: AppDropdown.relationship(
                 value: _selectedRelationship,
-                items: _relationships,
-                label: 'Relationship to Child',
-                icon: Icons.family_restroom,
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedRelationship = newValue;
                   });
                 },
-                validator: _validateRelationship,
+                // Optional: Provide custom relationships if needed
+                customRelationships: const ['Father', 'Mother', 'Guardian'], // You can remove this line to use default comprehensive list
               ),
             ),
 
@@ -275,87 +272,7 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> {
     return (constraints.maxWidth - (spacing * (columns - 1))) / columns;
   }
 
-  // Custom dropdown field builder for relationship selection
-  Widget _buildDropdownField({
-    required String? value,
-    required List<String> items,
-    required String label,
-    required IconData icon,
-    required void Function(String?) onChanged,
-    String? Function(String?)? validator,
-  }) {
-    return DropdownButtonFormField<String>(
-      value: value,
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(
-            item,
-            style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
-              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 14.0 :
-              AppThemeResponsiveness.isMediumPhone(context) ? 15.0 :
-              AppThemeResponsiveness.isLargePhone(context) ? 16.0 :
-              AppThemeResponsiveness.isTablet(context) ? 17.0 : 18.0,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      validator: validator,
-      decoration: InputDecoration(
-        prefixIcon: Container(
-          padding: EdgeInsets.all(AppThemeResponsiveness.getSmallSpacing(context)),
-          child: Icon(
-            icon,
-            color: AppThemeColor.black45,
-            size: AppThemeResponsiveness.getIconSize(context),
-          ),
-        ),
-        labelText: label,
-        labelStyle: AppThemeResponsiveness.getSubHeadingStyle(context).copyWith(
-          fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-          AppThemeResponsiveness.isMediumPhone(context) ? 13.0 :
-          AppThemeResponsiveness.isLargePhone(context) ? 14.0 :
-          AppThemeResponsiveness.isTablet(context) ? 15.0 : 16.0,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-          borderSide: BorderSide(
-            color: AppThemeColor.primaryBlue,
-            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-          borderSide: BorderSide(color: Colors.red.shade400),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
-          vertical: AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-          AppThemeResponsiveness.isMediumPhone(context) ? 14.0 :
-          AppThemeResponsiveness.isLargePhone(context) ? 16.0 :
-          AppThemeResponsiveness.isTablet(context) ? 18.0 : 20.0,
-        ),
-      ),
-    );
-  }
-
   // Validation Methods specific to Parent signup
-  String? _validateRelationship(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please select your relationship to the child';
-    }
-    return null;
-  }
-
   String? _validateChildAdmissionNo(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Please enter child\'s admission number';
@@ -378,23 +295,12 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> {
 
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Parent account created successfully!',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Parent account created successfully!',
+            backgroundColor: Colors.green,
+            icon: Icons.check_circle_outline,
           );
-
-          // Navigate to login page
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/login',
@@ -404,20 +310,11 @@ class _ParentSignUpPageState extends State<ParentSignUpPage> {
       } catch (error) {
         // Handle error
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Failed to create account. Please try again.',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Failed to create account. Please try again.',
+            backgroundColor: Colors.red,
+            icon: Icons.error,
           );
         }
       } finally {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/dashboardItem.dart';
+import 'package:school/model/dashboard/dashboardItem.dart';
 
 class StudentProfile extends StatefulWidget {
   const StudentProfile({super.key});

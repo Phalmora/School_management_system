@@ -3,7 +3,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:school/CommonLogic/tabBar.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/pagesMainHeading.dart';
-import 'package:school/model/feeManagementStudentDashboard.dart';
+import 'package:school/model/dashboard/feeManagementStudentDashboard.dart';
 
 class FeeManagementScreenStudent extends StatefulWidget {
   @override

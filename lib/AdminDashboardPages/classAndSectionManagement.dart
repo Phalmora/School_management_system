@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school/CommonLogic/tabBar.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/classSection.dart';
-import 'package:school/model/teacherModel.dart';
+import 'package:school/model/dashboard/classSection.dart';
+import 'package:school/model/admission/teacherModel.dart';
 
 // Main Page
 class ClassSectionManagementPage extends StatefulWidget {

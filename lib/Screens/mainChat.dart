@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
+import 'package:school/model/mainChat.dart';
 
 // Chat Selection Page
 class MainChat extends StatelessWidget {
@@ -606,17 +607,4 @@ class _ChatPageState extends State<ChatPage> {
     _scrollController.dispose();
     super.dispose();
   }
-}
-
-// Chat Message Model
-class ChatMessage {
-  final String text;
-  final bool isMe;
-  final DateTime timestamp;
-
-  ChatMessage({
-    required this.text,
-    required this.isMe,
-    required this.timestamp,
-  });
 }

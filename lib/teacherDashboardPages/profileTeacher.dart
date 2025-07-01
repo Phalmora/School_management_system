@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school/model/teacherProfile.dart';
+import 'package:school/model/dashboard/teacherProfile.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class TeacherProfilePage extends StatefulWidget {

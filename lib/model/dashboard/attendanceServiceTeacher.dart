@@ -1,4 +1,4 @@
-import 'package:school/model/attendanceModel.dart';
+import 'package:school/model/dashboard/attendanceModelTeacher.dart';
 
 class AttendanceService {
   static final AttendanceService _instance = AttendanceService._internal();

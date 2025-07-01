@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school/model/parentHelp.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
@@ -322,9 +323,9 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
           Icons.school_rounded,
           Colors.blue,
           [
-            _ContactMethod('Phone', '+91 98765 43210', Icons.phone_rounded, () => _makeCall('+919876543210')),
-            _ContactMethod('Email', 'info@brilliantschool.edu', Icons.email_rounded, () => _sendEmail('info@brilliantschool.edu')),
-            _ContactMethod('Address', '123 Education Street, Mumbai', Icons.location_on_rounded, () => _openMaps()),
+            ContactMethod('Phone', '+91 98765 43210', Icons.phone_rounded, () => _makeCall('+919876543210')),
+            ContactMethod('Email', 'info@brilliantschool.edu', Icons.email_rounded, () => _sendEmail('info@brilliantschool.edu')),
+            ContactMethod('Address', '123 Education Street, Mumbai', Icons.location_on_rounded, () => _openMaps()),
           ],
         ),
         SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
@@ -334,9 +335,9 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
           Icons.person_rounded,
           Colors.purple,
           [
-            _ContactMethod('Phone', '+91 98765 43211', Icons.phone_rounded, () => _makeCall('+919876543211')),
-            _ContactMethod('Email', 'principal@brilliantschool.edu', Icons.email_rounded, () => _sendEmail('principal@brilliantschool.edu')),
-            _ContactMethod('Schedule Meeting', 'Book appointment', Icons.calendar_today_rounded, () => _scheduleAppointment()),
+            ContactMethod('Phone', '+91 98765 43211', Icons.phone_rounded, () => _makeCall('+919876543211')),
+            ContactMethod('Email', 'principal@brilliantschool.edu', Icons.email_rounded, () => _sendEmail('principal@brilliantschool.edu')),
+            ContactMethod('Schedule Meeting', 'Book appointment', Icons.calendar_today_rounded, () => _scheduleAppointment()),
           ],
         ),
         SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
@@ -346,9 +347,9 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
           Icons.support_agent_rounded,
           Colors.green,
           [
-            _ContactMethod('WhatsApp', '+91 98765 43212', Icons.chat_rounded, () => _openWhatsApp('+919876543212')),
-            _ContactMethod('Email', 'tech@brilliantschool.edu', Icons.email_rounded, () => _sendEmail('tech@brilliantschool.edu')),
-            _ContactMethod('Live Chat', 'Chat with support', Icons.forum_rounded, () => _openLiveChat()),
+            ContactMethod('WhatsApp', '+91 98765 43212', Icons.chat_rounded, () => _openWhatsApp('+919876543212')),
+            ContactMethod('Email', 'tech@brilliantschool.edu', Icons.email_rounded, () => _sendEmail('tech@brilliantschool.edu')),
+            ContactMethod('Live Chat', 'Chat with support', Icons.forum_rounded, () => _openLiveChat()),
           ],
         ),
         SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
@@ -357,7 +358,7 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
     );
   }
 
-  Widget _buildContactCard(String title, String description, IconData icon, Color color, List<_ContactMethod> methods) {
+  Widget _buildContactCard(String title, String description, IconData icon, Color color, List<ContactMethod> methods) {
     return Container(
       padding: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
       decoration: BoxDecoration(
@@ -415,7 +416,7 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
     );
   }
 
-  Widget _buildContactMethod(_ContactMethod method) {
+  Widget _buildContactMethod(ContactMethod method) {
     return Container(
       margin: EdgeInsets.only(bottom: 8),
       child: Material(
@@ -544,12 +545,12 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
 
   Widget _buildTutorialsTab() {
     final tutorials = [
-      _TutorialItem('Getting Started', 'Learn the basics of using the parent portal', Icons.play_circle_rounded, Colors.blue, 'Basic'),
-      _TutorialItem('Checking Grades', 'How to view and understand your child\'s academic performance', Icons.grade_rounded, Colors.green, 'Basic'),
-      _TutorialItem('Fee Payment', 'Step-by-step guide to pay school fees online', Icons.payment_rounded, Colors.orange, 'Basic'),
-      _TutorialItem('Communication', 'How to message teachers and stay connected', Icons.message_rounded, Colors.purple, 'Intermediate'),
-      _TutorialItem('Attendance Tracking', 'Monitor your child\'s daily attendance', Icons.calendar_today_rounded, Colors.cyan, 'Basic'),
-      _TutorialItem('Notifications Setup', 'Customize your notification preferences', Icons.notifications_rounded, Colors.red, 'Advanced'),
+      TutorialItem('Getting Started', 'Learn the basics of using the parent portal', Icons.play_circle_rounded, Colors.blue, 'Basic'),
+      TutorialItem('Checking Grades', 'How to view and understand your child\'s academic performance', Icons.grade_rounded, Colors.green, 'Basic'),
+      TutorialItem('Fee Payment', 'Step-by-step guide to pay school fees online', Icons.payment_rounded, Colors.orange, 'Basic'),
+      TutorialItem('Communication', 'How to message teachers and stay connected', Icons.message_rounded, Colors.purple, 'Intermediate'),
+      TutorialItem('Attendance Tracking', 'Monitor your child\'s daily attendance', Icons.calendar_today_rounded, Colors.cyan, 'Basic'),
+      TutorialItem('Notifications Setup', 'Customize your notification preferences', Icons.notifications_rounded, Colors.red, 'Advanced'),
     ];
 
     return ListView(
@@ -558,7 +559,7 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
     );
   }
 
-  Widget _buildTutorialItem(_TutorialItem tutorial) {
+  Widget _buildTutorialItem(TutorialItem tutorial) {
     return Container(
       margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getDefaultSpacing(context)),
       decoration: BoxDecoration(
@@ -644,12 +645,12 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
 
   Widget _buildTroubleshootingTab() {
     final issues = [
-      _IssueItem('App is running slow', 'Clear app cache and restart', Icons.speed_rounded, Colors.orange, 'Performance'),
-      _IssueItem('Can\'t login to account', 'Reset password or contact support', Icons.login_rounded, Colors.red, 'Account'),
-      _IssueItem('Notifications not working', 'Check notification settings', Icons.notifications_off_rounded, Colors.blue, 'Notifications'),
-      _IssueItem('Payment failed', 'Try different payment method', Icons.payment_rounded, Colors.green, 'Payments'),
-      _IssueItem('Grades not showing', 'Contact teacher or refresh page', Icons.grade_rounded, Colors.purple, 'Academic'),
-      _IssueItem('App crashes frequently', 'Update app or reinstall', Icons.bug_report_rounded, Colors.red, 'Technical'),
+      IssueItem('App is running slow', 'Clear app cache and restart', Icons.speed_rounded, Colors.orange, 'Performance'),
+      IssueItem('Can\'t login to account', 'Reset password or contact support', Icons.login_rounded, Colors.red, 'Account'),
+      IssueItem('Notifications not working', 'Check notification settings', Icons.notifications_off_rounded, Colors.blue, 'Notifications'),
+      IssueItem('Payment failed', 'Try different payment method', Icons.payment_rounded, Colors.green, 'Payments'),
+      IssueItem('Grades not showing', 'Contact teacher or refresh page', Icons.grade_rounded, Colors.purple, 'Academic'),
+      IssueItem('App crashes frequently', 'Update app or reinstall', Icons.bug_report_rounded, Colors.red, 'Technical'),
     ];
 
     return ListView(
@@ -699,7 +700,7 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
     );
   }
 
-  Widget _buildIssueItem(_IssueItem issue) {
+  Widget _buildIssueItem(IssueItem issue) {
     return Container(
       margin: EdgeInsets.only(bottom: AppThemeResponsiveness.getDefaultSpacing(context)),
       decoration: BoxDecoration(
@@ -974,7 +975,7 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
     // Implement live chat functionality
   }
 
-  void _openTutorial(_TutorialItem tutorial) {
+  void _openTutorial(TutorialItem tutorial) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1064,7 +1065,7 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
     );
   }
 
-  void _reportIssue(_IssueItem issue) {
+  void _reportIssue(IssueItem issue) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -1122,43 +1123,4 @@ class _ParentHelpPageState extends State<ParentHelpPage> with TickerProviderStat
       ),
     );
   }
-}
-
-// Data Models
-class FAQItem {
-  final String question;
-  final String answer;
-  final String category;
-  final IconData icon;
-
-  FAQItem(this.question, this.answer, this.category, this.icon);
-}
-
-class _ContactMethod {
-  final String label;
-  final String value;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  _ContactMethod(this.label, this.value, this.icon, this.onTap);
-}
-
-class _TutorialItem {
-  final String title;
-  final String description;
-  final IconData icon;
-  final Color color;
-  final String difficulty;
-
-  _TutorialItem(this.title, this.description, this.icon, this.color, this.difficulty);
-}
-
-class _IssueItem {
-  final String title;
-  final String solution;
-  final IconData icon;
-  final Color color;
-  final String category;
-
-  _IssueItem(this.title, this.solution, this.icon, this.color, this.category);
 }

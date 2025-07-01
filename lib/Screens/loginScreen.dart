@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/inputField.dart';
-import 'package:school/customWidgets/loginCustomWidgets/userTypeSelection.dart'; // Import the new widget
+import 'package:school/customWidgets/loginCustomWidgets/userTypeSelection.dart';
+import 'package:school/customWidgets/snackBar.dart'; // Import the new widget
 
 class LoginPage extends StatefulWidget {
   @override
@@ -562,25 +563,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.error_outline, color: Colors.white),
-            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.red.shade600,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-        ),
-        margin: EdgeInsets.all(AppThemeResponsiveness.getMediumSpacing(context)),
-        duration: const Duration(seconds: 3),
-      ),
+    AppSnackBar.show(
+      context,
+      message: message,
+      backgroundColor: Colors.red,
+      icon: Icons.error,
     );
   }
 

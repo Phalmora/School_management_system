@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school/customWidgets/button.dart';
+import 'package:school/customWidgets/admissionCustomWidgets/admissionProcessIndicator.dart';
+import 'package:school/customWidgets/admissionCustomWidgets/backAndNextButton.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/sectionTitle.dart';
@@ -49,7 +50,7 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
                 padding: AppThemeResponsiveness.getScreenPadding(context),
                 child: Column(
                   children: [
-                    _buildProgressIndicator(2, 4),
+                    ProgressIndicatorBar(currentStep: 2, totalSteps: 4),
                     SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
                     Text(
                       'Parent/Guardian Information',
@@ -138,7 +139,10 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
                                 },
                               ),
                               SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
-                              buildActionButtons(),
+                              FormNavigationButtons(
+                            onNext: _nextPage,
+                            onBack: () => Navigator.pop(context),
+                          ),
                             ],
                           ),
                         ),
@@ -151,52 +155,6 @@ class _AdmissionParentInfoScreenState extends State<AdmissionParentInfoScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildProgressIndicator(int currentStep, int totalSteps) {
-    return Container(
-      padding: AppThemeResponsiveness.getVerticalPadding(context),
-      child: Row(
-        children: List.generate(totalSteps, (index) {
-          bool isCompleted = index < currentStep;
-          bool isCurrent = index == currentStep - 1;
-
-          return Expanded(
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: AppThemeResponsiveness.getSmallSpacing(context) / 4,
-              ),
-              height: AppThemeResponsiveness.isMobile(context) ? 4 : 6,
-              decoration: BoxDecoration(
-                color: isCompleted || isCurrent
-                    ? AppThemeColor.blue600
-                    : Colors.grey[300],
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.isMobile(context) ? 2 : 3),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
-  Widget buildActionButtons() {
-    return Column(
-      children: [
-        PrimaryButton(
-          title: 'Next',
-          icon: Icon(Icons.arrow_forward, color: Colors.white),
-          onPressed: _nextPage,
-        ),
-        SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
-        SecondaryButton(
-          title: 'Back',
-          icon: Icon(Icons.arrow_back_rounded, color: AppThemeColor.blue600),
-          color: AppThemeColor.blue600,
-          onPressed: () => Navigator.pop(context),
-        )
-      ],
     );
   }
 

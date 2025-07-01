@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/CommonLogic/tabBar.dart';
-import 'package:school/model/resultModelTeacher.dart';
+import 'package:school/model/dashboard/resultModelTeacher.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 class ResultEntryPage extends StatefulWidget {

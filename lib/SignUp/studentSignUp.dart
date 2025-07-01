@@ -4,6 +4,7 @@ import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/button.dart';
 import 'package:school/customWidgets/loginCustomWidgets/loginSPanText.dart';
 import 'package:school/customWidgets/loginCustomWidgets/signUpTitle.dart';
+import 'package:school/customWidgets/snackBar.dart';
 import 'package:school/customWidgets/validation.dart';
 
 class StudentSignupPage extends StatefulWidget {
@@ -229,23 +230,12 @@ class _StudentSignupPageState extends State<StudentSignupPage> {
 
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Student account created successfully!',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Student account created successfully!',
+            backgroundColor: Colors.green,
+            icon: Icons.check_circle_outline,
           );
-
-          // Navigate to login page
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/login',
@@ -255,20 +245,11 @@ class _StudentSignupPageState extends State<StudentSignupPage> {
       } catch (error) {
         // Handle error
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Failed to create account. Please try again.',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Failed to create account. Please try again.',
+            backgroundColor: Colors.red,
+            icon: Icons.error,
           );
         }
       } finally {

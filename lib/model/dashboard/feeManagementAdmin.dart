@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 // Fee Slip Model
 class FeeSlip {
   final String id;

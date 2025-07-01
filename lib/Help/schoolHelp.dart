@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school/model/schoolHelp.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SchoolHelpPage extends StatefulWidget {
@@ -453,11 +454,3 @@ class _SchoolHelpPageState extends State<SchoolHelpPage> {
   }
 }
 
-class HelpItem {
-  final String question;
-  final String answer;
-  final String category;
-  final IconData icon;
-
-  HelpItem(this.question, this.answer, this.category, this.icon);
-}

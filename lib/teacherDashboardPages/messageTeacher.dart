@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:school/model/messageModelTeacher.dart';
-import 'package:school/model/messageServiceTeacher.dart'; // For formatting timestamps
+import 'package:school/model/dashboard/messageModelTeacher.dart';
+import 'package:school/model/dashboard/messageServiceTeacher.dart'; // For formatting timestamps
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 
 /// A page to display and send messages to/from an admin or academic officer.

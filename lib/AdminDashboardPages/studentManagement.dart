@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school/AdminStudentManagement/studentListTile.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/classInfo.dart';
+import 'package:school/model/dashboard/classInfo.dart';
 
 class ClassManagementPage extends StatefulWidget {
   @override

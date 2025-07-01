@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/userRequestModel.dart';
+import 'package:school/model/dashboard/userRequestModel.dart';
 
 class UserRequestsPage extends StatefulWidget {
   const UserRequestsPage({Key? key}) : super(key: key);

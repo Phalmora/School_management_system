@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/feeManagementAdmin.dart';
+import 'package:school/model/dashboard/feeManagementAdmin.dart';
 
 class FeeManagementPage extends StatefulWidget {
   @override

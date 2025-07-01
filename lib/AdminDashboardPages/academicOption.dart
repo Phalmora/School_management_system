@@ -4,7 +4,7 @@ import 'package:school/AcademicManagement/addSubject.dart';
 import 'package:school/AcademicManagement/houseGroups.dart';
 import 'package:school/AcademicManagement/sportsGroups.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/academicOptionModel.dart';
+import 'package:school/model/dashboard/academicOptionModel.dart';
 
 class AcademicScreen extends StatefulWidget {
   @override

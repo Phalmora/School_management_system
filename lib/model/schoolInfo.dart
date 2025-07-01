@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Data Models
 class SchoolInfo {
   final String name;
   final String established;
@@ -29,7 +28,6 @@ class SchoolInfo {
   });
 }
 
-// Single, clean definition of StatItem
 class StatItem {
   final IconData icon;
   final String label;

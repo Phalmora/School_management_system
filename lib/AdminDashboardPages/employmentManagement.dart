@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school/AdminEmployeeManagement/editEmployee.dart';
 import 'package:school/AdminEmployeeManagement/teacherDetails.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/employeeModel.dart';
+import 'package:school/model/dashboard/employeeModel.dart';
 
 // Main Teacher Management Page
 class EmployeeManagementPage extends StatefulWidget {

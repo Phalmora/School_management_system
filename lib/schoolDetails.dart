@@ -677,15 +677,3 @@ class _AboutSchoolState extends State<AboutSchool> {
     );
   }
 }
-
-class StatItem {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  StatItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-}

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:school/CommonLogic/tabBar.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/examManagement.dart';
+import 'package:school/model/dashboard/examManagement.dart';
 
 
 // Main Exam Management Screen

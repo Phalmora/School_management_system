@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/themeResponsiveness.dart';
-import 'package:school/model/dashboardItem.dart';
+import 'package:school/model/dashboard/dashboardItem.dart';
 
 class DashboardCard extends StatelessWidget {
   final DashboardItem item;

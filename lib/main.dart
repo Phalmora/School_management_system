@@ -86,11 +86,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Roboto',
       ),
-      // home: SplashScreen(),
+      home: SplashScreen(),
       // home: MainChat(),
       // home: AppSettingsPage(),
       // home: Notifications(),
-      home: StudentListScreen(), //try for student connection
+      //home: StudentListScreen(), //try for student connection
       routes: {
         '/login': (context) => LoginPage(),
         '/change-password': (context) => ChangePasswordPage(),

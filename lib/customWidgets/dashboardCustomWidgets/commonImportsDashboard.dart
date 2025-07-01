@@ -1,7 +1,7 @@
 export 'package:school/customWidgets/commonCustomWidget/appBar.dart';
 export 'package:school/customWidgets/commonCustomWidget/themeColor.dart';
 export 'package:school/customWidgets/commonCustomWidget/themeResponsiveness.dart';
-export 'package:school/model/dashboardItem.dart';
+export 'package:school/model/dashboard/dashboardItem.dart';
 export 'package:school/CommonLogic/logout.dart';
 export 'package:school/customWidgets/dashboardCustomWIdgets/dashBoardCardWidget.dart';
 export 'package:school/customWidgets/dashboardCustomWIdgets/dashboardQuickStatsSection.dart';

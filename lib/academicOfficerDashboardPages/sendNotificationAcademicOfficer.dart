@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school/CommonLogic/tabBar.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/NotificationModel.dart';
+import 'package:school/model/dashboard/NotificationModelAcademicOfficer.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();

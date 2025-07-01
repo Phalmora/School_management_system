@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
-import 'package:school/model/classroomReport.dart';
+import 'package:school/model/dashboard/classroomReportAcademicOfficer.dart';
 
 class ClassroomReportsScreen extends StatefulWidget {
   @override

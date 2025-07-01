@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/datePicker.dart';
+import 'package:school/customWidgets/dropDownCommon.dart';
 import 'package:school/customWidgets/inputField.dart';
 import 'package:school/customWidgets/loginCustomWidgets/loginSPanText.dart';
 import 'package:school/customWidgets/loginCustomWidgets/signUpTitle.dart';
 import 'package:school/customWidgets/button.dart';
+import 'package:school/customWidgets/snackBar.dart';
 import 'package:school/customWidgets/validation.dart';
 
 class AcademicOfficerSignupPage extends StatefulWidget {
@@ -34,10 +36,6 @@ class _AcademicOfficerSignupPageState extends State<AcademicOfficerSignupPage> {
   // Dropdown Values
   String? _selectedRole = 'Academic Officer';
   String? _selectedGender;
-
-  // Dropdown Options
-  final List<String> _roles = ['Academic Officer', 'Admin'];
-  final List<String> _genders = ['Male', 'Female', 'Other'];
 
   @override
   Widget build(BuildContext context) {
@@ -169,30 +167,25 @@ class _AcademicOfficerSignupPageState extends State<AcademicOfficerSignupPage> {
                 validator: ValidationUtils.validatePhone,
               ),
             ),
-            // Role Dropdown
+            // Role Dropdown - Using AppDropdown.role()
             SizedBox(
               width: _getFieldWidth(context, constraints, columns),
-              child: _buildStyledDropdownField(
+              child: AppDropdown.role(
                 value: _selectedRole,
-                items: _roles,
-                label: 'Role',
-                icon: Icons.assignment_ind,
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedRole = newValue;
                   });
                 },
                 validator: ValidationUtils.validateRole,
+                customRoles: ['Academic Officer', 'Admin'], // Restrict to specific roles for academic officer signup
               ),
             ),
-            // Gender Dropdown
+            // Gender Dropdown - Using AppDropdown.gender()
             SizedBox(
               width: _getFieldWidth(context, constraints, columns),
-              child: _buildStyledDropdownField(
+              child: AppDropdown.gender(
                 value: _selectedGender,
-                items: _genders,
-                label: 'Gender',
-                icon: Icons.people,
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedGender = newValue;
@@ -274,82 +267,6 @@ class _AcademicOfficerSignupPageState extends State<AcademicOfficerSignupPage> {
     }
   }
 
-  // Reusable styled dropdown field to match AppTextFieldBuilder styling
-  Widget _buildStyledDropdownField({
-    required String? value,
-    required List<String> items,
-    required String label,
-    required IconData icon,
-    required void Function(String?) onChanged,
-    String? Function(String?)? validator,
-  }) {
-    return DropdownButtonFormField<String>(
-      value: value,
-      items: items.map((String item) {
-        return DropdownMenuItem<String>(
-          value: item,
-          child: Text(
-            item,
-            style: AppThemeResponsiveness.getBodyTextStyle(context),
-          ),
-        );
-      }).toList(),
-      onChanged: onChanged,
-      validator: validator,
-      style: AppThemeResponsiveness.getBodyTextStyle(context),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: AppThemeResponsiveness.getSubHeadingStyle(context),
-        prefixIcon: Icon(
-          icon,
-          size: AppThemeResponsiveness.getIconSize(context),
-          color: Colors.grey[600],
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-          borderSide: BorderSide(
-            color: AppThemeColor.blue600,
-            width: AppThemeResponsiveness.getFocusedBorderWidth(context),
-          ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-          borderSide: const BorderSide(
-            color: Colors.grey,
-            width: 1.0,
-          ),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            AppThemeResponsiveness.getInputBorderRadius(context),
-          ),
-          borderSide: BorderSide(color: Colors.red.shade400),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: AppThemeResponsiveness.getDefaultSpacing(context) * 1.5,
-          vertical: AppThemeResponsiveness.getSmallSpacing(context) * 2.5,
-        ),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      dropdownColor: Colors.white,
-      icon: Icon(
-        Icons.keyboard_arrow_down,
-        color: Colors.grey[600],
-        size: AppThemeResponsiveness.getIconSize(context),
-      ),
-    );
-  }
-
   // Helper method to parse date from string for validation
   DateTime? _parseDateFromString(String dateString) {
     try {
@@ -379,23 +296,12 @@ class _AcademicOfficerSignupPageState extends State<AcademicOfficerSignupPage> {
 
         // Show success message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Academic Officer account created successfully!',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Academic Officer account created successfully!',
+            backgroundColor: Colors.green,
+            icon: Icons.check_circle_outline,
           );
-
-          // Navigate to login page
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/login',
@@ -405,20 +311,11 @@ class _AcademicOfficerSignupPageState extends State<AcademicOfficerSignupPage> {
       } catch (error) {
         // Handle error
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Failed to create Academic Officer account. Please try again.',
-                style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(color: Colors.white),
-              ),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 3),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(AppThemeResponsiveness.getDefaultSpacing(context)),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-              ),
-            ),
+          AppSnackBar.show(
+            context,
+            message: 'Failed to create Academic Officer account. Please try again.',
+            backgroundColor: Colors.red,
+            icon: Icons.error,
           );
         }
       } finally {

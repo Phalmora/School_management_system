@@ -4,6 +4,7 @@ import 'package:school/SignUp/adminSignUp.dart';
 import 'package:school/SignUp/parentSignUp.dart';
 import 'package:school/SignUp/studentSignUp.dart';
 import 'package:school/SignUp/teacherSignUp.dart';
+import 'package:school/customWidgets/button.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/loginCustomWidgets/userTypeSelection.dart';
 import 'package:school/customWidgets/loginCustomWidgets/loginSpanText.dart';
@@ -220,54 +221,21 @@ class _MainSignUpPageState extends State<MainSignUpPage> {
               showError: _showUserTypeError,
             ),
             SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
-            _buildContinueButton(),
+            // Replaced custom continue button with PrimaryButton
+            PrimaryButton(
+              title: 'Continue to Sign Up',
+              onPressed: selectedRole != null ? _navigateToSelectedRole : null,
+              icon: Icon(
+                Icons.arrow_forward_rounded,
+                size: 20,
+                color: Colors.white,
+              ),
+            ),
             SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
             _buildDivider(),
             SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
             LoginRedirectText(context: context)
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContinueButton() {
-    return Container(
-      width: double.infinity,
-      height: AppThemeResponsiveness.getButtonHeight(context),
-      decoration: BoxDecoration(
-        gradient: selectedRole != null
-            ? LinearGradient(
-          colors: [AppThemeColor.blue400, AppThemeColor.blue600],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        )
-            : null,
-        color: selectedRole == null ? Colors.grey.shade300 : null,
-        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
-        boxShadow: selectedRole != null ? [
-          BoxShadow(
-            color: AppThemeColor.blue400.withOpacity(0.3),
-            blurRadius: 15,
-            spreadRadius: 2,
-            offset: Offset(0, 8),
-          ),
-        ] : null,
-      ),
-      child: ElevatedButton(
-        onPressed: selectedRole != null ? _navigateToSelectedRole : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppThemeResponsiveness.getButtonBorderRadius(context)),
-          ),
-        ),
-        child: Text(
-          'Continue to Sign Up',
-          style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
-            color: selectedRole != null ? Colors.white : Colors.grey.shade600,
-          ),
         ),
       ),
     );
@@ -315,7 +283,6 @@ class _MainSignUpPageState extends State<MainSignUpPage> {
       default:
         return;
     }
-
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => destinationPage),
