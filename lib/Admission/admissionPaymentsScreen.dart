@@ -510,10 +510,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
           name,
           style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
             fontWeight: FontWeight.w500,
-            fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-            AppThemeResponsiveness.isMediumPhone(context) ? 13.0 :
-            AppThemeResponsiveness.isLargePhone(context) ? 14.0 :
-            AppThemeResponsiveness.isTablet(context) ? 15.0 : 16.0,
+            fontSize: AppThemeResponsiveness.getTabFontSize(context),
           ),
         ),
         trailing: Icon(
@@ -569,12 +566,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
           SizedBox(height: AppThemeResponsiveness.getDefaultSpacing(context)),
           Text(
             'Card Details',
-            style: AppThemeResponsiveness.getHeadingStyle(context).copyWith(
-              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 16.0 :
-              AppThemeResponsiveness.isMediumPhone(context) ? 18.0 :
-              AppThemeResponsiveness.isLargePhone(context) ? 20.0 :
-              AppThemeResponsiveness.isTablet(context) ? 22.0 : 24.0,
-            ),
+            style: AppThemeResponsiveness.getHeadingStyle(context),
           ),
           SizedBox(height: AppThemeResponsiveness.getExtraLargeSpacing(context)),
 
@@ -792,21 +784,13 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                 Text(
                   'Your admission fee has been successfully paid using $provider.',
                   style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
-                    fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-                    AppThemeResponsiveness.isMediumPhone(context) ? 13.0 :
-                    AppThemeResponsiveness.isLargePhone(context) ? 14.0 :
-                    AppThemeResponsiveness.isTablet(context) ? 15.0 : 16.0,
+                    fontSize: AppThemeResponsiveness.getTabFontSize(context),
                   ),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: AppThemeResponsiveness.getMediumSpacing(context)),
                 Container(
-                  padding: EdgeInsets.all(
-                    AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-                    AppThemeResponsiveness.isMediumPhone(context) ? 16.0 :
-                    AppThemeResponsiveness.isLargePhone(context) ? 20.0 :
-                    AppThemeResponsiveness.isTablet(context) ? 24.0 : 28.0,
-                  ),
+                  padding: AppThemeResponsiveness.getCardPadding(context),
                   decoration: BoxDecoration(
                     color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
@@ -822,20 +806,14 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                           Text(
                             'Transaction ID:',
                             style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
-                              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 10.0 :
-                              AppThemeResponsiveness.isMediumPhone(context) ? 11.0 :
-                              AppThemeResponsiveness.isLargePhone(context) ? 12.0 :
-                              AppThemeResponsiveness.isTablet(context) ? 13.0 : 14.0,
+                              fontSize: AppThemeResponsiveness.getHistoryTimeFontSize(context),
                             ),
                           ),
                           Text(
                             'TXN${DateTime.now().millisecondsSinceEpoch.toString().substring(8)}',
                             style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                               fontWeight: FontWeight.w600,
-                              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 10.0 :
-                              AppThemeResponsiveness.isMediumPhone(context) ? 11.0 :
-                              AppThemeResponsiveness.isLargePhone(context) ? 12.0 :
-                              AppThemeResponsiveness.isTablet(context) ? 13.0 : 14.0,
+                              fontSize: AppThemeResponsiveness.getHistoryTimeFontSize(context),
                             ),
                           ),
                         ],
@@ -847,10 +825,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                           Text(
                             'Amount Paid:',
                             style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
-                              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 10.0 :
-                              AppThemeResponsiveness.isMediumPhone(context) ? 11.0 :
-                              AppThemeResponsiveness.isLargePhone(context) ? 12.0 :
-                              AppThemeResponsiveness.isTablet(context) ? 13.0 : 14.0,
+                              fontSize: AppThemeResponsiveness.getHistoryTimeFontSize(context),
                             ),
                           ),
                           Text(
@@ -858,10 +833,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                             style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                               fontWeight: FontWeight.w600,
                               color: Colors.green,
-                              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-                              AppThemeResponsiveness.isMediumPhone(context) ? 13.0 :
-                              AppThemeResponsiveness.isLargePhone(context) ? 14.0 :
-                              AppThemeResponsiveness.isTablet(context) ? 15.0 : 16.0,
+                              fontSize: AppThemeResponsiveness.getTabFontSize(context),
                             ),
                           ),
                         ],
@@ -873,20 +845,14 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                           Text(
                             'Date & Time:',
                             style: AppThemeResponsiveness.getCaptionTextStyle(context).copyWith(
-                              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 10.0 :
-                              AppThemeResponsiveness.isMediumPhone(context) ? 11.0 :
-                              AppThemeResponsiveness.isLargePhone(context) ? 12.0 :
-                              AppThemeResponsiveness.isTablet(context) ? 13.0 : 14.0,
+                              fontSize: AppThemeResponsiveness.getHistoryTimeFontSize(context),
                             ),
                           ),
                           Text(
                             '${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year} ${DateTime.now().hour}:${DateTime.now().minute.toString().padLeft(2, '0')}',
                             style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                               fontWeight: FontWeight.w600,
-                              fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 10.0 :
-                              AppThemeResponsiveness.isMediumPhone(context) ? 11.0 :
-                              AppThemeResponsiveness.isLargePhone(context) ? 12.0 :
-                              AppThemeResponsiveness.isTablet(context) ? 13.0 : 14.0,
+                              fontSize: AppThemeResponsiveness.getHistoryTimeFontSize(context),
                             ),
                           ),
                         ],
@@ -915,10 +881,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                   child: Text(
                     'Continue',
                     style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
-                      fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 13.0 :
-                      AppThemeResponsiveness.isMediumPhone(context) ? 14.0 :
-                      AppThemeResponsiveness.isLargePhone(context) ? 15.0 :
-                      AppThemeResponsiveness.isTablet(context) ? 16.0 : 17.0,
+                      fontSize: AppThemeResponsiveness.getTabFontSize(context),
                     ),
                   ),
                 ),
@@ -953,10 +916,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                         'Download Receipt',
                         style: AppThemeResponsiveness.getButtonTextStyle(context).copyWith(
                           color: Colors.green,
-                          fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 13.0 :
-                          AppThemeResponsiveness.isMediumPhone(context) ? 14.0 :
-                          AppThemeResponsiveness.isLargePhone(context) ? 15.0 :
-                          AppThemeResponsiveness.isTablet(context) ? 16.0 : 17.0,
+                          fontSize: AppThemeResponsiveness.getTabFontSize(context),
                         ),
                       ),
                     ],
@@ -985,10 +945,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
                 'Payment receipt downloaded successfully!',
                 style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
                   color: Colors.white,
-                  fontSize: AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-                  AppThemeResponsiveness.isMediumPhone(context) ? 13.0 :
-                  AppThemeResponsiveness.isLargePhone(context) ? 14.0 :
-                  AppThemeResponsiveness.isTablet(context) ? 15.0 : 16.0,
+                  fontSize: AppThemeResponsiveness.getTabFontSize(context),
                 ),
               ),
             ),
@@ -1001,10 +958,7 @@ class _AdmissionPaymentsScreenState extends State<AdmissionPaymentsScreen> {
           borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
         ),
         margin: EdgeInsets.all(
-          AppThemeResponsiveness.isSmallPhone(context) ? 12.0 :
-          AppThemeResponsiveness.isMediumPhone(context) ? 16.0 :
-          AppThemeResponsiveness.isLargePhone(context) ? 20.0 :
-          AppThemeResponsiveness.isTablet(context) ? 24.0 : 28.0,
+          AppThemeResponsiveness.getDefaultSpacing(context),
         ),
       ),
     );

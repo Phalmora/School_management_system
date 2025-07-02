@@ -16,7 +16,7 @@ class _AcademicScreenState extends State<AcademicScreen> {
     AcademicOption(
       icon: Icons.class_outlined,
       title: 'Add Class',
-      subtitle: 'Create new classes\nand sections',
+      subtitle: '',
       primaryColor: Color(0xFF667EEA),
       secondaryColor: Color(0xFF764BA2),
       route: () => AddClassScreen(),
@@ -25,7 +25,7 @@ class _AcademicScreenState extends State<AcademicScreen> {
     AcademicOption(
       icon: Icons.menu_book_outlined,
       title: 'Add Subject',
-      subtitle: 'Create and manage\nsubjects',
+      subtitle: '',
       primaryColor: Color(0xFF11998E),
       secondaryColor: Color(0xFF38EF7D),
       route: () => AddSubjectScreen(),
@@ -34,7 +34,7 @@ class _AcademicScreenState extends State<AcademicScreen> {
     AcademicOption(
       icon: Icons.sports_soccer_outlined,
       title: 'Sport Groups',
-      subtitle: 'Create and organize\nsport teams',
+      subtitle: '',
       primaryColor: Color(0xFFFC466B),
       secondaryColor: Color(0xFF3F5EFB),
       route: () => AddSportGroupScreen(),
@@ -43,7 +43,7 @@ class _AcademicScreenState extends State<AcademicScreen> {
     AcademicOption(
       icon: Icons.home_work_outlined,
       title: 'House Groups',
-      subtitle: 'Manage house\nsystem & points',
+      subtitle: '',
       primaryColor: Color(0xFFFFCE00),
       secondaryColor: Color(0xFFFF9500),
       route: () => AddHouseGroupScreen(),
@@ -275,7 +275,6 @@ class _AcademicScreenState extends State<AcademicScreen> {
               horizontal: AppThemeResponsiveness.getDashboardHorizontalPadding(context),
             ),
             child: GridView.builder(
-              physics: BouncingScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: AppThemeResponsiveness.getDashboardGridCrossAxisCount(context),
                 crossAxisSpacing: AppThemeResponsiveness.getDashboardGridCrossAxisSpacing(context),
@@ -332,57 +331,50 @@ class _AcademicScreenState extends State<AcademicScreen> {
           child: Padding(
             padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardPadding(context)),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Icon with gradient background - Responsive
-                Container(
-                  padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [option.primaryColor, option.secondaryColor],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: option.primaryColor.withOpacity(0.3),
-                        spreadRadius: 0,
-                        blurRadius: AppThemeResponsiveness.getCardElevation(context) * 0.8,
-                        offset: Offset(0, 4),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.all(AppThemeResponsiveness.getDashboardCardIconPadding(context)),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [option.primaryColor, option.secondaryColor],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ],
-                  ),
-                  child: Icon(
-                    option.icon,
-                    size: AppThemeResponsiveness.getDashboardCardIconSize(context),
-                    color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: option.primaryColor.withOpacity(0.3),
+                          spreadRadius: 0,
+                          blurRadius: AppThemeResponsiveness.getCardElevation(context) * 0.8,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      option.icon,
+                      size: AppThemeResponsiveness.getDashboardCardIconSize(context),
+                      color: Colors.white,
+                    ),
                   ),
                 ),
 
                 SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) * 1.2),
 
-                // Title and subtitle - Responsive
-                Text(
-                  option.title,
-                  style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
-                    letterSpacing: -0.2,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                SizedBox(height: AppThemeResponsiveness.getSmallSpacing(context) * 0.5),
-
+                // Title only - No subtitle
                 Expanded(
-                  child: Text(
-                    option.subtitle,
-                    style: AppThemeResponsiveness.getDashboardCardSubtitleStyle(context).copyWith(
-                      height: 1.3,
-                      letterSpacing: 0.1,
+                  child: Center(
+                    child: Text(
+                      option.title,
+                      style: AppThemeResponsiveness.getDashboardCardTitleStyle(context).copyWith(
+                        letterSpacing: -0.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
 

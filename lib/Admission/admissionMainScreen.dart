@@ -576,6 +576,7 @@ class AdmissionMainScreen extends StatelessWidget {
   }
 }
 
+//Static model no need to make any changes in it
 class ProcessStepData {
   final int stepNumber;
   final IconData icon;

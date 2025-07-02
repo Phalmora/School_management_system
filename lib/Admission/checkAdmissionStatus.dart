@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school/customWidgets/commonCustomWidget/commonMainInput.dart';
 import 'package:school/customWidgets/datePicker.dart';
 import 'package:school/customWidgets/inputField.dart';
+import 'package:school/customWidgets/button.dart';
 import 'package:school/customWidgets/pagesMainHeading.dart';
 
 import 'package:school/model/admission/admissionStatusModel.dart';
@@ -279,43 +280,14 @@ class _AdmissionStatusScreenState extends State<AdmissionStatusScreen> {
   }
 
   Widget _buildTrackButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: AppThemeResponsiveness.getButtonHeight(context),
-      child: ElevatedButton(
-        onPressed: _isSearching ? null : _handleTrackApplication,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppThemeColor.primaryBlue,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              AppThemeResponsiveness.getButtonBorderRadius(context),
-            ),
-          ),
-          elevation: AppThemeResponsiveness.getButtonElevation(context),
-        ),
-        child: _isSearching
-            ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: AppThemeResponsiveness.getIconSize(context) * 0.8,
-              height: AppThemeResponsiveness.getIconSize(context) * 0.8,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            ),
-            SizedBox(width: AppThemeResponsiveness.getSmallSpacing(context)),
-            Text(
-              'Searching...',
-              style: AppThemeResponsiveness.getButtonTextStyle(context),
-            ),
-          ],
-        )
-            : Text(
-          'Track My Application',
-          style: AppThemeResponsiveness.getButtonTextStyle(context),
-        ),
+    return PrimaryButton(
+      title: 'Track My Application',
+      onPressed: _handleTrackApplication,
+      isLoading: _isSearching,
+      icon: Icon(
+        Icons.search,
+        color: Colors.white,
+        size: AppThemeResponsiveness.getIconSize(context) * 0.8,
       ),
     );
   }

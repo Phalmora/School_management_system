@@ -32,42 +32,36 @@ class AppDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double defaultHeight = 56.0;
-
-    return SizedBox(
-      height: height ?? defaultHeight,
-      child: DropdownButtonFormField<T>(
-        value: value,
-        style: AppThemeResponsiveness.getBodyTextStyle(context),
-        dropdownColor: Colors.white,
-        decoration: _getInputDecoration(context),
-        items: items.map((T item) {
-          return DropdownMenuItem<T>(
-            value: item,
-            child: itemBuilder?.call(item) ??
-                Text(
-                  itemLabelBuilder?.call(item) ?? item.toString(),
-                  style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
-                    color: enabled ? Colors.black87 : Colors.grey[400],
-                  ),
-                ),
-          );
-        }).toList(),
-        onChanged: enabled ? onChanged : null,
-        validator: validator,
-        icon: Icon(
-          Icons.arrow_drop_down,
-          color: enabled ? Colors.grey[600] : Colors.grey[400],
-        ),
-        hint: hintText != null
-            ? Text(
-          hintText!,
-          style: AppThemeResponsiveness.getBodyTextStyle(context).copyWith(
-            color: Colors.grey[400],
-          ),
-        )
-            : null,
+    return DropdownButtonFormField<T>(
+      value: value,
+      style: AppThemeResponsiveness.getBodyTextStyle(context),
+      dropdownColor: Colors.white,
+      decoration: _getInputDecoration(context),
+      items: items.map((T item) {
+        return DropdownMenuItem<T>(
+          value: item,
+          child: itemBuilder?.call(item) ??
+              Text(
+                itemLabelBuilder?.call(item) ?? item.toString(),
+                style: AppThemeResponsiveness.getBodyTextStyle(context),
+              ),
+        );
+      }).toList(),
+      onChanged: enabled ? onChanged : null,
+      validator: validator,
+      icon: Icon(
+        Icons.arrow_drop_down,
+        color: Colors.grey[600],
+        size: AppThemeResponsiveness.getIconSize(context),
       ),
+      hint: hintText != null
+          ? Text(
+        hintText!,
+        style: AppThemeResponsiveness.getSubHeadingStyle(context)?.copyWith(
+          color: Colors.grey[600],
+        ),
+      )
+          : null,
     );
   }
 
@@ -78,41 +72,52 @@ class AppDropdown<T> extends StatelessWidget {
       prefixIcon: Icon(
         icon,
         size: AppThemeResponsiveness.getIconSize(context),
-        color: enabled ? Colors.grey[600] : Colors.grey[400],
+        color: Colors.grey[600],
       ),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getInputBorderRadius(context),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getInputBorderRadius(context),
+        ),
         borderSide: BorderSide(
           color: AppThemeColor.blue600,
           width: AppThemeResponsiveness.getFocusedBorderWidth(context),
         ),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-        borderSide: BorderSide(
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getInputBorderRadius(context),
+        ),
+        borderSide: const BorderSide(
           color: Colors.grey,
           width: 1.0,
         ),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-        borderSide: BorderSide(
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getInputBorderRadius(context),
+        ),
+        borderSide: const BorderSide(
           color: Colors.red,
+          width: 1.0,
         ),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppThemeResponsiveness.getInputBorderRadius(context)),
-        borderSide: BorderSide(
+        borderRadius: BorderRadius.circular(
+          AppThemeResponsiveness.getInputBorderRadius(context),
+        ),
+        borderSide: const BorderSide(
           color: Colors.red,
-          width: AppThemeResponsiveness.getFocusedBorderWidth(context),
+          width: 1.0,
         ),
       ),
       contentPadding: EdgeInsets.symmetric(
-        horizontal: AppThemeResponsiveness.getDefaultSpacing(context),
-        vertical: 16.0,
+        horizontal: AppThemeResponsiveness.getDefaultSpacing(context) * 1.5,
+        vertical: AppThemeResponsiveness.getSmallSpacing(context) * 2.5,
       ),
       filled: true,
       fillColor: Colors.white,
@@ -151,6 +156,70 @@ class AppDropdown<T> extends StatelessWidget {
       onChanged: onChanged,
       validator: validator ?? (value) => value == null ? 'Please select a role' : null,
     );
+  }
+
+  static AppDropdown<String> houseColor({
+    required String? value,
+    required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
+    List<String>? customColors,
+  }) {
+    final defaultColors = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Orange', 'Pink', 'Cyan'];
+
+    return AppDropdown<String>(
+      value: value,
+      items: customColors ?? defaultColors,
+      label: 'House Color *',
+      icon: Icons.palette,
+      onChanged: onChanged,
+      validator: validator ?? (value) => value == null ? 'Please select house color' : null,
+      itemBuilder: (String color) {
+        return Row(
+          children: [
+            Container(
+              width: 20,
+              height: 20,
+              decoration: BoxDecoration(
+                color: _getColorFromString(color),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              color,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static Color _getColorFromString(String colorName) {
+    switch (colorName.toLowerCase()) {
+      case 'red':
+        return Colors.red;
+      case 'blue':
+        return Colors.blue;
+      case 'green':
+        return Colors.green;
+      case 'yellow':
+        return Colors.yellow;
+      case 'purple':
+        return Colors.purple;
+      case 'orange':
+        return Colors.orange;
+      case 'pink':
+        return Colors.pink;
+      case 'cyan':
+        return Colors.cyan;
+      default:
+        return Colors.grey;
+    }
   }
 
   static AppDropdown<String> relationship({
@@ -252,6 +321,7 @@ class AppDropdown<T> extends StatelessWidget {
     List<String>? customYears,
   }) {
     final defaultYears = [
+      '2023-2024',
       '2024-2025',
       '2025-2026',
       '2026-2027',
@@ -455,6 +525,99 @@ class AppDropdown<T> extends StatelessWidget {
       icon: Icons.work,
       onChanged: onChanged,
       validator: validator,
+    );
+  }
+
+  static AppDropdown<String> section({
+    required String? value,
+    required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
+    List<String>? customSections,
+  }) {
+    final defaultSections = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+
+    return AppDropdown<String>(
+      value: value,
+      items: customSections ?? defaultSections,
+      label: 'Section *',
+      icon: Icons.category,
+      onChanged: onChanged,
+      validator: validator ?? (value) => value == null ? 'Please select section' : null,
+    );
+  }
+
+  static AppDropdown<String> medium({
+    required String? value,
+    required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
+    List<String>? customMediums,
+  }) {
+    final defaultMediums = ['English', 'Hindi', 'Regional Language', 'Bilingual'];
+
+    return AppDropdown<String>(
+      value: value,
+      items: customMediums ?? defaultMediums,
+      label: 'Medium of Instruction *',
+      icon: Icons.language,
+      onChanged: onChanged,
+      validator: validator ?? (value) => value == null ? 'Please select medium' : null,
+    );
+  }
+
+  static AppDropdown<String> stream({
+    required String? value,
+    required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
+    List<String>? customStreams,
+  }) {
+    final defaultStreams = ['Science', 'Commerce', 'Arts', 'Vocational'];
+
+    return AppDropdown<String>(
+      value: value,
+      items: customStreams ?? defaultStreams,
+      label: 'Stream *',
+      icon: Icons.school,
+      onChanged: onChanged,
+      validator: validator ?? (value) => value == null ? 'Please select stream' : null,
+    );
+  }
+
+  static AppDropdown<String> sportType({
+    required String? value,
+    required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
+    List<String>? customSportTypes,
+  }) {
+    final defaultSportTypes = [
+      'Football',
+      'Basketball',
+      'Cricket',
+      'Tennis',
+      'Swimming',
+      'Athletics',
+      'Badminton',
+      'Volleyball',
+      'Hockey',
+      'Table Tennis',
+      'Baseball',
+      'Rugby',
+      'Wrestling',
+      'Boxing',
+      'Gymnastics',
+      'Cycling',
+      'Running',
+      'Chess',
+      'Kabaddi',
+      'Kho Kho',
+    ];
+
+    return AppDropdown<String>(
+      value: value,
+      items: customSportTypes ?? defaultSportTypes,
+      label: 'Sport Type *',
+      icon: Icons.sports,
+      onChanged: onChanged,
+      validator: validator ?? (value) => value == null ? 'Please select sport type' : null,
     );
   }
 
